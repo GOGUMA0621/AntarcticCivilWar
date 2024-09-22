@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Unit Data",menuName ="Scriptable Object/Unit Data",order =int.MaxValue)]
 public class UnitData : ScriptableObject
 {
-    [SerializeField]public enum UNITTYPE
+    public enum UnitType
     {
         Normal,
         Special
@@ -15,8 +15,6 @@ public class UnitData : ScriptableObject
     [Header("¿Ø¥÷ ¡§∫∏")]
     [SerializeField] private string unitName;
     public string UnitName {  get { return unitName; } }
-
-    public UNITTYPE UnitType;
 
     [Multiline]
     [SerializeField]private string unitDescription = "";
@@ -26,15 +24,28 @@ public class UnitData : ScriptableObject
     [Header("¿Ø¥÷ Ω∫≈»")]
     [SerializeField] private float unitHP;
     public float UnitHP { get { return unitHP; } }
+    
+    [SerializeField] private float unitSpeed;
+    public float UnitSpeed { get { return unitSpeed; } }
 
-    [SerializeField] private int unitDamage;
-    public int UnitDamage { get { return unitDamage; } }
+    public enum UnitAttackType
+    {
+        Melee,
+        Projectile
+    }
+    
+    [SerializeField] private float unitDamage;
+    public float UnitDamage { get { return unitDamage; } }
+
+    [SerializeField] private float unitAttackSpeed;
+    public float UnitAttackSpeed { get { return unitAttackSpeed; } }
 
     [SerializeField] private float unitAttackDistance;
     public float UnitAttackDistance { get { return unitAttackDistance; } }
 
-    [SerializeField] private float unitSpeed;
-    public float UnitSpeed { get { return unitSpeed; } }
+    [SerializeField] private float unitSenseRadius;
+    public float UnitSenseRadius { get {return unitSenseRadius; } }
+
 
 
 }

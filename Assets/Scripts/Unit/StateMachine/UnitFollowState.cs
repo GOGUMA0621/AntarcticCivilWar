@@ -5,39 +5,47 @@ using UnityEngine.AI;
 
 public class UnitFollowState : StateMachineBehaviour
 {
-    private UnitAttackController _attackController;
+    private UnitDetectTarget _detect;
     private UnitController _controller;
     private NavMeshAgent _agent;
+    float distanceFromTarget = 0.0f;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _attackController = animator.GetComponent<UnitAttackController>();
+        _detect = animator.GetComponentInChildren<UnitDetectTarget>();
         _agent = animator.GetComponent<NavMeshAgent>();
         _controller = animator.GetComponent<UnitController>();
+
+        //Debug.Log("추적");
     }
 
     
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (_attackController.targetToAttack != null)
+        if (_detect.targetToAttack != null)
         {
             animator.SetBool("isFollow", true);
-            Debug.Log(animator.GetBool("isFollow"));
+            animator.SetBool("isIdle", false);
+            _agent.SetDestination(_detect.targetToAttack.transform.position);
+            //Debug.Log(animator.GetBool("isFollow"));
+            distanceFromTarget = Vector3.Distance(_detect.targetToAttack.transform.position, animator.transform.position);
+            
+
         }
-
-        _agent.SetDestination(_attackController.targetToAttack.transform.position);
-
-        float distanceFromTarget = Vector3.Distance(_attackController.targetToAttack.transform.position, animator.transform.position);
-        if (distanceFromTarget < _controller.unitData.UnitAttackDistance)
+        
+        if (distanceFromTarget <= _controller.unitAttackDistance)
         {
-            animator.SetBool("isAttack", true);
+            animator.SetTrigger("attack");
+            //Debug.Log("어택");
         }
     }
 
-    
+
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _agent.SetDestination(animator.transform.position);
+        animator.ResetTrigger("attack");
+        //Debug.Log("추적 끝남");
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

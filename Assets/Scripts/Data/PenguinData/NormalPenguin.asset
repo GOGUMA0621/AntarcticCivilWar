@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: NormalPenguin
   m_EditorClassIdentifier: 
   unitName: Normal Penguin
-  UnitType: 0
   unitDescription: 
   unitHP: 17
-  unitDamage: 5
-  unitAttackDistance: 5
   unitSpeed: 4
+  unitDamage: 5
+  unitAttackSpeed: 2
+  unitAttackDistance: 1.5
+  unitSenseRadius: 10.21
