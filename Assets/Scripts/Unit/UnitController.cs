@@ -78,10 +78,10 @@ public class UnitController : MonoBehaviour
     {
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         Vector2 currentPosition = transform.position;
-        if (stateInfo.IsName("AttackState"))
-        {
-            float targetDirection = currentPosition.x - detectTarget.targetToAttack.transform.position.x;
-        }
+        //if (stateInfo.IsName("AttackState"))
+        //{
+        //    float targetDirection = currentPosition.x - detectTarget.targetToAttack.transform.position.x;
+        //}
         float moveDirection = currentPosition.x - _lastPosition.x;
 
         if (moveDirection > 0)
