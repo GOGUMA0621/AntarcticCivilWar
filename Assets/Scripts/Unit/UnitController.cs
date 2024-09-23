@@ -57,6 +57,7 @@ public class UnitController : MonoBehaviour
         _agent.updateUpAxis = false;
         #endregion
         _lastPosition = transform.position;
+        _rb.drag = 1.0f;
     }
 
     void Update()
@@ -75,7 +76,12 @@ public class UnitController : MonoBehaviour
 
     public void FlipAnimation()
     {
+        AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         Vector2 currentPosition = transform.position;
+        if (stateInfo.IsName("AttackState"))
+        {
+            float targetDirection = currentPosition.x - detectTarget.targetToAttack.transform.position.x;
+        }
         float moveDirection = currentPosition.x - _lastPosition.x;
 
         if (moveDirection > 0)
@@ -114,16 +120,16 @@ public class UnitController : MonoBehaviour
             isUnitDie = true;
             _animator.SetBool("isDie", true);
             
-            //Vector2 direction = (this.transform.position - _attackers[0].transform.position).normalized;
-            //_rb.AddForce(direction * _force, ForceMode2D.Impulse);
+            _agent.enabled = false;
+            Vector2 direction = (this.transform.position - _attackers[0].transform.position).normalized;
+            _rb.AddForce(direction * 2.0f, ForceMode2D.Impulse);
+
 
             foreach (UnitController attacker in _attackers)
             {
-                
                 attacker.detectTarget.RemoveTarget(this);
             }
             _attackers.Clear();
-
         }
     }
 
@@ -131,7 +137,8 @@ public class UnitController : MonoBehaviour
 
     internal void Revive()
     {
-       
+       _rb.velocity = Vector2.zero;
+        _agent.enabled = true;
         _animator.SetBool("isDie", false);
         isUnitDie = false;
         this.tag = "Unit";

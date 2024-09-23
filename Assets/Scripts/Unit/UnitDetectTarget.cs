@@ -20,22 +20,24 @@ public class UnitDetectTarget : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log(this.tag);
-        if (other.CompareTag("Enemy") && this.transform.parent.CompareTag("Unit"))
+        if(other.TryGetComponent<UnitController>(out UnitController target))
         {
-            UnitController target = other.GetComponent<UnitController>();
-            targets.Add(target);
-            if (targetToAttack == null)
+            if (target.CompareTag("Enemy") && this.transform.parent.CompareTag("Unit") && !targets.Contains(target))
             {
-                AttackClosestTarget();
+            
+                targets.Add(target);
+                if (targetToAttack == null)
+                {
+                    AttackClosestTarget();
+                }
             }
-        }
-        if (other.CompareTag("Unit") && this.transform.parent.CompareTag("Enemy"))
-        {
-            UnitController target = other.GetComponent<UnitController>();
-            targets.Add(target);
-            if (targetToAttack == null)
+            if (target.CompareTag("Unit") && this.transform.parent.CompareTag("Enemy") && !targets.Contains(target))
             {
-                AttackClosestTarget();
+                targets.Add(target);
+                if (targetToAttack == null)
+                {
+                    AttackClosestTarget();
+                }
             }
         }
         //if (other.CompareTag("Enemy") && this.CompareTag("Unit"))
@@ -73,9 +75,6 @@ public class UnitDetectTarget : MonoBehaviour
     public void RemoveTarget(UnitController target)
     {
         targets.Remove(target);
-        if (!targets.Any())
-        {
-            targetToAttack = null;
-        }
+        targetToAttack = null;
     }
 }

@@ -24,6 +24,7 @@ public class UnitDieState : StateMachineBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 _controller.Revive();
+                _canRevive = false;
             }
         }
     }

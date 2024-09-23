@@ -28,16 +28,13 @@ public class UnitAttackState : StateMachineBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if(_detect.targetToAttack != null)
-        {
-            
-            
+        {      
             _attackTime += Time.deltaTime;
             if (_attackRate < _attackTime)
             {
                 _attackTime = 0.0f;
                 var unitInflictedDamage = _unitController.unitDamage;
                 _detect.targetToAttack.GetComponent<UnitController>().ReceiveDamage(unitInflictedDamage, _unitController);
-                //Debug.Log("╬Нец");
             }
         }
         if (_detect.targetToAttack == null)

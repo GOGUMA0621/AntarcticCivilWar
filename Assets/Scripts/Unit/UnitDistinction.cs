@@ -19,7 +19,6 @@ public class UnitDistinction : MonoBehaviour
     void Update()
     {
         ChangeColorDistinction();
-
     }
 
     void ChangeColorDistinction()
