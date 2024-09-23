@@ -137,9 +137,10 @@ public class UnitController : MonoBehaviour
 
     internal void Revive()
     {
-       _rb.velocity = Vector2.zero;
+        _rb.velocity = Vector2.zero;
         _agent.enabled = true;
         _animator.SetBool("isDie", false);
+        detectTarget.ClearTarget();
         isUnitDie = false;
         this.tag = "Unit";
         unitHP = unitData.UnitHP;

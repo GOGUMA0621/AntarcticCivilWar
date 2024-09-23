@@ -77,4 +77,10 @@ public class UnitDetectTarget : MonoBehaviour
         targets.Remove(target);
         targetToAttack = null;
     }
+
+    public void ClearTarget()
+    {
+        targets.Clear();
+        targetToAttack = null;
+    }
 }
