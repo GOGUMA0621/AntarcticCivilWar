@@ -93,10 +93,23 @@ MonoBehaviour:
     - {fileID: -577648691, guid: a675bb103afe1704a98d2326958a6014, type: 3}
     - {fileID: -1742494462, guid: a675bb103afe1704a98d2326958a6014, type: 3}
     - {fileID: -940592806, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
+    - {fileID: -1825341655, guid: a675bb103afe1704a98d2326958a6014, type: 3}
     m_GameObject: {fileID: 0}
     m_MinAnimationSpeed: 1
     m_MaxAnimationSpeed: 1
-    m_PerlinScale: 0.1
+    m_PerlinScale: 0.106
     m_Output: 1
     m_ColliderType: 2
     m_RandomTransform: 1

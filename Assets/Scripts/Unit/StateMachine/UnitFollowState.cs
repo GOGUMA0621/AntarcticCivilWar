@@ -9,6 +9,7 @@ public class UnitFollowState : StateMachineBehaviour
     private UnitController _controller;
     private NavMeshAgent _agent;
     float distanceFromTarget = 0.0f;
+    float distanceToTarget = 0.0f;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -29,7 +30,7 @@ public class UnitFollowState : StateMachineBehaviour
             _agent.SetDestination(_detect.targetToAttack.transform.position);
             //Debug.Log(animator.GetBool("isFollow"));
             distanceFromTarget = Vector3.Distance(_detect.targetToAttack.transform.position, animator.transform.position);
-            
+            distanceToTarget = Mathf.Abs(_detect.targetToAttack.position.y - animator.transform.position.y);
 
         }
         

@@ -13,7 +13,7 @@ public class UnitDieState : StateMachineBehaviour
         if (!animator.CompareTag("Unit"))
         {
             _canRevive = true;
-            Debug.Log(_canRevive);
+            //Debug.Log(_canRevive);
         }
     }
 

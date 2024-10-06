@@ -6,32 +6,28 @@ using UnityEngine.AI;
 
 public class UnitIdleState : StateMachineBehaviour
 {
-    UnitDetectTarget _detect;
-    UnitController _controller;
-    NavMeshAgent _agent;
+    Unit _unit;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _controller = animator.GetComponent<UnitController>();
-        _agent = animator.GetComponent<NavMeshAgent>();
-        _detect = _controller.detectTarget;
+        _unit = animator.GetComponent<Unit>();
 
         //Debug.Log("Idle");
     }
     
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(_detect.targetToAttack != null)
+        if(_unit.detectTarget.targetToAttack != null)
         {
             animator.SetBool("isFollow", true);
             animator.SetBool("isIdle", false);
             //Debug.Log(animator.GetBool("isFollow"));
         }
-        animator.SetFloat("speed", _agent.velocity.magnitude);
+        animator.SetFloat("speed", _unit.agent.velocity.magnitude);
 
         if (animator.CompareTag("Unit"))
         {
-            _controller.MoveTo(_controller.PlayerController.playerPos);
+            _unit.controller.MoveTo(_unit.player.playerPos);
         }
     }
 
