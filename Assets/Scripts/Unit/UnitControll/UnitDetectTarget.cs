@@ -68,7 +68,7 @@ public class UnitDetectTarget : MonoBehaviour
 
     public void AddTarget(Unit target)
     {
-        Debug.Log("타켓 발견");
+        //Debug.Log("타켓 발견");
         if (!targets.Contains(target) && target.tag != this.transform.parent.tag)
         {
             targets.Add(target);
@@ -84,7 +84,7 @@ public class UnitDetectTarget : MonoBehaviour
         if (targets.Contains(target))
         {
             targets.Remove(target);
-            Debug.Log("일반 타겟"+target.ToString());
+            //Debug.Log("일반 타겟"+target.ToString());
             if (target.transform == targetToAttack)
             {
                 Debug.Log(target.ToString());

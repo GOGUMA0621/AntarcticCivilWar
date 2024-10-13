@@ -64,6 +64,9 @@ public class UnitData : ScriptableObject
     [SerializeField] private GameObject unitProjectile;
     public GameObject UnitProjectile { get { return unitProjectile; } }
 
+    [SerializeField] private float unitProjectileSpeed;
+    public float UnitProjectileSpeed { get {return unitProjectileSpeed; } }
+
     [Header("애니메이션")]
     [SerializeField]private AnimatorOverrideController animatorOverrideController;
     public AnimatorOverrideController AnimatorOverrideController { get { return animatorOverrideController; } }

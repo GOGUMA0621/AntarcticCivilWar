@@ -37,6 +37,7 @@ public class UnitAttackController : MonoBehaviour
 
     internal void Attack()
     {
+        Debug.Log("АјАн"+ _unit.name);
         var attackType = _unit.data.unitAttackType;
         switch (attackType)
         {

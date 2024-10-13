@@ -22,7 +22,7 @@ MonoBehaviour:
   unitHasKnockback: 0
   unitUnstoppable: 0
   unitAttackSpeed: 2
-  unitAttackDistance: 1.5
+  unitAttackDistance: 1
   unitSenseRadius: 10
   unitProjectile: {fileID: 0}
   animatorOverrideController: {fileID: 22100000, guid: d22ae70dc483f08469e94eaf55fd1fa7, type: 2}
