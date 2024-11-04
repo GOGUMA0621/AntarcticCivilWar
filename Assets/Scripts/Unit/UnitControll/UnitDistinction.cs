@@ -28,10 +28,15 @@ public class UnitDistinction : MonoBehaviour
             _currentTag = this.transform.parent.tag;
             _distinction.color = Color.green;
         }
-        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Enemy")
+        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Resistance")
         {
             _currentTag = this.transform.parent.tag;
             _distinction.color = Color.red;
+        }
+        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Royal")
+        {
+            _currentTag = this.transform.parent.tag;
+            _distinction.color = Color.blue;
         }
     }
 
@@ -41,9 +46,13 @@ public class UnitDistinction : MonoBehaviour
         {
             _distinction.color = Color.green;
         }
-        if (_currentTag == "Enemy")
+        if (_currentTag == "Resistance")
         {
             _distinction.color = Color.red;
+        }
+        if ( _currentTag == "Royal")
+        {
+            _distinction.color = Color.blue;
         }
     }
 }

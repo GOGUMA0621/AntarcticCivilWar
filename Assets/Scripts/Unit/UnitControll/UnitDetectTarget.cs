@@ -4,50 +4,29 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class UnitDetectTarget : MonoBehaviour
+public class UnitDetectTarget : Unit
 {
-    internal CircleCollider2D detectRadiusCollider;
     private Unit _unit;
-    [HideInInspector] public Transform targetToAttack;
+    public Transform targetToAttack;
     public List<Unit> targets;
 
-    private void Start()
+    void Start()
     {
-        detectRadiusCollider = this.GetComponent<CircleCollider2D>();
-        _unit = this.transform.parent.GetComponent<Unit>();
+        _unit = transform.parent.GetComponent<Unit>();
     }
 
     private void Update()
     {
+        
         if (targetToAttack == null && targets.Any())
         {
             AttackClosestTarget();
         }
     }
-
-    private void OnTriggerEnter2D(Collider2D other)
+    private void FixedUpdate()
     {
-        //Debug.Log(this.transform.parent.tag);
-        if(other.TryGetComponent<Unit>(out Unit target))
-        {
-            if (target.tag != this.transform.parent.tag)
-            {
-                if (target.CompareTag("Enemy"))
-                {
-                    _unit.playerUnitManager.AddEnemyList(target);
-                    //AddTarget(target);
-                }
-                if (target.CompareTag("Unit"))
-                {
-                    AddTarget(target);
-                }
-            }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-            
+        Detect();
+        DeathTarget();
     }
 
     internal void AttackClosestTarget()
@@ -83,7 +62,7 @@ public class UnitDetectTarget : MonoBehaviour
     {
         if (targets.Contains(target))
         {
-            targets.Remove(target);
+            targets.RemoveAt(targets.IndexOf(target));
             //Debug.Log("老馆 鸥百"+target.ToString());
             if (target.transform == targetToAttack)
             {
@@ -93,17 +72,39 @@ public class UnitDetectTarget : MonoBehaviour
         }
     }
 
-    public void StopCollider()
+    void Detect()
     {
-        detectRadiusCollider.enabled = false;
+        if (!_unit.controller.isUnitDie)
+        {
+            Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, _unit.data.UnitSenseRadius);
+            foreach(Collider2D targetCollider in collider)
+            {
+                if(targetCollider.gameObject.TryGetComponent<Unit>(out Unit target))
+                {
+                    if(!target.controller.isUnitDie) AddTarget(target);
+                }
+            }
+        }
     }
-    public void StartCollider()
+
+    void DeathTarget()
     {
-        detectRadiusCollider.enabled = true;
+        if (targets.Any())
+        {
+            foreach (Unit target in targets)
+            {
+                if (target.controller.isUnitDie)
+                {
+                    RemoveTarget(target);
+                    break;
+                }
+            }
+        }
     }
 
     public void ClearTarget()
     {
+        Debug.Log("鸥百 努府绢");
         targets.Clear();
         targetToAttack = null;
     }

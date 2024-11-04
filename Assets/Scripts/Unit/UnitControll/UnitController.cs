@@ -1,52 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class UnitController : MonoBehaviour
+public class UnitController : Unit
 {
     internal Unit unit;
-    [SerializeField] UnitData _unitData;
 
     private Vector2 _lastPosition;
     private UnitData _currentData;
     private bool _isFacingRight = true;
     internal bool isUnitDie = false;
-    [SerializeField] private List <Unit> _attackers;
-    
-    [HideInInspector] 
+    [SerializeField] private List<Unit> _attackers;
+
+    [HideInInspector]
     public float unitHP;
     public float unitDamage;
     public float unitSpeed;
     public float unitAttackDistance;
-    
+
     private float _unitAttackSpeed = 1.0f;
     private float _unitSenseDistance = 1.0f;
 
     void Start()
     {
-        unit = GetComponent<Unit>();  
+        unit = GetComponent<Unit>();
         _attackers = new List<Unit>();
         _lastPosition = transform.position;
-        if (unit.isSetup)
-        {
-            SetUnit();
-        }
+
+        SetUnit();
     }
 
     void Update()
     {
-        unit.detectTarget.detectRadiusCollider.radius = unit.data.UnitSenseRadius;
         unit.animator.SetFloat("speed", unit.agent.velocity.magnitude);
     }
 
     private void FixedUpdate()
     {
-        if (_currentData != unit.data)
+        if (_currentData != data)
         {
             SetUnit();
         }
@@ -55,22 +47,39 @@ public class UnitController : MonoBehaviour
     #region 기본셋업
     private void SetUnit()
     {
-        this.transform.rotation = Quaternion.identity;
-        unitHP = unit.data.UnitHP;
-        unitDamage = unit.data.UnitDamage;
-        unitSpeed = unit.data.UnitSpeed;
-        unitAttackDistance = unit.data.UnitAttackDistance;
-        _unitAttackSpeed = unit.data.UnitAttackSpeed;
-        _unitSenseDistance = unit.data.UnitSenseRadius;
-        unit.agent.enabled = true;
-        unit.agent.speed = unit.data.UnitSpeed;
-        unit.agent.updateRotation = false;
-        unit.agent.updateUpAxis = false;
-        if(unit.tag == "Unit") unit.playerUnitManager.AddAllayList(unit);
-        unit.unitAnimationOverride.SetAniamtion(unit.data.AnimatorOverrideController);
+        if (unit != null && unit.data != null)
+        {
+            unitHP = unit.data.UnitHP;
+            unitDamage = unit.data.UnitDamage;
+            unitSpeed = unit.data.UnitSpeed;
+            unitAttackDistance = unit.data.UnitAttackDistance;
+            _unitAttackSpeed = unit.data.UnitAttackSpeed;
+            _unitSenseDistance = unit.data.UnitSenseRadius;
 
-        unit.rb.drag = 1.0f;
-        _currentData = unit.data;
+            if (unit.agent != null)
+            {
+                unit.agent.speed = unit.data.UnitSpeed;
+                unit.agent.updateRotation = false;
+                unit.agent.updateUpAxis = false;
+            }
+
+            if (playerUnitManager != null && tag == "Unit")
+            {
+                playerUnitManager.AddAllayList(unit);
+            }
+
+            if (unitAnimationOverride != null)
+            {
+                unitAnimationOverride.SetAniamtion(unit.data.AnimatorOverrideController);
+            }
+
+            if (rb != null)
+            {
+                rb.drag = 1.0f;
+            }
+
+            _currentData = data;
+        }
     }
     #endregion
 
@@ -84,14 +93,14 @@ public class UnitController : MonoBehaviour
     #region 애니메이션 반전
     public void FlipAnimation()
     {
-       
+
         AnimatorStateInfo stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
         Vector2 currentPosition = transform.position;
         if (stateInfo.IsName("AttackState"))
         {
-            if(unit.detectTarget.targetToAttack != null)
+            if (detectTarget.targetToAttack != null)
             {
-                float targetDirection = unit.detectTarget.targetToAttack.transform.position.x - currentPosition.x;
+                float targetDirection = detectTarget.targetToAttack.transform.position.x - currentPosition.x;
 
                 if (targetDirection > 0 && !_isFacingRight)
                 {
@@ -111,7 +120,7 @@ public class UnitController : MonoBehaviour
             {
                 Flip();
             }
-            else if(moveDirection < 0 && _isFacingRight)
+            else if (moveDirection < 0 && _isFacingRight)
             {
                 Flip();
             }
@@ -123,7 +132,7 @@ public class UnitController : MonoBehaviour
     void Flip()
     {
         Vector2 curentScale = gameObject.transform.localScale;
-        curentScale *= new Vector2( -1, 1 );
+        curentScale *= new Vector2(-1, 1);
         gameObject.transform.localScale = curentScale;
 
         _isFacingRight = !_isFacingRight;
@@ -133,10 +142,10 @@ public class UnitController : MonoBehaviour
     #region 전투 관련
     public void UnitAttack()
     {
-        unit.attackController.Attack();
+        attackController.Attack();
     }
 
-    internal void ReceiveDamage(float damageInflict,Unit attacker)
+    internal void ReceiveDamage(float damageInflict, Unit attacker)
     {
         unitHP -= damageInflict;
         unitHP = Mathf.Max(unitHP, 0);
@@ -144,31 +153,41 @@ public class UnitController : MonoBehaviour
         {
             _attackers.Add(attacker);
         }
-        else
+        else if (_attackers[0] != attacker)
         {
-            _attackers.Insert(0, attacker);
+            SwapElements<Unit>(_attackers, 0, _attackers.IndexOf(attacker));
         }
         Die();
+    }
+    void SwapElements<T>(List<T> list, int indexA, int indexB)
+    {
+        T temp = list[indexA];
+        list[indexA] = list[indexB];
+        list[indexB] = temp;
     }
 
     internal void Die()
     {
-        if( unitHP <= 0 && !isUnitDie)
+        if (unitHP <= 0 && !isUnitDie)
         {
             isUnitDie = true;
-            unit.animator.SetBool("isDie", true);
+            animator.SetBool("isDie", true);
             StartCoroutine(KnockBack(2));
+            unit.agent.enabled = false;
             unit.detectTarget.ClearTarget();
+            foreach (Unit attacker in _attackers)
+            {
+                attacker.detectTarget.ClearTarget();
+            }
             _attackers.Clear();
-            unit.detectTarget.StopCollider();
-            
+
             if (this.transform.tag == "Unit")
             {
-                unit.playerUnitManager.RemoveAllayList(this.unit);
+                playerUnitManager.RemoveAllayList(this.unit);
             }
             else
             {
-                unit.playerUnitManager.RemoveEnemyList(this.unit);
+                playerUnitManager.RemoveEnemyList(this.unit);
             }
         }
     }
@@ -176,14 +195,13 @@ public class UnitController : MonoBehaviour
     internal void Revive()
     {
         this.tag = "Unit";
-        unit.detectTarget.StartCollider();
-        unit.rb.velocity = Vector2.zero;
-        unit.agent.enabled = true;
-        unit.animator.SetBool("isDie", false);
+        rb.velocity = Vector2.zero;
+        agent.enabled = true;
+        animator.SetBool("isDie", false);
         isUnitDie = false;
         unitHP = unit.data.UnitHP;
-        unit.animator.Play("IdleState");
-        unit.playerUnitManager.AddAllayList(this.unit);
+        animator.Play("IdleState");
+        playerUnitManager.AddAllayList(this.unit);
     }
 
     IEnumerator KnockBack(float amount)
@@ -192,13 +210,13 @@ public class UnitController : MonoBehaviour
         {
             if (amount >= 0)
             {
-                unit.agent.enabled = false;
+                agent.enabled = false;
                 Vector2 direction = (this.transform.position - _attackers[0].transform.position).normalized;
-                unit.rb.AddForce(direction * amount, ForceMode2D.Impulse);
+                rb.AddForce(direction * amount, ForceMode2D.Impulse);
             }
             yield return new WaitForSeconds(0.5f);
-            unit.rb.velocity = Vector2.zero;
-            unit.agent.enabled = true;
+            rb.velocity = Vector2.zero;
+            agent.enabled = true;
         }
     }
     #endregion

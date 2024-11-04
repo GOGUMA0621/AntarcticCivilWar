@@ -5,12 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - Unit
-  - Enemy
+  - Resistance
+  - Royal
+  - Ground
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Unit
@@ -42,4 +44,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Unit
+    uniqueID: 4281309301
     locked: 0

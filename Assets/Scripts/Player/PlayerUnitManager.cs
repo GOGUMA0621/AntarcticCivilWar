@@ -31,7 +31,7 @@ public class PlayerUnitManager : MonoBehaviour
         if (allayList.Contains(unit))
         {
             allayList.Remove(unit);
-            //Debug.Log("아군 리스트 삭제" + unit.ToString());
+            //Debug.Log("아군 리스트 삭제" + ToString());
             foreach (Unit enemy in enemyList)
             {
                 enemy.detectTarget.RemoveTarget(unit);
@@ -57,7 +57,7 @@ public class PlayerUnitManager : MonoBehaviour
     {
         if (enemyList.Contains(unit))
         {
-            //Debug.Log("적 리스트 삭제"+unit.ToString());
+            //Debug.Log("적 리스트 삭제"+ToString());
             enemyList.Remove(unit);
             foreach(Unit allay in allayList)
             {

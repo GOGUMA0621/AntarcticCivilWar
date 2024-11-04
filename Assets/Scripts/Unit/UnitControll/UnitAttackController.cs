@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class UnitAttackController : MonoBehaviour
+public class UnitAttackController : Unit
 {
     private Unit _unit;
-    private PolygonCollider2D _attackCollider;
     private bool _isAttacking = false;
     private GameObject _pfProjectile;
     private Transform _pfProjectilePos;
     
     void Start()
     {
-        _unit = this.transform.parent.GetComponent<Unit>();
-        _attackCollider = this.GetComponent<PolygonCollider2D>();
-        _attackCollider.enabled = false;
+        _unit = transform.parent.GetComponent<Unit>();
         if(_unit.data.unitAttackType == UnitAttackType.Range)
         {
             _pfProjectile = _unit.data.UnitProjectile;
@@ -37,7 +34,7 @@ public class UnitAttackController : MonoBehaviour
 
     internal void Attack()
     {
-        Debug.Log("공격"+ _unit.name);
+        Debug.Log("공격"+ name);
         var attackType = _unit.data.unitAttackType;
         switch (attackType)
         {
@@ -57,10 +54,10 @@ public class UnitAttackController : MonoBehaviour
     {
         if(_pfProjectile != null)
         {
-            if (_unit.detectTarget.targetToAttack != null)
+            if (detectTarget.targetToAttack != null)
             {
-                Vector3 targetDirection = _unit.detectTarget.targetToAttack.position - this.transform.position;
-                Vector3 targetRotation = this.transform.position - _unit.detectTarget.targetToAttack.position;
+                Vector3 targetDirection = detectTarget.targetToAttack.position - this.transform.position;
+                Vector3 targetRotation = this.transform.position - detectTarget.targetToAttack.position;
                 GameObject projectile = Instantiate(_pfProjectile,this.transform.position,Quaternion.identity);
                 if (projectile != null)
                 {
@@ -72,24 +69,16 @@ public class UnitAttackController : MonoBehaviour
 
     void MeleeAttack()
     {
-        if (!_isAttacking)
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, _unit.data.UnitSenseRadius);
+        foreach (Collider2D targetCollider in collider)
         {
-            _attackCollider.enabled = true;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (this.transform.tag != other.transform.tag)
-        {
-            if (other.transform == _unit.detectTarget.targetToAttack)
+            if (targetCollider.transform == _unit.detectTarget.targetToAttack)
             {
-                other.GetComponent<UnitController>().ReceiveDamage(_unit.controller.unitDamage,_unit);
-                _isAttacking = true;
+                if(targetCollider.TryGetComponent<Unit>(out Unit targetUnit))
+                {
+                    targetUnit.controller.ReceiveDamage(_unit.controller.unitDamage, _unit);
+                }
             }
-            _isAttacking = false;
-            _attackCollider.enabled=false;
         }
     }
-
 }

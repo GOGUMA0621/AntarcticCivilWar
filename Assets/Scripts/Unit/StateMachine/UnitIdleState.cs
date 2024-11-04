@@ -11,7 +11,6 @@ public class UnitIdleState : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _unit = animator.GetComponent<Unit>();
-
         //Debug.Log("Idle");
     }
     
@@ -27,7 +26,7 @@ public class UnitIdleState : StateMachineBehaviour
 
         if (animator.CompareTag("Unit"))
         {
-            _unit.controller.MoveTo(_unit.player.playerPos);
+            _unit.controller.MoveTo(_unit.playerController.playerPos);
         }
     }
 

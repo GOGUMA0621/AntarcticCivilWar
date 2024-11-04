@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitAnimationOverride : MonoBehaviour
+public class UnitAnimationOverride : Unit
 {
     private Animator _animator;
     void Awake()

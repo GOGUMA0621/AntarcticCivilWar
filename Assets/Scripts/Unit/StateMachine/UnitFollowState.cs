@@ -33,6 +33,13 @@ public class UnitFollowState : StateMachineBehaviour
             distanceToTarget = Mathf.Abs(_detect.targetToAttack.position.y - animator.transform.position.y);
 
         }
+        else
+        {
+            animator.SetBool("isFollow", false);
+            animator.SetBool("isIdle", true);
+        }
+
+        
         
         if (distanceFromTarget <= _controller.unitAttackDistance)
         {
