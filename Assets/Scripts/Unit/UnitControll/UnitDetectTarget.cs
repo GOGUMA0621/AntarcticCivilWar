@@ -1,18 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnitController;
 
-public class UnitDetectTarget : Unit
+public class UnitDetectTarget : Unit //유닛 적 탐지
 {
+    public Transform targetToAttack; //공격할 타깃의 위치값
+    public List<Unit> targets; // 타킷 리스트
     private Unit _unit;
-    public Transform targetToAttack;
-    public List<Unit> targets;
 
-    void Start()
+    protected override void Start()
     {
-        _unit = transform.parent.GetComponent<Unit>();
+        base.Start();
+        _unit = GetComponent<Unit>();
+        data = _unit.data;
     }
 
     private void Update()
@@ -26,10 +30,9 @@ public class UnitDetectTarget : Unit
     private void FixedUpdate()
     {
         Detect();
-        DeathTarget();
     }
 
-    internal void AttackClosestTarget()
+    internal void AttackClosestTarget() //타겟 리스트를 가까운 순으로 정렬하여 공격할 상대값에 값 부여
     {
         targets.Sort((a, b) =>
         {
@@ -45,10 +48,10 @@ public class UnitDetectTarget : Unit
         } 
     }
 
-    public void AddTarget(Unit target)
+    public void AddTarget(Unit target) //타깃 리스트에 추가
     {
         //Debug.Log("타켓 발견");
-        if (!targets.Contains(target) && target.tag != this.transform.parent.tag)
+        if (!targets.Contains(target) && target.tag != this.tag)
         {
             targets.Add(target);
             if (targetToAttack == null)
@@ -58,54 +61,44 @@ public class UnitDetectTarget : Unit
         }
     }
 
-    public void RemoveTarget(Unit target)
+    public void RemoveTarget(Unit target) // 타깃 리스트에서 제거
     {
         if (targets.Contains(target))
         {
             targets.RemoveAt(targets.IndexOf(target));
-            //Debug.Log("일반 타겟"+target.ToString());
             if (target.transform == targetToAttack)
             {
-                Debug.Log(target.ToString());
                 targetToAttack = null;
             }
         }
     }
 
-    void Detect()
+    void Detect() //타깃 감지 메소드
     {
-        if (!_unit.controller.isUnitDie)
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, data.UnitSenseRadius);
+        foreach(Collider2D targetCollider in collider)
         {
-            Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, _unit.data.UnitSenseRadius);
-            foreach(Collider2D targetCollider in collider)
+            if(targetCollider.gameObject.TryGetComponent<Unit>(out Unit target))
             {
-                if(targetCollider.gameObject.TryGetComponent<Unit>(out Unit target))
-                {
-                    if(!target.controller.isUnitDie) AddTarget(target);
-                }
+                if(!target.unitController.isUnitDie) AddTarget(target);
             }
         }
     }
 
-    void DeathTarget()
-    {
-        if (targets.Any())
-        {
-            foreach (Unit target in targets)
-            {
-                if (target.controller.isUnitDie)
-                {
-                    RemoveTarget(target);
-                    break;
-                }
-            }
-        }
-    }
-
-    public void ClearTarget()
+    public void ClearTarget() //타깃 리스트 초기화
     {
         Debug.Log("타겟 클리어");
         targets.Clear();
         targetToAttack = null;
+    }
+
+    private void OnEnable()
+    {
+        UnitController.OnUnitDeath += RemoveTarget; //유닛 죽음 감지로 리스트 제거
+    }
+
+    private void OnDisable()
+    {
+        UnitController.OnUnitDeath -= RemoveTarget;
     }
 }

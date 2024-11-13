@@ -22,7 +22,7 @@ public class PlayerUnitManager : MonoBehaviour
             allayList.Add(unit);
             foreach (Unit enemy in enemyList)
             {
-                unit.detectTarget.AddTarget(enemy);
+                unit.unitDetectTarget.AddTarget(enemy);
             }
         }
     }
@@ -31,10 +31,9 @@ public class PlayerUnitManager : MonoBehaviour
         if (allayList.Contains(unit))
         {
             allayList.Remove(unit);
-            //Debug.Log("아군 리스트 삭제" + ToString());
             foreach (Unit enemy in enemyList)
             {
-                enemy.detectTarget.RemoveTarget(unit);
+                enemy.unitDetectTarget.RemoveTarget(unit);
             }
         }
     }
@@ -48,7 +47,7 @@ public class PlayerUnitManager : MonoBehaviour
             enemyList.Add(unit);
             foreach(Unit allay in allayList)
             {
-                allay.detectTarget.AddTarget(unit);
+                allay.unitDetectTarget.AddTarget(unit);
             }
         }
     }
@@ -57,11 +56,10 @@ public class PlayerUnitManager : MonoBehaviour
     {
         if (enemyList.Contains(unit))
         {
-            //Debug.Log("적 리스트 삭제"+ToString());
             enemyList.Remove(unit);
             foreach(Unit allay in allayList)
             {
-                allay.detectTarget.RemoveTarget(unit);
+                allay.unitDetectTarget.RemoveTarget(unit);
             }
         }
     }

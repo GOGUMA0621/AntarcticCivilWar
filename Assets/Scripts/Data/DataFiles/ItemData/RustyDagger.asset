@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 583fef7f41f85664dacdae417c83ff68, type: 3}
   m_Name: RustyDagger
   m_EditorClassIdentifier: 
-  <Type>k__BackingField: 0
+  <Type>k__BackingField: 1
   <Rarity>k__BackingField: 0
   <Name>k__BackingField: "\uB179\uC2A8 \uB2E8\uAC80"
   <Description>k__BackingField: 

@@ -36,9 +36,9 @@ public class ProjectileController : MonoBehaviour
 
         if(other.TryGetComponent<Unit>(out Unit otherUnit))
         {
-            if (_unit.tag != otherUnit.tag && !otherUnit.controller.isUnitDie)
+            if (_unit.tag != otherUnit.tag && !otherUnit.unitController.isUnitDie)
             {
-                otherUnit.controller.ReceiveDamage(_unit.controller.unitDamage, _unit);
+                otherUnit.unitController.ReceiveDamage(_unit.unitController.unitDamage);
                 Destroy(this.gameObject);
             }
         }

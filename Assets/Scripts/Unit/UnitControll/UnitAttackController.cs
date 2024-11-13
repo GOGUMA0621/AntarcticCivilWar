@@ -1,41 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEngine;
 
-public class UnitAttackController : Unit
+public class UnitAttackController : Unit //유닛 공격 관련
 {
-    private Unit _unit;
-    private bool _isAttacking = false;
-    private GameObject _pfProjectile;
-    private Transform _pfProjectilePos;
-    
-    void Start()
+    public delegate void UnitAttackEvent(Unit unit);
+
+    public static event UnitAttackEvent OnUnitAttack;
+
+    private GameObject _pfProjectile; //유닛 투사체 프리팹
+    private Transform _pfProjectilePos; //투사체 위치값
+    private Unit unit;
+    protected override void Start()
     {
-        _unit = transform.parent.GetComponent<Unit>();
-        if(_unit.data.unitAttackType == UnitAttackType.Range)
+        base.Start();
+        unit = GetComponent<Unit>();
+        data = unit.data;
+        if(unit.data.unitAttackType == UnitAttackType.Range)
         {
-            _pfProjectile = _unit.data.UnitProjectile;
+            _pfProjectile = data.UnitProjectile;
             _pfProjectilePos = _pfProjectile.transform;
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (_unit.detectTarget.targetToAttack != null)
-        {
-            Vector2 targetDirection = _unit.detectTarget.targetToAttack.position - this.transform.position;
-
-            float rotZ = Mathf.Atan2(targetDirection.y, targetDirection.x)*Mathf.Rad2Deg;
-
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
         }
     }
 
     internal void Attack()
     {
-        Debug.Log("공격"+ name);
-        var attackType = _unit.data.unitAttackType;
+       OnUnitAttack?.Invoke(GetComponent<Unit>());
+        var attackType = unit.data.unitAttackType;
         switch (attackType)
         {
             case (UnitAttackType.Melee):
@@ -47,7 +40,6 @@ public class UnitAttackController : Unit
                 break;
 
         }
-
     }
 
     void RangeAttack()
@@ -61,7 +53,7 @@ public class UnitAttackController : Unit
                 GameObject projectile = Instantiate(_pfProjectile,this.transform.position,Quaternion.identity);
                 if (projectile != null)
                 {
-                    projectile.GetComponent<ProjectileController>().SetDirection(targetDirection,targetRotation,_unit);
+                    projectile.GetComponent<ProjectileController>().SetDirection(targetDirection,targetRotation,GetUnit());
                 }
             }
         }
@@ -69,15 +61,13 @@ public class UnitAttackController : Unit
 
     void MeleeAttack()
     {
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, _unit.data.UnitSenseRadius);
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, data.UnitSenseRadius);
         foreach (Collider2D targetCollider in collider)
         {
-            if (targetCollider.transform == _unit.detectTarget.targetToAttack)
+            if (targetCollider.transform == detectTarget.targetToAttack)
             {
-                if(targetCollider.TryGetComponent<Unit>(out Unit targetUnit))
-                {
-                    targetUnit.controller.ReceiveDamage(_unit.controller.unitDamage, _unit);
-                }
+                IDamageAble target = targetCollider.GetComponent<IDamageAble>();
+                target.ReceiveDamage(unit.unitController.unitDamage);
             }
         }
     }

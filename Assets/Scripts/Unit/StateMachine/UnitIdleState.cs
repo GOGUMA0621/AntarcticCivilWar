@@ -16,17 +16,17 @@ public class UnitIdleState : StateMachineBehaviour
     
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(_unit.detectTarget.targetToAttack != null)
+        if(_unit.unitDetectTarget.targetToAttack != null)
         {
             animator.SetBool("isFollow", true);
             animator.SetBool("isIdle", false);
             //Debug.Log(animator.GetBool("isFollow"));
         }
-        animator.SetFloat("speed", _unit.agent.velocity.magnitude);
+        animator.SetFloat("speed", _unit.unitAgent.velocity.magnitude);
 
-        if (animator.CompareTag("Unit"))
+        if (animator.CompareTag("Unit") && animator.GetComponent<Unit>().unitAgent.enabled)
         {
-            _unit.controller.MoveTo(_unit.playerController.playerPos);
+            _unit.unitController.MoveTo(_unit.playerController.playerPos);
         }
     }
 

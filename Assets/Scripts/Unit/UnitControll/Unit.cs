@@ -4,24 +4,29 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Unit : MonoBehaviour
+public class Unit : MonoBehaviour //유닛에 대한 부모 파일
 {
-    [HideInInspector] public UnitController controller;
+    [SerializeField]protected UnitController controller;
+    public UnitController unitController { get { return controller; } }
     protected UnitDistinction distinction;
-    [HideInInspector] public UnitDetectTarget detectTarget;
+    public UnitDistinction unitDistinction { get { return distinction; } }
+    [SerializeField]protected UnitDetectTarget detectTarget;
+    public UnitDetectTarget unitDetectTarget { get { return detectTarget; } }
     protected UnitAttackController attackController;
     protected UnitAnimationOverride unitAnimationOverride;
     public UnitData data;
 
-    public NavMeshAgent agent;
+    protected NavMeshAgent agent;
+    public NavMeshAgent unitAgent {  get { return agent; } }
     protected Rigidbody2D rb;
     protected CircleCollider2D circleCollider;
     protected SpriteRenderer spriteRenderer;
     public PlayerController playerController;
     protected PlayerUnitManager playerUnitManager;
-    [HideInInspector] public Animator animator;
+    protected Animator animator;
+    public Animator unitAnimator {  get { return animator; } }
 
-    void Awake()
+    protected virtual void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         controller = GetComponent<UnitController>();
@@ -31,24 +36,11 @@ public class Unit : MonoBehaviour
         animator = GetComponent<Animator>();
         playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         distinction = GetComponentInChildren<UnitDistinction>();
-        detectTarget = GetComponentInChildren<UnitDetectTarget>();
-        attackController = GetComponentInChildren<UnitAttackController>();
+        detectTarget = GetComponent<UnitDetectTarget>();
+        attackController = GetComponent<UnitAttackController>();
         playerUnitManager = playerController.GetComponent<PlayerUnitManager>();
-        unitAnimationOverride = GetComponentInChildren<UnitAnimationOverride>();
+        unitAnimationOverride = GetComponent<UnitAnimationOverride>();
     }
-    //private void Setup()
-    //{
-    //    controller = GetComponent<UnitController>();
-    //    rb = GetComponent<Rigidbody2D>();
-    //    agent = GetComponent<NavMeshAgent>();
-    //    circleCollider = GetComponent<CircleCollider2D>();
-    //    spriteRenderer = GetComponent<SpriteRenderer>();
-    //    animator = GetComponent<Animator>();
-    //    player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-    //    distinction = GetComponentInChildren<UnitDistinction>();
-    //    detectTarget = GetComponentInChildren<UnitDetectTarget>();
-    //    attackController = GetComponentInChildren<UnitAttackController>();
-    //    playerUnitManager = player.GetComponent<PlayerUnitManager>();
-    //    unitAnimationOverride = GetComponentInChildren<UnitAnimationOverride>();
-    //}
+    public Unit GetUnit() { return this; }
+    public UnitData GetData() { return data; }
 }

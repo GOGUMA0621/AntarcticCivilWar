@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitDistinction : MonoBehaviour
+public class UnitDistinction : MonoBehaviour //유닛 진영 구별을 위해서 임시로 넣은 클래스
 {
     private SpriteRenderer _distinction;
     private string _currentTag;
@@ -23,17 +23,17 @@ public class UnitDistinction : MonoBehaviour
 
     void ChangeColorDistinction()
     {
-        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Unit")
+        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Unit") //아군
         {
             _currentTag = this.transform.parent.tag;
             _distinction.color = Color.green;
         }
-        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Resistance")
+        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Resistance") //저항군
         {
             _currentTag = this.transform.parent.tag;
             _distinction.color = Color.red;
         }
-        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Royal")
+        if (_currentTag != this.transform.parent.tag && this.transform.parent.tag == "Royal") //왕국군
         {
             _currentTag = this.transform.parent.tag;
             _distinction.color = Color.blue;

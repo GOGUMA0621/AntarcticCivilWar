@@ -20,8 +20,17 @@ MonoBehaviour:
   unitDamage: 7
   unitAttackType: 0
   unitHasKnockback: 1
-  unitCanKnockback: 1
+  unitUnstoppable: 0
   unitAttackSpeed: 0
   unitAttackDistance: 1.5
   unitSenseRadius: 10
   unitProjectile: {fileID: 0}
+  unitProjectileSpeed: 0
+  unitSkill:
+    rid: -2
+  animatorOverrideController: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

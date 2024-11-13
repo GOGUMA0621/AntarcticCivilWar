@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public interface IUnitSkill
+{
+    void Skill();
+}
 
 public enum UnitType
 {
@@ -66,6 +70,10 @@ public class UnitData : ScriptableObject
 
     [SerializeField] private float unitProjectileSpeed;
     public float UnitProjectileSpeed { get {return unitProjectileSpeed; } }
+
+    [Header("유닛 스킬")]
+    [SerializeReference] private IUnitSkill unitSkill;
+    public IUnitSkill UnitSkill { get { return unitSkill; } }
 
     [Header("애니메이션")]
     [SerializeField]private AnimatorOverrideController animatorOverrideController;

@@ -13,7 +13,6 @@ public class UnitAttackState : StateMachineBehaviour
         _unitController = animator.GetComponent<UnitController>();
         _detect = animator.GetComponentInChildren<UnitDetectTarget>();
         animator.SetBool("isFollow", false);
-        //Debug.Log("АјАн");
     }
 
 

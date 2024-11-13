@@ -1,39 +1,62 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class UnitController : Unit
+public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
 {
-    internal Unit unit;
+    public delegate void UnitDeathEvent(Unit unit);
 
-    private Vector2 _lastPosition;
-    private UnitData _currentData;
-    private bool _isFacingRight = true;
+    public static event UnitDeathEvent OnUnitDeath;
+
+    private Unit _unit;
+    private Vector2 _lastPosition; //애니메이션 좌우 번전을 위한 변수
+    private bool _isFacingRight = true; 
+    private UnitData _currentData; //유닛의 데이터 변화 감지를 위한 변수
     internal bool isUnitDie = false;
-    [SerializeField] private List<Unit> _attackers;
+    private Unit _lastAttacker; //넉백을 위해 마지막 공격자를 알아내는 변수
 
-    [HideInInspector]
-    public float unitHP;
-    public float unitDamage;
-    public float unitSpeed;
-    public float unitAttackDistance;
+    [HideInInspector] public float unitHP; 
+    [HideInInspector] public float unitDamage;
+    [HideInInspector] public float unitSpeed;
+    [HideInInspector] public float unitAttackDistance;
 
     private float _unitAttackSpeed = 1.0f;
     private float _unitSenseDistance = 1.0f;
 
-    void Start()
+    #region 이벤트 관리
+    private void OnEnable()
     {
-        unit = GetComponent<Unit>();
-        _attackers = new List<Unit>();
-        _lastPosition = transform.position;
+        UnitAttackController.OnUnitAttack += HandleAttackEvent;
+    }
 
+    private void OnDisable()
+    {
+        UnitAttackController.OnUnitAttack -= HandleAttackEvent;
+    }
+
+    private void HandleAttackEvent(Unit attacker)
+    {
+        Debug.Log(attacker);
+        _lastAttacker = attacker;
+    }
+    #endregion
+
+    protected override void Start()
+    {
+        base.Start();
+        _unit = GetComponent<Unit>();
+        data = _unit.data;
+        _lastPosition = transform.position;
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
         SetUnit();
     }
 
     void Update()
     {
-        unit.animator.SetFloat("speed", unit.agent.velocity.magnitude);
+        animator.SetFloat("speed", agent.velocity.magnitude);
     }
 
     private void FixedUpdate()
@@ -47,30 +70,25 @@ public class UnitController : Unit
     #region 기본셋업
     private void SetUnit()
     {
-        if (unit != null && unit.data != null)
+        if (data != null)
         {
-            unitHP = unit.data.UnitHP;
-            unitDamage = unit.data.UnitDamage;
-            unitSpeed = unit.data.UnitSpeed;
-            unitAttackDistance = unit.data.UnitAttackDistance;
-            _unitAttackSpeed = unit.data.UnitAttackSpeed;
-            _unitSenseDistance = unit.data.UnitSenseRadius;
+            unitHP = data.UnitHP;
+            unitDamage = data.UnitDamage;
+            unitSpeed = data.UnitSpeed;
+            unitAttackDistance = data.UnitAttackDistance;
+            _unitAttackSpeed = data.UnitAttackSpeed;
+            _unitSenseDistance = data.UnitSenseRadius;
+            agent.speed = data.UnitSpeed;
 
-            if (unit.agent != null)
-            {
-                unit.agent.speed = unit.data.UnitSpeed;
-                unit.agent.updateRotation = false;
-                unit.agent.updateUpAxis = false;
-            }
 
             if (playerUnitManager != null && tag == "Unit")
             {
-                playerUnitManager.AddAllayList(unit);
+                playerUnitManager.AddAllayList(GetUnit());
             }
 
             if (unitAnimationOverride != null)
             {
-                unitAnimationOverride.SetAniamtion(unit.data.AnimatorOverrideController);
+                unitAnimationOverride.SetAniamtion(data.AnimatorOverrideController);
             }
 
             if (rb != null)
@@ -86,7 +104,7 @@ public class UnitController : Unit
     #region 이동관련
     public void MoveTo(Vector2 targetPos)
     {
-        unit.agent.SetDestination(targetPos);
+        agent.SetDestination(targetPos);
     }
     #endregion
 
@@ -94,7 +112,7 @@ public class UnitController : Unit
     public void FlipAnimation()
     {
 
-        AnimatorStateInfo stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         Vector2 currentPosition = transform.position;
         if (stateInfo.IsName("AttackState"))
         {
@@ -145,50 +163,27 @@ public class UnitController : Unit
         attackController.Attack();
     }
 
-    internal void ReceiveDamage(float damageInflict, Unit attacker)
+    public void ReceiveDamage(float damageInflict)
     {
+        UnitAttackController.OnUnitAttack += HandleAttackEvent;
         unitHP -= damageInflict;
         unitHP = Mathf.Max(unitHP, 0);
-        if (!_attackers.Contains(attacker))
-        {
-            _attackers.Add(attacker);
-        }
-        else if (_attackers[0] != attacker)
-        {
-            SwapElements<Unit>(_attackers, 0, _attackers.IndexOf(attacker));
-        }
-        Die();
-    }
-    void SwapElements<T>(List<T> list, int indexA, int indexB)
-    {
-        T temp = list[indexA];
-        list[indexA] = list[indexB];
-        list[indexB] = temp;
+        UnitAttackController.OnUnitAttack -= HandleAttackEvent;
+        if (unitHP <= 0 && !isUnitDie) Death();
     }
 
-    internal void Die()
+    internal void Death()
     {
-        if (unitHP <= 0 && !isUnitDie)
-        {
-            isUnitDie = true;
-            animator.SetBool("isDie", true);
-            StartCoroutine(KnockBack(2));
-            unit.agent.enabled = false;
-            unit.detectTarget.ClearTarget();
-            foreach (Unit attacker in _attackers)
-            {
-                attacker.detectTarget.ClearTarget();
-            }
-            _attackers.Clear();
+        OnUnitDeath?.Invoke(GetComponent<Unit>());
+        isUnitDie = true;
+        animator.SetBool("isDie", true);
+        StartCoroutine(KnockBack(2.0f));
+        agent.enabled = false;
+        detectTarget.ClearTarget();
 
-            if (this.transform.tag == "Unit")
-            {
-                playerUnitManager.RemoveAllayList(this.unit);
-            }
-            else
-            {
-                playerUnitManager.RemoveEnemyList(this.unit);
-            }
+        if (this.transform.tag == "Unit")
+        {
+            playerUnitManager.RemoveAllayList(base.GetUnit());
         }
     }
 
@@ -197,21 +192,22 @@ public class UnitController : Unit
         this.tag = "Unit";
         rb.velocity = Vector2.zero;
         agent.enabled = true;
+        detectTarget.ClearTarget();
         animator.SetBool("isDie", false);
         isUnitDie = false;
-        unitHP = unit.data.UnitHP;
+        unitHP = data.UnitHP;
         animator.Play("IdleState");
-        playerUnitManager.AddAllayList(this.unit);
+        playerUnitManager.AddAllayList(GetUnit());
     }
 
     IEnumerator KnockBack(float amount)
     {
-        if (!unit.data.UnitUnstoppable)
+        if (!data.UnitUnstoppable)
         {
             if (amount >= 0)
             {
                 agent.enabled = false;
-                Vector2 direction = (this.transform.position - _attackers[0].transform.position).normalized;
+                Vector2 direction = (this.transform.position - _lastAttacker.transform.position).normalized;
                 rb.AddForce(direction * amount, ForceMode2D.Impulse);
             }
             yield return new WaitForSeconds(0.5f);
@@ -221,9 +217,9 @@ public class UnitController : Unit
     }
     #endregion
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmos() //디버그용 기즈모
     {
-        if (unit != null)
+        if (GetUnit() != null)
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(this.transform.position, _unitSenseDistance);
@@ -232,4 +228,6 @@ public class UnitController : Unit
             Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
         }
     }
+
+
 }
