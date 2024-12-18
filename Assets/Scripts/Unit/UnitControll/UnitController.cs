@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,15 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
     internal bool isUnitDie = false;
     private Unit _lastAttacker; //넉백을 위해 마지막 공격자를 알아내는 변수
 
-    [HideInInspector] public float unitHP; 
+    [HideInInspector] public float unitHP;
+    [HideInInspector] public float unitMax_MP;
+    [HideInInspector] public float unitMP;
     [HideInInspector] public float unitDamage;
     [HideInInspector] public float unitSpeed;
     [HideInInspector] public float unitAttackDistance;
+    [HideInInspector] public IUnitSkill ManaSkill;
+    [HideInInspector] public float m_SkillDelay;
+    [HideInInspector] public IUnitSkill UniqeSkill;
 
     private float _unitAttackSpeed = 1.0f;
     private float _unitSenseDistance = 1.0f;
@@ -56,7 +62,7 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
 
     void Update()
     {
-        animator.SetFloat("speed", agent.velocity.magnitude);
+            animator.SetFloat("speed", agent.velocity.magnitude);
     }
 
     private void FixedUpdate()
@@ -73,8 +79,12 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
         if (data != null)
         {
             unitHP = data.UnitHP;
+            unitMax_MP = data.UnitMax_MP;
+            unitMP = data.UnitMP;
             unitDamage = data.UnitDamage;
             unitSpeed = data.UnitSpeed;
+            ManaSkill = data.manaSkill;
+            m_SkillDelay = data.M_SkillDelay;
             unitAttackDistance = data.UnitAttackDistance;
             _unitAttackSpeed = data.UnitAttackSpeed;
             _unitSenseDistance = data.UnitSenseRadius;
@@ -161,15 +171,18 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
     public void UnitAttack()
     {
         attackController.Attack();
+        
     }
 
     public void ReceiveDamage(float damageInflict)
     {
         UnitAttackController.OnUnitAttack += HandleAttackEvent;
         unitHP -= damageInflict;
+        Debug.Log("피해 입음");
         unitHP = Mathf.Max(unitHP, 0);
         UnitAttackController.OnUnitAttack -= HandleAttackEvent;
         if (unitHP <= 0 && !isUnitDie) Death();
+        
     }
 
     internal void Death()
@@ -185,19 +198,25 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
         {
             playerUnitManager.RemoveAllayList(base.GetUnit());
         }
+
     }
 
     internal void Revive()
     {
-        this.tag = "Unit";
-        rb.velocity = Vector2.zero;
-        agent.enabled = true;
-        detectTarget.ClearTarget();
-        animator.SetBool("isDie", false);
-        isUnitDie = false;
-        unitHP = data.UnitHP;
-        animator.Play("IdleState");
-        playerUnitManager.AddAllayList(GetUnit());
+        if (this.tag != "A.Fabric")
+        {
+            this.tag = "Unit";
+            rb.velocity = Vector2.zero;
+            agent.enabled = true;
+            detectTarget.ClearTarget();
+            animator.SetBool("isDie", false);
+            isUnitDie = false;
+            unitHP = data.UnitHP;
+            unitMax_MP = data.UnitMax_MP;
+            unitMP = data.UnitMP;
+            animator.Play("IdleState");
+            playerUnitManager.AddAllayList(GetUnit());
+        }
     }
 
     IEnumerator KnockBack(float amount)
@@ -214,6 +233,17 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
             rb.velocity = Vector2.zero;
             agent.enabled = true;
         }
+    }
+
+    public void UseManaSkill()
+    {
+
+        ManaSkill.Execute(this);
+        unitMP = 0;
+        
+
+
+
     }
     #endregion
 

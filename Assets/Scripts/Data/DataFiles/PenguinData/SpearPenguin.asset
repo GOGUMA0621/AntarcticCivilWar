@@ -16,6 +16,8 @@ MonoBehaviour:
   unitDescription: 
   unitType: 0
   unitHP: 30
+  unitMax_MP: 0
+  unitMP: 0
   unitSpeed: 4
   unitDamage: 7
   unitAttackType: 0
@@ -26,11 +28,6 @@ MonoBehaviour:
   unitSenseRadius: 10
   unitProjectile: {fileID: 0}
   unitProjectileSpeed: 0
-  unitSkill:
-    rid: -2
+  ManaSkill: {fileID: 0}
+  UniqeSkill: {fileID: 0}
   animatorOverrideController: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }

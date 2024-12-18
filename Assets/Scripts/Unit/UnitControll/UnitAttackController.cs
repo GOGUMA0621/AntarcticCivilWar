@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
+//using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ public class UnitAttackController : Unit //유닛 공격 관련
         base.Start();
         unit = GetComponent<Unit>();
         data = unit.data;
-        if(unit.data.unitAttackType == UnitAttackType.Range)
+        if (unit.data.unitAttackType == UnitAttackType.Range)
         {
             _pfProjectile = data.UnitProjectile;
             _pfProjectilePos = _pfProjectile.transform;
@@ -29,8 +29,15 @@ public class UnitAttackController : Unit //유닛 공격 관련
     {
        OnUnitAttack?.Invoke(GetComponent<Unit>());
         var attackType = unit.data.unitAttackType;
+        if (unit.unitController.unitMP >= unit.unitController.unitMax_MP && unit.unitController.ManaSkill != null)
+        {
+            unit.unitController.UseManaSkill();
+            animator.SetBool("ManaSkill", true);
+            Invoke(nameof(EndManaSkill), unit.unitController.m_SkillDelay);
+        }
         switch (attackType)
         {
+
             case (UnitAttackType.Melee):
                 MeleeAttack();
                 break;
@@ -38,7 +45,7 @@ public class UnitAttackController : Unit //유닛 공격 관련
             case (UnitAttackType.Range):
                 RangeAttack();
                 break;
-
+                
         }
     }
 
@@ -51,6 +58,7 @@ public class UnitAttackController : Unit //유닛 공격 관련
                 Vector3 targetDirection = detectTarget.targetToAttack.position - this.transform.position;
                 Vector3 targetRotation = this.transform.position - detectTarget.targetToAttack.position;
                 GameObject projectile = Instantiate(_pfProjectile,this.transform.position,Quaternion.identity);
+                Debug.Log("공격");
                 if (projectile != null)
                 {
                     projectile.GetComponent<ProjectileController>().SetDirection(targetDirection,targetRotation,GetUnit());
@@ -68,7 +76,16 @@ public class UnitAttackController : Unit //유닛 공격 관련
             {
                 IDamageAble target = targetCollider.GetComponent<IDamageAble>();
                 target.ReceiveDamage(unit.unitController.unitDamage);
+                unit.unitController.unitMP = unit.unitController.unitMP + 5;
             }
         }
     }
+
+    private void EndManaSkill()
+    {
+        animator.SetBool("ManaSkill", false);
+
+    }
+
+
 }

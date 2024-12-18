@@ -9,9 +9,11 @@ AnimatorOverrideController:
   m_Name: BardPenguin
   m_Controller: {fileID: 9100000, guid: 1b1d0954615895942bc9f4ba49331686, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: 735c0d20ca107f341ac448a40d7e3673, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 5abe73adbf9cf1a42b89d9d2a5c4e93b, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 6cc2d870a58b63245a0b58dfc533f387, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: b021d8fbdb2244148aed815a772adc95, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 9226b5f77c9ac2449af0416cba5a0c8b, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 25cadabaee8828748876b378ea335b71, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d08b790e577af55499e6c2557580941d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 5a43ce6c674107e47b4cfe12e8a221f2, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a324e71297e2f3649a4d02e1b37c2317, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: fe618e0138ab6a44d844faac334a8840, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5abe73adbf9cf1a42b89d9d2a5c4e93b, type: 2}

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
+  m_Name: GiantPenguin
+  m_EditorClassIdentifier: 
+  unitName: GiantPenguin
+  unitDescription: 
+  unitType: 2
+  unitHP: 200
+  unitMax_MP: 0
+  unitMP: 0
+  unitSpeed: 3
+  unitDamage: 25
+  unitAttackType: 0
+  unitHasKnockback: 0
+  unitUnstoppable: 0
+  unitAttackSpeed: 0.4
+  unitAttackDistance: 3
+  unitSenseRadius: 8
+  unitProjectile: {fileID: 0}
+  unitProjectileSpeed: 0
+  ManaSkill: {fileID: 11400000, guid: acf3a25902db0df4083704631455ebfc, type: 2}
+  UniqeSkill: {fileID: 0}
+  animatorOverrideController: {fileID: 22100000, guid: 1f2d8137402a73e4bbb6c1dfe1b6cd9a, type: 2}

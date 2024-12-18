@@ -1,24 +1,27 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public interface IUnitSkill
 {
-    void Skill();
+    void Execute(UnitController unit);
 }
 
 public enum UnitType
 {
     Normal,
-    Special
+    Special,
+    Boss
 }
 
 public enum UnitAttackType
 {
     Melee,
-    Range
+    Range,
+    None
 }
 
 [CreateAssetMenu(fileName = "Unit Data",menuName ="Scriptable Object/Unit Data",order = 2)]
@@ -38,7 +41,13 @@ public class UnitData : ScriptableObject
     [Header("¿Ø¥÷ Ω∫≈»")]
     [SerializeField] private float unitHP;
     public float UnitHP { get { return unitHP; } }
-    
+
+    [SerializeField] private float unitMax_MP;
+    public float UnitMax_MP { get { return unitMP; } }
+
+    [SerializeField] private float unitMP;
+    public float UnitMP { get { return unitMP; } }
+
     [SerializeField] private float unitSpeed;
     public float UnitSpeed { get { return unitSpeed; } }
  
@@ -72,11 +81,18 @@ public class UnitData : ScriptableObject
     public float UnitProjectileSpeed { get {return unitProjectileSpeed; } }
 
     [Header("¿Ø¥÷ Ω∫≈≥")]
-    [SerializeReference] private IUnitSkill unitSkill;
-    public IUnitSkill UnitSkill { get { return unitSkill; } }
+    [SerializeField] private ScriptableObject ManaSkill;
+    public IUnitSkill manaSkill => ManaSkill as IUnitSkill;
+
+    [SerializeField] private float m_SkillDelay;
+    public float M_SkillDelay { get { return m_SkillDelay; } }
+
+    [SerializeField] private ScriptableObject UniqeSkill;
+    public IUnitSkill uniqeSkill => UniqeSkill as IUnitSkill;
 
     [Header("æ÷¥œ∏ﬁ¿Ãº«")]
     [SerializeField]private AnimatorOverrideController animatorOverrideController;
     public AnimatorOverrideController AnimatorOverrideController { get { return animatorOverrideController; } }
+
 
 }

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 8854620222465688866}
   m_Layer: 6
   m_Name: NormalPenguin
-  m_TagString: Unit
+  m_TagString: Resistance
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -83,12 +83,12 @@ SpriteRenderer:
   m_SortingLayerID: -13657995
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: -609456674, guid: b28e0b5afa28dfa4ebd7e7abf8e09f66, type: 3}
+  m_Sprite: {fileID: 1181783500, guid: 32c719f0c6fb8e34b8805160d72dcab5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.5, y: 1.5}
+  m_Size: {x: 0.9375, y: 0.8125}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -134,7 +134,7 @@ NavMeshAgent:
   m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 0.87
-  m_BaseOffset: 0.75
+  m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!70 &4332695332052997046
@@ -169,8 +169,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.285402}
-  m_Size: {x: 0.7478825, y: 0.9023346}
+  m_Offset: {x: 0, y: -0.04}
+  m_Size: {x: 0.8, y: 0.97}
   m_Direction: 0
 --- !u!114 &6345866539272163795
 MonoBehaviour:
@@ -185,6 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  detectTarget: {fileID: 0}
   data: {fileID: 11400000, guid: 9ad8c6f1c80917e48becd074b3aa898e, type: 2}
   playerController: {fileID: 0}
 --- !u!114 &5257417320873170678
@@ -200,10 +201,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  detectTarget: {fileID: 0}
   data: {fileID: 0}
   playerController: {fileID: 0}
-  _attackers: []
   unitHP: 0
+  unitMax_MP: 0
+  unitMP: 0
   unitDamage: 0
   unitSpeed: 0
   unitAttackDistance: 0
@@ -220,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  detectTarget: {fileID: 0}
   data: {fileID: 0}
   playerController: {fileID: 0}
 --- !u!114 &2764380314185021207
@@ -235,6 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  detectTarget: {fileID: 0}
   data: {fileID: 0}
   playerController: {fileID: 0}
 --- !u!114 &4470436493769590028
@@ -250,6 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  detectTarget: {fileID: 0}
   data: {fileID: 0}
   playerController: {fileID: 0}
   targetToAttack: {fileID: 0}
@@ -308,7 +314,7 @@ Transform:
   m_GameObject: {fileID: 6131613577334374775}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.05, y: -0.7, z: 0}
+  m_LocalPosition: {x: 0.018, y: -0.389, z: 0}
   m_LocalScale: {x: 1.03, y: 0.36, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -15,14 +15,19 @@ MonoBehaviour:
   unitName: "\uC74C\uC720\uC2DC\uC778 \uD3AD\uADC4"
   unitDescription: 
   unitType: 0
-  unitHP: 15
+  unitHP: 25
+  unitMax_MP: 100
+  unitMP: 0
   unitSpeed: 3.5
-  unitDamage: 2
+  unitDamage: 5
   unitAttackType: 1
   unitHasKnockback: 0
   unitUnstoppable: 0
   unitAttackSpeed: 1.5
-  unitAttackDistance: 6
-  unitSenseRadius: 10
+  unitAttackDistance: 5.5
+  unitSenseRadius: 8
   unitProjectile: {fileID: 7488575402456918469, guid: ba8617c05e66fe44ebada2674aaa2399, type: 3}
+  unitProjectileSpeed: 5
+  ManaSkill: {fileID: 11400000, guid: acf3a25902db0df4083704631455ebfc, type: 2}
+  UniqeSkill: {fileID: 0}
   animatorOverrideController: {fileID: 22100000, guid: 893c68f230190194dad5c3aa7c3ff82e, type: 2}

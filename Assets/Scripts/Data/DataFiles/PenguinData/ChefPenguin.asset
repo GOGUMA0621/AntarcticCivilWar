@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
+  m_Name: ChefPenguin
+  m_EditorClassIdentifier: 
+  unitName: ChefPenguin
+  unitDescription: 
+  unitType: 0
+  unitHP: 60
+  unitMax_MP: 30
+  unitMP: 0
+  unitSpeed: 4
+  unitDamage: 8
+  unitAttackType: 0
+  unitHasKnockback: 0
+  unitUnstoppable: 0
+  unitAttackSpeed: 3
+  unitAttackDistance: 1.5
+  unitSenseRadius: 8
+  unitProjectile: {fileID: 0}
+  unitProjectileSpeed: 0
+  ManaSkill: {fileID: 11400000, guid: acf3a25902db0df4083704631455ebfc, type: 2}
+  m_SkillDelay: 3
+  UniqeSkill: {fileID: 0}
+  animatorOverrideController: {fileID: 22100000, guid: 776b4fbd588140944a62dd477b60b44d, type: 2}

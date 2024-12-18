@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ChefPenguin
+  m_Controller: {fileID: 9100000, guid: 1b1d0954615895942bc9f4ba49331686, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 9226b5f77c9ac2449af0416cba5a0c8b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d6887268fb2840d4994362875db855dc, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 5a43ce6c674107e47b4cfe12e8a221f2, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ac63be3149327414f89feb5830887c29, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: fe618e0138ab6a44d844faac334a8840, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e1cf96f7330193b41b01616d8d0421d3, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 6cc2d870a58b63245a0b58dfc533f387, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6a1f151f6103c6f4fa0ae1e29c41affc, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: db0249b7321978b48941c4ed33ea13a5, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: db0249b7321978b48941c4ed33ea13a5, type: 2}

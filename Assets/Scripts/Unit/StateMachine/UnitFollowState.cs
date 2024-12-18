@@ -52,6 +52,7 @@ public class UnitFollowState : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.ResetTrigger("attack");
+        _agent.SetDestination(animator.transform.position);
         //Debug.Log("추적 끝남");
     }
 

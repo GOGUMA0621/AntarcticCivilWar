@@ -51,7 +51,7 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
     public void AddTarget(Unit target) //타깃 리스트에 추가
     {
         //Debug.Log("타켓 발견");
-        if (!targets.Contains(target) && target.tag != this.tag)
+        if (!targets.Contains(target) && target.tag != this.tag && target.tag != "Fabric")
         {
             targets.Add(target);
             if (targetToAttack == null)
