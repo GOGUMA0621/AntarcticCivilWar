@@ -10,5 +10,6 @@ public interface IDamageAble //데미지를 입는 속성을 위한 인터페이스
 
 public interface IStructure
 {
-
+    public delegate void OnDestroyed(GameObject gameObject);
+    public static OnDestroyed OnDestroedStructure;
 }

@@ -108,10 +108,12 @@ public class UnitDetectTarget : Unit //À¯´Ö Àû Å½Áö
     private void OnEnable()
     {
         UnitController.OnUnitDeath += RemoveTarget; //À¯´Ö Á×À½ °¨Áö·Î ¸®½ºÆ® Á¦°Å
+        IStructure.OnDestroedStructure += RemoveTarget;
     }
 
     private void OnDisable()
     {
         UnitController.OnUnitDeath -= RemoveTarget;
+        IStructure.OnDestroedStructure -= RemoveTarget;
     }
 }

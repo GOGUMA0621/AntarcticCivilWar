@@ -3388,6 +3388,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7166436416925669925, guid: 788b96643ec858d40b929a4229a28ced, type: 3}
+      propertyPath: _pfBigBomb
+      value: 
+      objectReference: {fileID: 6637513073205006468, guid: 2d7b486c705b9014cb92c7d9554c8f92, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

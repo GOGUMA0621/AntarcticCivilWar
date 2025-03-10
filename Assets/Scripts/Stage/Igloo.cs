@@ -4,10 +4,12 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Igloo : MonoBehaviour, IDamageAble, IStructure,INeutrality
+public class Igloo : MonoBehaviour, IDamageAble, IStructure, INeutrality
 {
+    
     public float health;
     private float currentHealth;
+    
 
     [SerializeField] Sprite[] brokenIgloos = new Sprite[5];
     private SpriteRenderer spriteRenderer;
@@ -111,6 +113,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure,INeutrality
             if (IglooSpawnGenerator.igloos.Contains(this.gameObject))
             {
                 IglooSpawnGenerator.igloos.Remove(this.gameObject);
+                
                 Destroy(gameObject);
             }
         }
