@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Igloo : MonoBehaviour, IDamageAble, IStructure
+public class Igloo : MonoBehaviour, IDamageAble, IStructure,INeutrality
 {
     public float health;
     private float currentHealth;

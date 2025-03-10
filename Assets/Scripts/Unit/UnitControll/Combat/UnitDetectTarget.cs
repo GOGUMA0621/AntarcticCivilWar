@@ -81,7 +81,7 @@ public class UnitDetectTarget : Unit //À¯´Ö Àû Å½Áö
             if(targetCollider.gameObject.TryGetComponent<Unit>(out Unit target) && targetCollider.tag != this.gameObject.tag)
             {
                 if (this.gameObject.tag != "Unit" && targetCollider.gameObject.tag == "Mercenary") return;
-                else if (this.gameObject.tag == "Mercenary" && targetCollider.gameObject.tag != "Unit") return;
+                else if (this.gameObject.tag == "Mercenary" && targetCollider.gameObject.tag == "Unit") return;
                 else if (!target.unitController.isUnitDie) AddTarget(target.gameObject);
             }
             else if(targetCollider.gameObject.TryGetComponent<INeutrality>(out INeutrality neutrality) && this.gameObject.tag == "Unit")
