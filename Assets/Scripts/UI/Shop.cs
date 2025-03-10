@@ -19,6 +19,10 @@ public class Shop : MonoBehaviour
             button.onClick.AddListener(() => SelectItem(button));
         }
     }
+    private void Start()
+    {
+        gameObject.SetActive(false);
+    }
 
     // Update is called once per frame
     void Update()

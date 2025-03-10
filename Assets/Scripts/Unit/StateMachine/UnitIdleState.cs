@@ -20,6 +20,8 @@ public class UnitIdleState : StateMachineBehaviour
         {
             animator.SetBool("isFollow", true);
             animator.SetBool("isIdle", false);
+            
+            
             //Debug.Log(animator.GetBool("isFollow"));
         }
         animator.SetFloat("speed", _unit.unitAgent.velocity.magnitude);

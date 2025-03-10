@@ -15,14 +15,27 @@ MonoBehaviour:
   unitName: "\uD3AD\uADC4"
   unitDescription: 
   unitType: 0
-  unitHP: 25
+  unitHP: 200
+  unitMP: 0
   unitSpeed: 4
-  unitDamage: 5
+  unitDamage: 40
   unitAttackType: 0
   unitHasKnockback: 0
   unitUnstoppable: 0
-  unitAttackSpeed: 2
+  unitAttackSpeed: 1
   unitAttackDistance: 1
   unitSenseRadius: 10
   unitProjectile: {fileID: 0}
-  animatorOverrideController: {fileID: 22100000, guid: d22ae70dc483f08469e94eaf55fd1fa7, type: 2}
+  unitProjectileSpeed: 0
+  unitTrajectoryAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  unitCorrectionAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

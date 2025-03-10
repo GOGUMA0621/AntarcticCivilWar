@@ -3,29 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class UnitAttackState : StateMachineBehaviour
+public sealed class UnitAttackState : StateMachineBehaviour
 {
-    private UnitDetectTarget _detect;
-    private UnitController _unitController;
+    private Unit unit;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _unitController = animator.GetComponent<UnitController>();
-        _detect = animator.GetComponentInChildren<UnitDetectTarget>();
+        unit = animator.GetComponent<Unit>();
         animator.SetBool("isFollow", false);
     }
 
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (_detect.targetToAttack == null)
+        if (unit.unitController.isStunned && !unit.unitController.isUnitDie)
+        {
+            animator.CrossFade("IdleState", 1);
+            return;
+        }
+        else if (unit.unitDetectTarget.targetToAttack == null)
         {
             animator.SetBool("isIdle", true);
         }
-        if(animator.GetCurrentAnimatorStateInfo(0).length < animator.GetCurrentAnimatorStateInfo(0).normalizedTime)
+        else
         {
-            animator.SetBool("isFollow", true);
+            float distanceFromTarget = Vector3.Distance(unit.unitDetectTarget.targetToAttack.transform.position, animator.transform.position);
+            if (distanceFromTarget <= unit.data.UnitAttackDistance)
+            {
+                unit.unitAgent.velocity = Vector2.zero;
+            }
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+            {
+                animator.SetBool("isFollow", true);
+            }
         }
+
+
     }
 
 

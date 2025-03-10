@@ -1,46 +1,225 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ProjectileController : MonoBehaviour
 {
-    private Rigidbody2D _rb;
-    private Unit _unit;
-    public float force = 5.0f;
-    // Start is called before the first frame update
-    void Awake()
+    [SerializeField] private ProjectileVisual visual;
+    private Unit unit;
+    private Vector3 currentVelocity;
+    private Vector3 previousPos;
+
+    public DamageData projectileDamageData;
+
+    public Transform target {  get; private set; }
+    [SerializeField] private bool isAOE = false;
+    [SerializeField] private float AOERange = 0f;
+    private float moveSpeed;
+    private float maxMoveSpeed;
+    private float distanceToTargetDestroyProjectile = 2f;
+    private float trajectoryMaxRelativeHeight;
+
+    private AnimationCurve trajectoryAniamaionCurve;
+    private AnimationCurve axisCorrectionAnimationCurve;
+    private AnimationCurve speedAnimationCurve;
+
+    private Vector3 trajectoryStartPoint;
+    private Vector3 projectileMoveDirection;
+    private Vector3 trajectoryRange;
+
+    private float nextYTrajectoryPosition;
+    private float nextXTrajectoryPosition;
+    private float nextPositionYCorrectionAbsolute;
+    private float nextPositionXCorrectionAbsolute;
+
+
+    private void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
+        trajectoryStartPoint = transform.position;
+        previousPos = transform.localPosition;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        
+        UpdateProjectilePosition();
+        currentVelocity = (transform.position - previousPos) / Time.deltaTime;
+
+        previousPos = transform.position;
+        if (Vector3.Distance(transform.position, target.position) < distanceToTargetDestroyProjectile || Mathf.Approximately(currentVelocity.magnitude, 0))
+        {
+            if (this.TryGetComponent<Animator>(out Animator animator))
+            {
+
+                if(animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+                {
+                    if (target.TryGetComponent<IDamageAble>(out IDamageAble targetUnit))
+                    {
+                        targetUnit.ReceiveDamage(projectileDamageData);
+                        DoAreaOnEffect();
+                    }
+                    Destroy(this.gameObject);
+                }
+            }
+            else
+            {
+                if (target.TryGetComponent<IDamageAble>(out IDamageAble targetUnit))
+                {
+                    targetUnit.ReceiveDamage(projectileDamageData);
+                    DoAreaOnEffect();
+                }
+                Destroy(this.gameObject);
+            }
+            
+        }
+
+    }
+
+    private void DoAreaOnEffect()
+    {
+        if (isAOE)
+        {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, AOERange);
+            foreach(Collider2D collider in colliders)
+            {
+                if(collider.TryGetComponent<IDamageAble>(out IDamageAble target) && collider != this.gameObject && collider.tag != unit.tag)
+                {
+                    target.ReceiveDamage(projectileDamageData);
+                }
+            }
+        }
+    }
+
+    private void UpdateProjectilePosition()
+    {
+        trajectoryRange = target.position - trajectoryStartPoint;
+
+        if (Mathf.Abs(trajectoryRange.normalized.x) < Mathf.Abs(trajectoryRange.normalized.y))
+        {
+            if (trajectoryRange.y < 0)
+            {
+                moveSpeed -= moveSpeed;
+            }
+            
+            UpdatePositionWithXCurve();
+        }
+        else
+        {
+            if (trajectoryRange.x < 0)
+            {
+                moveSpeed -= moveSpeed;
+            }
+            
+            UpdatePositionWithYCurve();
+        }
+
         
     }
 
-    public void SetDirection(Vector3 direction, Vector3 rotation, Unit unit)
+    private void UpdatePositionWithXCurve()
     {
-        if (_rb != null)
+        float nextPositionY = transform.position.y + moveSpeed * Time.deltaTime;
+        float nextPositionYNormalized = (nextPositionY - trajectoryStartPoint.y) / trajectoryRange.y;
+
+        float nextPositionXNormailized = trajectoryAniamaionCurve.Evaluate(nextPositionYNormalized);
+        nextXTrajectoryPosition = nextPositionXNormailized * trajectoryMaxRelativeHeight;
+
+        float nextPositionXCorrectionNormalized = axisCorrectionAnimationCurve.Evaluate(nextPositionYNormalized);
+        nextPositionXCorrectionAbsolute = nextPositionXCorrectionNormalized * trajectoryRange.x;
+
+        float nextPositionX = trajectoryStartPoint.x + nextXTrajectoryPosition + nextPositionXCorrectionAbsolute;
+
+        if(trajectoryRange.x > 0 && trajectoryRange.y > 0)
         {
-            _unit = unit;
-            _rb.velocity = new Vector2(direction.x, direction.y).normalized * force;
-            float rot = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, rot + 180);
-            Destroy(this.gameObject, 5f);
+            nextXTrajectoryPosition = -nextXTrajectoryPosition;
         }
+
+        if (trajectoryRange.x < 0 && trajectoryRange.y < 0)
+        {
+            nextXTrajectoryPosition = -nextXTrajectoryPosition;
+        }
+
+        Vector3 newPosition = new Vector3(nextPositionX, nextPositionY, 0);
+        
+
+        CalculateNextSpeed(nextPositionYNormalized);
+        projectileMoveDirection = newPosition - transform.position;
+
+        transform.position = newPosition;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void UpdatePositionWithYCurve()
     {
+        float nextPositionX = transform.position.x + moveSpeed * Time.deltaTime;
+        float nextPositionXNormalized = (nextPositionX - trajectoryStartPoint.x) / trajectoryRange.x;
 
-        if(other.TryGetComponent<Unit>(out Unit otherUnit))
-        {
-            if (_unit.tag != otherUnit.tag && !otherUnit.unitController.isUnitDie)
-            {
-                otherUnit.unitController.ReceiveDamage(_unit.unitController.unitDamage);
-                Destroy(this.gameObject);
-            }
-        }
+        float nextPositionYNormailized = trajectoryAniamaionCurve.Evaluate(nextPositionXNormalized);
+        nextYTrajectoryPosition = nextPositionYNormailized * trajectoryMaxRelativeHeight;
+
+        float nextPositionYCorrectionNormalized = axisCorrectionAnimationCurve.Evaluate(nextPositionXNormalized);
+        nextPositionYCorrectionAbsolute = nextPositionYCorrectionNormalized * trajectoryRange.y;
+
+        float nextPositionY = trajectoryStartPoint.y + nextYTrajectoryPosition + nextPositionYCorrectionAbsolute;
+
+        Vector3 newPosition = new Vector3(nextPositionX, nextPositionY, 0);
+
+        CalculateNextSpeed(nextPositionXNormalized);
+        
+        projectileMoveDirection = newPosition - transform.position;
+
+        transform.position = newPosition;
+    }
+
+    private void CalculateNextSpeed(float nextPostionXNormalized)
+    {
+        float nextMoveSpeedNormailized = speedAnimationCurve.Evaluate(nextPostionXNormalized);
+
+        moveSpeed = nextMoveSpeedNormailized * maxMoveSpeed;
+    }
+
+    public void InitialzeProjectile(Transform target, float maxMoveSpeed, float trajectoryMaxHeight, Unit unit)
+    {
+        this.target = target;
+        this.maxMoveSpeed = maxMoveSpeed;
+        this.unit = unit;
+
+        float xDistanceToTarget = target.position.x - trajectoryStartPoint.x;
+        this.trajectoryMaxRelativeHeight = Mathf.Abs(xDistanceToTarget) * trajectoryMaxHeight;
+
+        visual.SetTarget(target);
+    }
+
+    public void InitializeAnimaionCurve(AnimationCurve trajectoyAnimationCure, AnimationCurve axisCorrectionAnimationCurve, AnimationCurve speedAnimationCurve)
+    {
+        this.trajectoryAniamaionCurve = trajectoyAnimationCure;
+        this.axisCorrectionAnimationCurve = axisCorrectionAnimationCurve;
+        this.speedAnimationCurve = speedAnimationCurve;
+    }
+
+    public Vector3 GetMoveDirection()
+    {
+        return projectileMoveDirection;
+    }
+
+    public float GetNextYTrajectoryPosition()
+    {
+        return nextYTrajectoryPosition;
+    }
+
+    public float GetNextPositionYCorrectionAbsolute()
+    {
+        return nextPositionYCorrectionAbsolute;
+    }
+
+    public float GetNextXTrajectoryPosition()
+    {
+        return nextXTrajectoryPosition;
+    }
+
+    public float GetNextPositionXCorrectionAbsolute()
+    {
+        return nextPositionXCorrectionAbsolute;
     }
 }

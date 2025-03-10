@@ -13,7 +13,7 @@ public class ShopItem : MonoBehaviour
     public TextMeshProUGUI itemName;
     public TextMeshProUGUI itemPrice;
 
-    public ItemData itemData;
+    public SciptableObjects.ItemData itemData;
 
     
     // Start is called before the first frame update

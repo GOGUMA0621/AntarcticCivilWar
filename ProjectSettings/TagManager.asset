@@ -8,6 +8,7 @@ TagManager:
   - Resistance
   - Royal
   - Ground
+  - Mercenary
   layers:
   - Default
   - TransparentFX

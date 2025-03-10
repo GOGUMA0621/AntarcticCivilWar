@@ -2,17 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEngine;
 
-public interface IUnitSkill
-{
-    void Skill();
-}
-
-public enum UnitType
+public enum UnitTierType
 {
     Normal,
-    Special
+    Special,
+    Minion
+}
+
+public enum UnitSynergyType
+{
+    None,
+    Circus,
+    Summoner,
+
 }
 
 public enum UnitAttackType
@@ -20,63 +25,76 @@ public enum UnitAttackType
     Melee,
     Range
 }
-
-[CreateAssetMenu(fileName = "Unit Data",menuName ="Scriptable Object/Unit Data",order = 2)]
-public class UnitData : ScriptableObject
+namespace SciptableObjects
 {
-    [Header("À¯´Ö Á¤º¸")]
-    [SerializeField] private string unitName;
-    public string UnitName {  get { return unitName; } }
+    [Serializable]
+    [CreateAssetMenu(fileName = "Unit Data",menuName ="Scriptable Object/Unit Data",order = 2)]
+    public class UnitData : ScriptableObject
+    {
 
-    [Multiline]
-    [SerializeField] private string unitDescription = "";
-    public string UnitDescription { get { return unitDescription; } }
-    public UnitType unitType;
-    
-    [Space]
+        [SerializeField] private string unitName;
+        public string UnitName {  get { return unitName; } }
 
-    [Header("À¯´Ö ½ºÅÈ")]
-    [SerializeField] private float unitHP;
-    public float UnitHP { get { return unitHP; } }
+        [Multiline]
+        [SerializeField] private string unitDescription = "";
+        public string UnitDescription { get { return unitDescription; } }
+        [SerializeField] private int unitPower;
+        public int UnitPower { get { return unitPower; } }
+        public UnitTierType unitType;
+        public UnitSynergyType unitSynergyType;
     
-    [SerializeField] private float unitSpeed;
-    public float UnitSpeed { get { return unitSpeed; } }
+
+
+  
+        [SerializeField] private float unitHP;
+        public float UnitHP { get { return unitHP; } }
+
+        [SerializeField] private int unitMP;
+        public int UnitMP { get { return unitMP; } }
+    
+        [SerializeField] private float unitSpeed;
+        public float UnitSpeed { get { return unitSpeed; } }
  
-    [SerializeField] private float unitDamage;
-    public float UnitDamage { get { return unitDamage; } }
+        [SerializeField] private float unitDamage;
+        public float UnitDamage { get { return unitDamage; } }
 
-    [Space]
 
-    [Header("À¯´Ö °ø°Ý")]
-    public UnitAttackType unitAttackType;
 
-    [SerializeField] private bool unitHasKnockback = false;
-    public bool UnitHasKnockback { get { return unitHasKnockback; } }
+        
+        public UnitAttackType unitAttackType;
 
-    [SerializeField] private bool unitUnstoppable = false;
-    public bool UnitUnstoppable { get{ return unitUnstoppable; } }
+        [SerializeField] private bool unitHasKnockback = false;
+        public bool UnitHasKnockback { get { return unitHasKnockback; } }
 
-    [SerializeField] private float unitAttackSpeed;
-    public float UnitAttackSpeed { get { return unitAttackSpeed; } }
+        [SerializeField] private bool unitUnstoppable = false;
+        public bool UnitUnstoppable { get{ return unitUnstoppable; } }
 
-    [SerializeField] private float unitAttackDistance;
-    public float UnitAttackDistance { get { return unitAttackDistance; } }
+        [SerializeField] private float unitAttackSpeed;
+        public float UnitAttackSpeed { get { return unitAttackSpeed; } }
 
-    [SerializeField] private float unitSenseRadius;
-    public float UnitSenseRadius { get {return unitSenseRadius; } }
+        [SerializeField] private float unitAttackDistance;
+        public float UnitAttackDistance { get { return unitAttackDistance; } }
+
+        [SerializeField] private float unitSenseRadius;
+        public float UnitSenseRadius { get {return unitSenseRadius; } }
     
-    [SerializeField] private GameObject unitProjectile;
-    public GameObject UnitProjectile { get { return unitProjectile; } }
+        [SerializeField] private GameObject unitProjectile;
+        public GameObject UnitProjectile { get { return unitProjectile; } }
 
-    [SerializeField] private float unitProjectileSpeed;
-    public float UnitProjectileSpeed { get {return unitProjectileSpeed; } }
+        [SerializeField] private float unitProjectileMaxSpeed;
+        public float UnitMaxProjectileSpeed { get {return unitProjectileMaxSpeed; } }
 
-    [Header("À¯´Ö ½ºÅ³")]
-    [SerializeReference] private IUnitSkill unitSkill;
-    public IUnitSkill UnitSkill { get { return unitSkill; } }
+        [SerializeField] private float unitProjectileMaxHeight;
+        public float UnitMaxProjectileHeight { get { return unitProjectileMaxHeight; } }
 
-    [Header("¾Ö´Ï¸ÞÀÌ¼Ç")]
-    [SerializeField]private AnimatorOverrideController animatorOverrideController;
-    public AnimatorOverrideController AnimatorOverrideController { get { return animatorOverrideController; } }
+        [SerializeField] private AnimationCurve projectileTrajectoryAnimationCurve;
+        public AnimationCurve ProjectileTrajectoryAnimationCurve { get { return projectileTrajectoryAnimationCurve; } }
 
+        [SerializeField] private AnimationCurve projectileCorrectionAnimationCurve;
+        public AnimationCurve ProjectileCorrectionAnimationCurve { get { return projectileCorrectionAnimationCurve; } }
+
+        [SerializeField] private AnimationCurve projectileSpeedAnimationCurve;
+        public AnimationCurve ProjectileSpeedAnimationCurve { get {return projectileSpeedAnimationCurve; } }
+
+    }
 }

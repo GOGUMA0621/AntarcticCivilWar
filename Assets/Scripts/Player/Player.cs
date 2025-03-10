@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public int coinAmount;
-    public List<ItemData> itemList;
+    public List<SciptableObjects.ItemData> itemList;
 
     // Start is called before the first frame update
     void Start()
