@@ -113,7 +113,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure, INeutrality
             if (IglooSpawnGenerator.igloos.Contains(this.gameObject))
             {
                 IglooSpawnGenerator.igloos.Remove(this.gameObject);
-                
+                IStructure.OnDestroedStructure?.Invoke(this.gameObject);
                 Destroy(gameObject);
             }
         }
