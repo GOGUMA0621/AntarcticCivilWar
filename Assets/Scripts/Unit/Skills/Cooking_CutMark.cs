@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
@@ -23,7 +24,7 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
             Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.unitDetectTarget.targetToAttack.position, skillRadius);
             foreach (Collider2D collider in colliders)
             {
-                if (collider.TryGetComponent<Unit>(out Unit unit) && collider.tag != this.tag && !unit.unitController.isUnitDie)
+                if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag))
                 {
                     GameObject effect = Instantiate(cutMarkPrefab, unit.transform.position, Quaternion.identity,unit.transform);
                 }

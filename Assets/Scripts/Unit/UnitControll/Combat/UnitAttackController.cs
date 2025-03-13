@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class UnitAttackController : Unit //À¯´Ö °ø°Ý °ü·Ã
     public delegate void UnitAttackEvent(Transform t);
 
     public static event UnitAttackEvent OnUnitAttack;
+
 
     public GameObject pfProjectile; //À¯´Ö Åõ»çÃ¼ ÇÁ¸®ÆÕ
     
@@ -26,18 +28,21 @@ public class UnitAttackController : Unit //À¯´Ö °ø°Ý °ü·Ã
 
     internal void Attack()
     {
-        OnUnitAttack?.Invoke(GetComponent<Transform>());
-        var attackType = unit.data.unitAttackType;
-        switch (attackType)
+        if (!detectTarget.IsDestroyed())
         {
-            case (UnitAttackType.Melee):
-                MeleeAttack();
-                break;
+            OnUnitAttack?.Invoke(GetComponent<Transform>());
+            var attackType = unit.data.unitAttackType;
+            switch (attackType)
+            {
+                case (UnitAttackType.Melee):
+                    MeleeAttack();
+                    break;
 
-            case (UnitAttackType.Range):
-                RangeAttack();
-                break;
+                case (UnitAttackType.Range):
+                    RangeAttack();
+                    break;
 
+            }
         }
     }
 

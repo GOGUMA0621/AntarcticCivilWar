@@ -27,13 +27,16 @@ public class IglooSpawnGenerator : MonoBehaviour
     IEnumerator SpawnIgloo()
     {
         isReadyToSpawn = false;
-        Debug.Log("이글루 소환중");
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForSeconds(iglooSpawnRate);
+        Vector3 iglooSpawnPosition = SpawnIglooPosition(iglooRange);
+        if (iglooSpawnPosition != Vector3.zero)
+        {
+            Debug.Log("이글루 소환중");
+            yield return new WaitForSeconds(iglooSpawnRate);
+            GameObject igloo = Instantiate(pfIgloo, SpawnIglooPosition(iglooRange), Quaternion.identity);
+            igloos.Add(igloo);
+            isReadyToSpawn = true;
+        }
 
-        GameObject igloo = Instantiate(pfIgloo,SpawnIglooPosition(5f),Quaternion.identity);
-        igloos.Add(igloo);
-        isReadyToSpawn = true;
         Debug.Log($"{isReadyToSpawn}, {igloos.Count}");
     }
 

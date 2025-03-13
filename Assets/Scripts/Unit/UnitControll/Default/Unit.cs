@@ -36,7 +36,7 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
         animator = GetComponent<Animator>();
         playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         distinction = GetComponentInChildren<UnitDistinction>();
-        detectTarget = GetComponent<UnitDetectTarget>();
+        detectTarget = GetComponentInChildren<UnitDetectTarget>();
         attackController = GetComponent<UnitAttackController>();
         playerUnitManager = playerController.GetComponent<PlayerUnitManager>();
     }

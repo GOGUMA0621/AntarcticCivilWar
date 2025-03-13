@@ -10,54 +10,44 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
 {
     public Transform targetToAttack; //공격할 타깃의 위치값
     public List<GameObject> targets; // 타겟 리스트
-    private Unit _unit;
+    private Unit unit;
+    private CircleCollider2D detectCollider;
 
     protected override void Start()
     {
-        base.Start();
-        _unit = GetComponent<Unit>();
-        data = _unit.data;
+        unit = transform.parent.GetComponent<Unit>();
+        data = unit.data;
+        detectCollider = GetComponent<CircleCollider2D>();
+
+        detectCollider.radius = data.UnitSenseRadius;
     }
 
     private void Update()
     {
-        
+
         if (targetToAttack == null && targets.Any())
         {
             AttackClosestTarget();
         }
     }
-    private void FixedUpdate()
-    {
-        Detect();
-    }
 
     internal void AttackClosestTarget() //타겟 리스트를 가까운 순으로 정렬하여 공격할 상대값에 값 부여
-    {
-        targets.Sort((a, b) =>
-        {
-            float distanceA = Vector2.Distance(this.transform.position, a.transform.position);
-            float distanceB = Vector2.Distance(this.transform.position, b.transform.position);
-
-            return distanceA.CompareTo(distanceB);
-        });
+    {                                   //특정 인터페이스를 후순위로 정렬
+        var sortedTargets = targets.OrderBy(t => t.TryGetComponent(out IStructure _) ? 1 : 0)
+            .ThenBy(t => Vector2.Distance(transform.position, t.transform.position)).ToList();
 
         if (targets.Any())
         {
             targetToAttack = targets.First().transform;
-        } 
+        }
     }
 
     public void AddTarget(GameObject target) //타깃 리스트에 추가
     {
-        //Debug.Log("타켓 발견");
-        if (!targets.Contains(target) && target.tag != this.tag)
+        if (!targets.Contains(target) && target.TryGetComponent(out IDamageAble i) && !i.IsDestroyed())
         {
+            i.OnDestroyed += RemoveTarget;  //타깃 리스트에 들어가면서 파괴확인 이벤트에 등록
             targets.Add(target);
-            if (targetToAttack == null)
-            {
-                AttackClosestTarget();
-            }
         }
     }
 
@@ -65,37 +55,39 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
     {
         if (targets.Contains(target))
         {
-            targets.RemoveAt(targets.IndexOf(target));
+            
+            if (target.TryGetComponent(out IDamageAble i))
+            {
+                Debug.Log($"{this.gameObject}의 타겟 제거 {target.gameObject}");
+                i.OnDestroyed -= RemoveTarget; //타깃 리스트에 존재 하지 않으므로 이벤트에서 제거
+                targets.Remove(target);
+            }
+           
             if (target.transform == targetToAttack)
             {
                 targetToAttack = null;
+                AttackClosestTarget();
             }
         }
     }
 
-    void Detect() //타깃 감지 메소드
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, data.UnitSenseRadius);
-        foreach(Collider2D targetCollider in collider)
+        if(collision.TryGetComponent(out IDamageAble i) && i is MonoBehaviour target && target.tag != unit.tag)
         {
-            if(targetCollider.gameObject.TryGetComponent<Unit>(out Unit target) && targetCollider.tag != this.gameObject.tag)
+            if (!target.IsDestroyed())
             {
-                if (this.gameObject.tag == "Unit")
-                {
-                    AddTarget(target.gameObject);
-                }
-                else if (this.gameObject.tag != "Unit" && targetCollider.gameObject.tag == "Mercenary") return;
-                else if (this.gameObject.tag == "Mercenary" && targetCollider.gameObject.tag != "Unit") return;
-                else if (!target.unitController.isUnitDie) AddTarget(target.gameObject);
-            }
-            else if(targetCollider.gameObject.TryGetComponent<INeutrality>(out INeutrality neutrality) && this.gameObject.tag == "Unit")
-            {
-                if (neutrality is MonoBehaviour neautralityObject)
-                {
-                    AddTarget(neautralityObject.gameObject);
-                }
+                if ((this.tag != "Unit" && target.tag == "Mercenary")               //용병은 플레이어의 유닛만을 때리도록 수정
+                    || (this.tag == "Mercenary" && target.tag != "Unit")) return;
+
+                AddTarget(target.gameObject);
             }
         }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        RemoveTarget(collision.gameObject);
     }
 
     public void ClearTarget() //타깃 리스트 초기화
@@ -103,17 +95,5 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
         //Debug.Log("타겟 클리어");
         targets.Clear();
         targetToAttack = null;
-    }
-
-    private void OnEnable()
-    {
-        UnitController.OnUnitDeath += RemoveTarget; //유닛 죽음 감지로 리스트 제거
-        IStructure.OnDestroedStructure += RemoveTarget;
-    }
-
-    private void OnDisable()
-    {
-        UnitController.OnUnitDeath -= RemoveTarget;
-        IStructure.OnDestroedStructure -= RemoveTarget;
     }
 }

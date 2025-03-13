@@ -16,7 +16,7 @@ public sealed class UnitAttackState : StateMachineBehaviour
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (unit.unitController.isStunned && !unit.unitController.isUnitDie)
+        if (unit.unitController.isStunned && !unit.unitController.IsDestroyed())
         {
             animator.CrossFade("IdleState", 1);
             return;

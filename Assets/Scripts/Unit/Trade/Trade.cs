@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -22,7 +20,7 @@ public class Trade : MonoBehaviour
         if (distanceToPlayer <= 5)
         {
             ClosePlayer();
-            if (Input.GetKeyDown(KeyCode.F))
+            if (InputManager.Instance.GetInterActionPressed())
             {
                 if (!isTrade)
                 {

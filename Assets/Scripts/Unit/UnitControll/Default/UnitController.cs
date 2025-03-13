@@ -21,12 +21,12 @@ public class DamageData
     }
 }
 
-public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
+public class UnitController : Unit,IStatusAble,IDamageAble //유닛의 전반적인 컨트롤
 {
-    public delegate void UnitDeathEvent(GameObject unit);
+    public event Action<GameObject> OnDestroyed;
+    
     public delegate void UnitAttackCountEvent();
 
-    public static event UnitDeathEvent OnUnitDeath;
     public static event UnitAttackCountEvent OnUnitAttackCount;
 
     private StatusEffectManager statusEffectManager;
@@ -34,7 +34,7 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
     private Vector2 _lastPosition; //애니메이션 좌우 번전을 위한 변수
     private bool _isFacingRight = true; 
     private SciptableObjects.UnitData _currentData; //유닛의 데이터 변화 감지를 위한 변수
-    internal bool isUnitDie = false;
+    private bool isUnitDie;
     private Transform _lastAttacker; //넉백을 위해 마지막 공격자를 알아내는 변수
     public IActiveSkill unitSkill;
     public IPasseiveSkillAttack unitPassiveSkill;
@@ -72,6 +72,7 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
 
     protected override void Start()
     {
+        isUnitDie = false;
         base.Start();
         unitPassiveSkill = GetComponent<IPasseiveSkillAttack>();
         _unit = GetComponent<Unit>();
@@ -224,8 +225,9 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
 
     internal void Death()
     {
-        OnUnitDeath?.Invoke(gameObject);
         isUnitDie = true;
+        OnDestroyed?.Invoke(this.gameObject);
+
         animator.SetBool("isDie", true);
         StartCoroutine(KnockBack(2.0f));
         agent.enabled = false;
@@ -250,7 +252,7 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
         playerUnitManager.AddAllayList(GetUnit().gameObject);
     }
 
-    private void ApplyEffect(DamageData damage)
+    public void ApplyEffect(DamageData damage)
     {
         if (damage.effectType == StatusEffectType.None)
         {
@@ -309,5 +311,8 @@ public class UnitController : Unit,IDamageAble //유닛의 전반적인 컨트롤
         }
     }
 
-
+    public bool IsDestroyed()
+    {
+        return isUnitDie;
+    }
 }

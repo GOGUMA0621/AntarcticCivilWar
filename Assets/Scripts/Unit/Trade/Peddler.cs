@@ -1,16 +1,15 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Tilemaps;
-using UnityEngineInternal;
 
-public class Peddler : MonoBehaviour, IDamageAble, INeutrality
+public class Peddler : MonoBehaviour, IStatusAble, INeutrality
 {
+    public event Action<GameObject> OnDestroyed;
     
     [SerializeField] private float maxHealth;
     private float currentHealth;
+    private bool isDie;
     [SerializeField] private float speed;
 
     [SerializeField, Range(0f, 1f)] private float[] stateThreshold = new float[1];
@@ -21,12 +20,14 @@ public class Peddler : MonoBehaviour, IDamageAble, INeutrality
     private Animator animator;
     [HideInInspector] public NavMeshAgent agent;
 
+
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         spawnUnit = GetComponent<SpawnUnit>();
+        isDie = false;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         agent.speed = speed;
@@ -42,11 +43,17 @@ public class Peddler : MonoBehaviour, IDamageAble, INeutrality
     public void ReceiveDamage(DamageData damage)
     {
         currentHealth -= damage.damage;
+        ApplyEffect(damage);
         if(currentHealth <= 0)
         {
             Die();
         }
         ChangeState(currentHealth);
+    }
+
+    public void ApplyEffect(DamageData damage)
+    {
+        throw new System.NotImplementedException();
     }
 
     private void ChangeState(float health)
@@ -70,9 +77,12 @@ public class Peddler : MonoBehaviour, IDamageAble, INeutrality
 
     private void Die()
     {
+        OnDestroyed?.Invoke(this.gameObject);
         animator.Play("DownState");
-
     }
 
-    
+    public bool IsDestroyed()
+    {
+        return isDie;
+    }
 }

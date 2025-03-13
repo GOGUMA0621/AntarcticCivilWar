@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class Igloo : MonoBehaviour, IDamageAble, IStructure, INeutrality
+public class Igloo : MonoBehaviour, IDamageAble, IStructure
 {
-    
+    public event System.Action<GameObject> OnDestroyed;
+
+    private bool isDestroyed = false;
     public float health;
     private float currentHealth;
+    [SerializeField] float destroyTime;
     
 
     [SerializeField] Sprite[] brokenIgloos = new Sprite[5];
@@ -26,13 +27,14 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure, INeutrality
         { 100, new List<(int, float)> { (5, 100f) } }
     };
 
+
     private void Start()
     {
         spawnUnit = GetComponent<SpawnUnit>();
         stateInfo = brokenIgloos.Length;
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentHealth = health;
-
+        spriteRenderer.enabled = true;
     }
 
     private void Awake()
@@ -101,7 +103,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure, INeutrality
             }
         }
 
-        return levelProbabilities.First().level;
+        return levelProbabilities[0].level;
     }
 
     public void ReceiveDamage(DamageData damage)
@@ -110,13 +112,21 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure, INeutrality
         UpdateIglooState();
         if (currentHealth <= 0f)
         {
+            OnDestroyed.Invoke(this.gameObject);
             if (IglooSpawnGenerator.igloos.Contains(this.gameObject))
             {
                 IglooSpawnGenerator.igloos.Remove(this.gameObject);
-                IStructure.OnDestroedStructure?.Invoke(this.gameObject);
-                Destroy(gameObject);
             }
+            isDestroyed = true;
+            StartCoroutine(DestoryIgloo(destroyTime));
         }
+    }
+
+    private IEnumerator DestoryIgloo(float time)
+    {
+        spriteRenderer.enabled = false;
+        yield return new WaitForSeconds(time);
+        Destroy(gameObject);
     }
 
     private void UpdateIglooState()
@@ -136,5 +146,10 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure, INeutrality
     private float GetNormalizedHealth()
     {
         return currentHealth / health;
+    }
+
+    public bool IsDestroyed()
+    {
+        return isDestroyed;
     }
 }
