@@ -37,12 +37,10 @@ public class PeddlerSpawnGenerator : MonoBehaviour
         yield return new WaitForEndOfFrame();
         yield return new WaitForSeconds(spawnRate);
         Vector3Int spawnTile = TilemapManager.instance.GetRandomEdgeSpawnPoint(minOffset, maxOffset);
-        Vector3 spawnPoint = TilemapManager.instance.GetValidPoint(spawnTile);
         Vector3Int destinationTile = TilemapManager.instance.GetOppositeDestination(spawnTile,minOffset, maxOffset);
-        destinationPoint = TilemapManager.instance.GetValidPoint(destinationTile);
 
-        peddler = Instantiate(pfPeddler, spawnPoint, Quaternion.identity).GetComponent<Peddler>();
+        peddler = Instantiate(pfPeddler, spawnTile, Quaternion.identity).GetComponent<Peddler>();
         yield return new WaitForSeconds(0.1f);
-        peddler.MoveToDestination(destinationPoint);
+        peddler.MoveToDestination(destinationTile);
     }
 }

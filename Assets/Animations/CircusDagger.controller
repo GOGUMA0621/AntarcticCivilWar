@@ -23,7 +23,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 9226b5f77c9ac2449af0416cba5a0c8b, type: 2}
+  m_Motion: {fileID: 7400000, guid: 9ba4acfbbbdc7f84f826ed2ce3869f81, type: 2}
   m_Tag: 
   m_SpeedParameter: motionMultiplierValue
   m_MirrorParameter: isFollow
@@ -139,7 +139,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 6cc2d870a58b63245a0b58dfc533f387, type: 2}
+  m_Motion: {fileID: 7400000, guid: c456586aba9bd094190dabf487cb3183, type: 2}
   m_Tag: 
   m_SpeedParameter: motionMultiplierValue
   m_MirrorParameter: 
@@ -175,7 +175,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UnitAnimationController
+  m_Name: CircusDagger
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: isFollow
@@ -250,7 +250,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 735c0d20ca107f341ac448a40d7e3673, type: 2}
+  m_Motion: {fileID: 7400000, guid: c456586aba9bd094190dabf487cb3183, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -276,16 +276,13 @@ AnimatorStateMachine:
     m_Position: {x: 290, y: 170, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3613788603624680952}
-    m_Position: {x: 20, y: 30, z: 0}
+    m_Position: {x: 30, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1143021446968779425}
     m_Position: {x: 290, y: -70, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7200772456634112347}
     m_Position: {x: 760, y: 30, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1475036649158105514}
-    m_Position: {x: 795, y: 95, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -6054610397045044558}
@@ -343,35 +340,9 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 5a43ce6c674107e47b4cfe12e8a221f2, type: 2}
+  m_Motion: {fileID: 7400000, guid: 6186c431a04a92d4c8e24555400ab27e, type: 2}
   m_Tag: 
   m_SpeedParameter: speed
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &1475036649158105514
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: CircusDagger_Idle
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c456586aba9bd094190dabf487cb3183, type: 2}
-  m_Tag: 
-  m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
@@ -474,7 +445,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 6cc2d870a58b63245a0b58dfc533f387, type: 2}
+  m_Motion: {fileID: 7400000, guid: 070e8a26099811e4f87b266cda66da27, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

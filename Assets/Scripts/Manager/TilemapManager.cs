@@ -31,30 +31,31 @@ public class TilemapManager : MonoBehaviour
         FindTileMapEdge(tilemap);
     }
 
-    public Vector3 GetValidPoint(Vector3Int spawnTile)
+    public bool IsValidPoint(Vector3Int spawnTile)
     {
         bool isValid = false;
-        while (!isValid)
+        
+        TileBase tileAtSpawn = tilemap.GetTile(spawnTile);
+
+        if (tileAtSpawn != null && !restrictedTileSet.Contains(tileAtSpawn))
         {
-            TileBase tileAtSpawn = tilemap.GetTile(spawnTile);
-
-            if (tileAtSpawn != null && !restrictedTileSet.Contains(tileAtSpawn))
-            {
-                isValid = true;
-                Vector3 validPoint = tilemap.CellToWorld(spawnTile);
-                return validPoint;
-            }
+            isValid = true;
+            Vector3 validPoint = tilemap.CellToWorld(spawnTile);
+            return isValid;
         }
-
-        return Vector3.zero;
+        else
+        {
+            isValid = false;
+            return isValid;
+        }
     }
 
     public Vector3Int GetRandomSpawnPoint()
     {
         Vector3Int spawnTile;
         spawnTile = new Vector3Int(Random.Range(minBounds.x, maxBounds.x),Random.Range(minBounds.y,maxBounds.y), 0);
-        GetValidPoint(spawnTile);
-        if (spawnTile == Vector3Int.zero)
+        
+        if (IsValidPoint(spawnTile))
         {
             GetRandomSpawnPoint();
         }
@@ -95,8 +96,7 @@ public class TilemapManager : MonoBehaviour
 
         }
 
-        GetValidPoint(spawnTile);
-        if (spawnTile == Vector3Int.zero)
+        if (IsValidPoint(spawnTile))
         {
             GetRandomEdgeSpawnPoint(minOffset, maxOffset);
         }
@@ -150,8 +150,7 @@ public class TilemapManager : MonoBehaviour
             else destinationTile = new Vector3Int(spawnTile.x, minBounds.y, 0);
         }
 
-        GetValidPoint(destinationTile);
-        if(destinationTile == Vector3Int.zero)
+        if(IsValidPoint(destinationTile))
         {
             GetOppositeDestination(spawnTile, minOffset, maxOffset);
         }
@@ -177,6 +176,7 @@ public class TilemapManager : MonoBehaviour
                 }
             }
         }
+
     }
 
     public Vector3Int GetMinBounds() => minBounds;
