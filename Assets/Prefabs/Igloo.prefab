@@ -125,7 +125,7 @@ MonoBehaviour:
     m_Bits: 64
   baseRadius: 1
   radiusIncrement: 0.5
-  collisionCheckRadius: 0.5
+  collisionCheckRadius: 2
   level01:
   - {fileID: 11400000, guid: ea3108b7fc0ddd74fa6e371769001982, type: 2}
   - {fileID: 11400000, guid: 31ffe83036b35444095456912c3f393d, type: 2}

@@ -17,6 +17,7 @@ public class SpawnUnit : MonoBehaviour
 
     public void SpawnUnits(SpawnUnitsSO unitToSpawn, Vector3 positionToSpawn, string tag)
     {
+        Debug.Log($"스폰 유닛 {unitToSpawn}");
         List<(GameObject pfUnit, int count)> unitsToSpawn = new List<(GameObject, int)>();
 
         // 모든 유닛 타입을 리스트에 추가
@@ -50,12 +51,14 @@ public class SpawnUnit : MonoBehaviour
 
             for (int i = 0; i < maxAttempts && spawnedCount < totalUnits && unitsInThisRing > 0; i++)
             {
+                Debug.Log("소환 준비중");
                 float angle = (360f / unitsInThisRing) * (i % unitsInThisRing) * Mathf.Deg2Rad; // 원형 각도 계산
                 Vector2 spawnPos = positionToSpawn + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * currentRadius;
 
                 // 충돌 체크
                 if (!Physics2D.OverlapCircle(spawnPos, collisionCheckRadius, obstacleMask))
                 {
+                    Debug.Log("유닛 소환됨");
                     var (unitPrefab, count) = unitsToSpawn[unitIndex]; // 현재 소환할 유닛 선택
                     GameObject summonedUnit = Instantiate(unitPrefab, spawnPos, Quaternion.identity);
                     summonedUnit.tag = tag;

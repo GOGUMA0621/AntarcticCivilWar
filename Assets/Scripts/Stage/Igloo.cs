@@ -40,10 +40,12 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
     private void Awake()
     {
         spawnLevel = RandomLevelNum(1);
+        Debug.Log(spawnLevel);
     }
 
     private void RandomNumUnitList(int level)
     {
+
         switch (level)
         {
             case 1:
@@ -51,19 +53,19 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
                 break;
 
             case 2:
-                spawnUnit.SpawnUnits(spawnUnit.level01[Random.Range(0, spawnUnit.level02.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.level02[Random.Range(0, spawnUnit.level02.Count)], this.transform.position, "Mercenary");
                 break;
 
             case 3:
-                spawnUnit.SpawnUnits(spawnUnit.level01[Random.Range(0, spawnUnit.level03.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.level03[Random.Range(0, spawnUnit.level03.Count)], this.transform.position, "Mercenary");
                 break;
 
             case 4:
-                spawnUnit.SpawnUnits(spawnUnit.level01[Random.Range(0, spawnUnit.level04.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.level04[Random.Range(0, spawnUnit.level04.Count)], this.transform.position, "Mercenary");
                 break;
 
             case 5:
-                spawnUnit.SpawnUnits(spawnUnit.level01[Random.Range(0, spawnUnit.level05.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.level05[Random.Range(0, spawnUnit.level05.Count)], this.transform.position, "Mercenary");
                 break;
 
             default:
@@ -112,7 +114,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
         UpdateIglooState();
         if (currentHealth <= 0f)
         {
-            OnDestroyed.Invoke(this.gameObject);
+            OnDestroyed?.Invoke(this.gameObject);
             if (IglooSpawnGenerator.igloos.Contains(this.gameObject))
             {
                 IglooSpawnGenerator.igloos.Remove(this.gameObject);
