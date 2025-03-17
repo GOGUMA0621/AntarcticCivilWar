@@ -96,7 +96,7 @@ public class TilemapManager : MonoBehaviour
 
         }
 
-        if (IsValidPoint(spawnTile))
+        if (!IsValidPoint(spawnTile))
         {
             GetRandomEdgeSpawnPoint(minOffset, maxOffset);
         }
@@ -150,7 +150,7 @@ public class TilemapManager : MonoBehaviour
             else destinationTile = new Vector3Int(spawnTile.x, minBounds.y, 0);
         }
 
-        if(IsValidPoint(destinationTile))
+        if(!IsValidPoint(destinationTile))
         {
             GetOppositeDestination(spawnTile, minOffset, maxOffset);
         }
