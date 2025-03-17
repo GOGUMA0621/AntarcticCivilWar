@@ -55,7 +55,7 @@ public class TilemapManager : MonoBehaviour
         Vector3Int spawnTile;
         spawnTile = new Vector3Int(Random.Range(minBounds.x, maxBounds.x),Random.Range(minBounds.y,maxBounds.y), 0);
         
-        if (IsValidPoint(spawnTile))
+        if (!IsValidPoint(spawnTile))
         {
             GetRandomSpawnPoint();
         }
