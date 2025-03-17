@@ -8,6 +8,7 @@ public class IglooSpawnGenerator : MonoBehaviour
 
     [SerializeField] private float iglooRange;
     [SerializeField] private float iglooSpawnRate;
+    [SerializeField] private int iglooSpawnNum;
 
     public static List<GameObject> igloos = new List<GameObject>();
     private bool isReadyToSpawn = true;
@@ -18,7 +19,7 @@ public class IglooSpawnGenerator : MonoBehaviour
 
     private void Update()
     {
-        if (isReadyToSpawn && igloos.Count <= 4)
+        if (isReadyToSpawn && igloos.Count <= iglooSpawnNum - 1)
         {
             StartCoroutine(SpawnIgloo());
         }

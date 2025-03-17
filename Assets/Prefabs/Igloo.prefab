@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7457848713402739675}
   - component: {fileID: 3498967493084370786}
   - component: {fileID: 11654372319556723}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Igloo
   m_TagString: Mercenary
   m_Icon: {fileID: 0}
@@ -123,9 +123,9 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
-  baseRadius: 1
+  baseRadius: 3
   radiusIncrement: 0.5
-  collisionCheckRadius: 2
+  collisionCheckRadius: 0.5
   level01:
   - {fileID: 11400000, guid: ea3108b7fc0ddd74fa6e371769001982, type: 2}
   - {fileID: 11400000, guid: 31ffe83036b35444095456912c3f393d, type: 2}

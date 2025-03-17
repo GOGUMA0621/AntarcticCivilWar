@@ -33,8 +33,10 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
 
     internal void AttackClosestTarget() //타겟 리스트를 가까운 순으로 정렬하여 공격할 상대값에 값 부여
     {                                   //특정 인터페이스를 후순위로 정렬
-        var sortedTargets = targets.OrderBy(t => t.TryGetComponent(out IStructure _) ? 0 : 1)
-            .ThenBy(t => Vector2.Distance(transform.position, t.transform.position)).ToList();
+        targets = targets
+            .OrderBy(t => t.TryGetComponent(out IStructure _) ? 1 : 0) // 특정 레이어를 가진 객체를 후순위로 배치
+            .ThenBy(t => Vector2.Distance(transform.position, t.transform.position)) // 같은 그룹 내에서는 거리순 정렬
+            .ToList();
 
         if (targets.Any())
         {
@@ -48,6 +50,7 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
         {
             i.OnDestroyed += RemoveTarget;  //타깃 리스트에 들어가면서 파괴확인 이벤트에 등록
             targets.Add(target);
+            AttackClosestTarget();
         }
     }
 
@@ -58,7 +61,7 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
             
             if (target.TryGetComponent(out IDamageAble i))
             {
-                Debug.Log($"{this.gameObject}의 타겟 제거 {target.gameObject}");
+                //Debug.Log($"{this.gameObject}의 타겟 제거 {target.gameObject}");
                 i.OnDestroyed -= RemoveTarget; //타깃 리스트에 존재 하지 않으므로 이벤트에서 제거
                 targets.Remove(target);
             }
@@ -77,7 +80,7 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
         {
             if (!target.IsDestroyed())
             {
-                if ((this.transform.parent.tag != "Unit" && target.tag == "Mercenary")               //용병은 플레이어의 유닛만을 때리도록 수정
+                if ((this.transform.parent.tag != "Unit" && target.tag == "Mercenary")          //용병은 플레이어의 유닛만을 때리도록 수정
                     || (this.transform.parent.tag == "Mercenary" && target.tag != "Unit")) return;
 
                 AddTarget(target.gameObject);
