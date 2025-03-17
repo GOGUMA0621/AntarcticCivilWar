@@ -33,7 +33,7 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
 
     internal void AttackClosestTarget() //타겟 리스트를 가까운 순으로 정렬하여 공격할 상대값에 값 부여
     {                                   //특정 인터페이스를 후순위로 정렬
-        var sortedTargets = targets.OrderBy(t => t.TryGetComponent(out IStructure _) ? 1 : 0)
+        var sortedTargets = targets.OrderBy(t => t.TryGetComponent(out IStructure _) ? 0 : 1)
             .ThenBy(t => Vector2.Distance(transform.position, t.transform.position)).ToList();
 
         if (targets.Any())
@@ -73,12 +73,12 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent(out IDamageAble i) && i is MonoBehaviour target && target.tag != unit.tag)
+        if(collision.TryGetComponent(out IDamageAble i) && i is MonoBehaviour target && target.tag != this.transform.parent.tag)
         {
             if (!target.IsDestroyed())
             {
-                if ((this.tag != "Unit" && target.tag == "Mercenary")               //용병은 플레이어의 유닛만을 때리도록 수정
-                    || (this.tag == "Mercenary" && target.tag != "Unit")) return;
+                if ((this.transform.parent.tag != "Unit" && target.tag == "Mercenary")               //용병은 플레이어의 유닛만을 때리도록 수정
+                    || (this.transform.parent.tag == "Mercenary" && target.tag != "Unit")) return;
 
                 AddTarget(target.gameObject);
             }
