@@ -10,48 +10,42 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
-  m_Name: BardPenguin
+  m_Name: CircusDagger
   m_EditorClassIdentifier: 
-  unitName: "\uC74C\uC720\uC2DC\uC778 \uD3AD\uADC4"
+  unitName: "\uC11C\uCEE4\uC2A4 \uB2E8\uAC80 \uACE1\uC608 \uD3AD\uADC4"
   unitDescription: 
+  unitPower: 0
+  unitFaction: 1
   unitType: 0
-  unitHP: 180
-  unitMP: 0
+  unitSynergyType: 1
+  unitHP: 200
+  unitMP: 160
   unitSpeed: 3.5
-  unitDamage: 35
+  unitDamage: 25
   unitAttackType: 1
   unitHasKnockback: 0
   unitUnstoppable: 0
-  unitAttackSpeed: 1.5
-  unitAttackDistance: 6
-  unitSenseRadius: 10
-  unitProjectile: {fileID: 7427458923226158902, guid: ba8617c05e66fe44ebada2674aaa2399, type: 3}
+  unitAttackSpeed: 1
+  unitAttackDistance: 5
+  unitSenseRadius: 8
+  unitProjectile: {fileID: 0}
   unitProjectileMaxSpeed: 3
-  unitProjectileMaxHeight: 0.3
+  unitProjectileMaxHeight: 2
   projectileTrajectoryAnimationCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: -1.2
-      outSlope: -1.2
+      inSlope: 2
+      outSlope: 2
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.25
-      value: -0.3
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.75
-      value: 0.3
+      time: 0.5
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 34
@@ -61,8 +55,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: -1.2
-      outSlope: -1.2
+      inSlope: -2
+      outSlope: -2
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -99,48 +93,21 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
-      inSlope: -0.20000005
-      outSlope: -0.20000005
-      tangentMode: 34
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.25
-      value: 0.95
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.5
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.75
-      value: 0.95
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0.20000005
-      outSlope: 0.20000005
-      tangentMode: 34
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

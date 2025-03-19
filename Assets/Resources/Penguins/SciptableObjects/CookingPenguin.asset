@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uC694\uB9AC\uC655 \uD3AD\uADC4"
   unitDescription: 
+  unitPower: 0
+  unitFaction: 1
   unitType: 1
+  unitSynergyType: 0
   unitHP: 450
   unitMP: 200
   unitSpeed: 3.5
@@ -26,4 +29,23 @@ MonoBehaviour:
   unitAttackDistance: 2
   unitSenseRadius: 10
   unitProjectile: {fileID: 0}
-  unitProjectileSpeed: 0
+  unitProjectileMaxSpeed: 0
+  unitProjectileMaxHeight: 0
+  projectileTrajectoryAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileCorrectionAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileSpeedAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 2764380314185021207}
   - component: {fileID: 6747871169830987556}
   m_Layer: 6
-  m_Name: NormalPenguin
+  m_Name: DefaultPenguin
   m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

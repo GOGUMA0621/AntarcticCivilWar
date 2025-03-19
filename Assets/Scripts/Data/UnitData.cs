@@ -17,7 +17,13 @@ public enum UnitSynergyType
     None,
     Circus,
     Summoner,
+}
 
+public enum UnitFaction
+{
+    Royal,
+    Resistance,
+    Mercenary
 }
 
 public enum UnitAttackType
@@ -40,9 +46,9 @@ namespace SciptableObjects
         public string UnitDescription { get { return unitDescription; } }
         [SerializeField] private int unitPower;
         public int UnitPower { get { return unitPower; } }
+        public UnitFaction unitFaction;
         public UnitTierType unitType;
         public UnitSynergyType unitSynergyType;
-    
 
 
   

@@ -16,7 +16,6 @@ public class UnitDetectTarget : Unit //À¯´Ö Àû Å½Áö
     protected override void Start()
     {
         unit = transform.parent.GetComponent<Unit>();
-        data = unit.data;
         detectCollider = GetComponent<CircleCollider2D>();
 
         detectCollider.radius = data.UnitSenseRadius;
@@ -69,8 +68,8 @@ public class UnitDetectTarget : Unit //À¯´Ö Àû Å½Áö
             if (target.transform == targetToAttack)
             {
                 targetToAttack = null;
-                AttackClosestTarget();
             }
+            AttackClosestTarget();
         }
     }
 

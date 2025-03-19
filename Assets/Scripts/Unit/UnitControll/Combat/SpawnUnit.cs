@@ -56,8 +56,8 @@ public class SpawnUnit : MonoBehaviour
                 Vector2 spawnPos = positionToSpawn + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * currentRadius;
 
                 // 충돌 체크
-                if (!Physics2D.OverlapCircle(spawnPos, collisionCheckRadius, obstacleMask))
-                {
+                //if (!Physics2D.OverlapCircle(spawnPos, collisionCheckRadius, obstacleMask))
+                //{
                     //Debug.Log("유닛 소환됨");
                     var (unitPrefab, count) = unitsToSpawn[unitIndex]; // 현재 소환할 유닛 선택
                     GameObject summonedUnit = Instantiate(unitPrefab, spawnPos, Quaternion.identity);
@@ -72,7 +72,7 @@ public class SpawnUnit : MonoBehaviour
                     {
                         unitIndex++;
                     }
-                }
+                //}
             }
         }
     }

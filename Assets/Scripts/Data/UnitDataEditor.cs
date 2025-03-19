@@ -7,11 +7,13 @@ using Unity.VisualScripting;
 
 [CustomEditor(typeof(SciptableObjects.UnitData))]
 [CanEditMultipleObjects]
+#if UNITY_EDITOR
 public class UnitDataEditor : Editor
 {
     private UnitData unitData;
 
     private SerializedProperty unitType;
+    private SerializedProperty unitFaction;
     private SerializedProperty attackType;
     private SerializedProperty unitSynergyType;
     private SerializedProperty unitName;
@@ -37,7 +39,9 @@ public class UnitDataEditor : Editor
     {
         unitData = (target as UnitData);
 
+        
         unitType = serializedObject.FindProperty("unitType");
+        unitFaction = serializedObject.FindProperty("unitFaction");
         attackType = serializedObject.FindProperty("unitAttackType");
         unitSynergyType = serializedObject.FindProperty("unitSynergyType");
         unitName = serializedObject.FindProperty("unitName");
@@ -65,11 +69,12 @@ public class UnitDataEditor : Editor
         serializedObject.Update();
         GUIStyle style = EditorStyles.helpBox;
         EditorGUILayout.LabelField("일반",EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(unitFaction);
         EditorGUILayout.PropertyField(unitType);
         EditorGUILayout.PropertyField(unitSynergyType);
         EditorGUILayout.PropertyField(unitName);
         EditorGUILayout.PropertyField(unitDescription);
-        EditorGUILayout.PropertyField (unitPower);
+        EditorGUILayout.PropertyField(unitPower);
 
         EditorGUILayout.LabelField("전투", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
@@ -83,24 +88,21 @@ public class UnitDataEditor : Editor
         EditorGUILayout.PropertyField(this.attackType);
         var attackType = (UnitAttackType)this.attackType.intValue;
 
+        EditorGUILayout.PropertyField(unitDamage);
+        EditorGUILayout.PropertyField(unitAttackDistance);
+        EditorGUILayout.PropertyField(unitAttackSpeed);
+        EditorGUILayout.PropertyField(unitSenseRadius);
+
         switch (attackType)
         {
             case UnitAttackType.Melee:
                 {
-                    EditorGUILayout.PropertyField(unitDamage);
-                    EditorGUILayout.PropertyField(unitAttackDistance);
-                    EditorGUILayout.PropertyField(unitAttackSpeed);
-                    EditorGUILayout.PropertyField(unitSenseRadius);
+
                 }
                 break;
 
             case UnitAttackType.Range:
                 {
-                    EditorGUILayout.PropertyField(unitDamage);
-                    EditorGUILayout.PropertyField(unitAttackDistance);
-                    EditorGUILayout.PropertyField(unitAttackSpeed);
-                    EditorGUILayout.PropertyField(unitSenseRadius);
-
                     EditorGUILayout.Space(10);
                     EditorGUILayout.LabelField("투사체", EditorStyles.boldLabel);
                     EditorGUILayout.PropertyField(unitProjectile);
@@ -119,3 +121,4 @@ public class UnitDataEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 }
+#endif

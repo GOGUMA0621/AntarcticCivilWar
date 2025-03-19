@@ -4,75 +4,51 @@ using UnityEngine;
 
 public class PlayerUnitManager : MonoBehaviour
 {
-    public List<GameObject> allayList;
-    public List<GameObject> enemyList;
+    public List<GameObject> allayList = new List<GameObject>();
+    public List<GameObject> enemyList = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
-        allayList = new List<GameObject>();
-        enemyList = new List<GameObject>();
     }
 
     #region  酒焙 包府
-    internal void AddAllayList(GameObject unit)
+    public void AddAllayList(GameObject allay)
     {
-        if(!allayList.Contains(unit))
+        if (!allayList.Contains(allay))
         {
-            allayList.Add(unit);
-            foreach (GameObject enemy in enemyList)
-            {
-                if (enemy.TryGetComponent<Unit>(out Unit enemyUnit))
-                {
-                    enemyUnit.unitDetectTarget.AddTarget(enemy);
-                }
-            }
+            allayList.Add(allay);
+            
         }
     }
-    internal void RemoveAllayList(GameObject unit)
+    public void RemoveAllayList(GameObject allay)
     {
-        if (allayList.Contains(unit))
+        if (allayList.Contains(allay))
         {
-            allayList.Remove(unit);
-            foreach (GameObject enemy in enemyList)
-            {
-                if (enemy.TryGetComponent<Unit>(out Unit enemyUnit)) 
-                { 
-                    enemyUnit.unitDetectTarget.RemoveTarget(unit);
-                }
-            }
+            allayList.Remove(allay);
+
         }
     }
     #endregion
 
     #region 利焙 包府
-    internal void AddEnemyList(GameObject unit)
+    public void AddEnemyList(GameObject enemy)
     {
-        if (!enemyList.Contains(unit))
+        if(!enemyList.Contains(enemy))
         {
-            enemyList.Add(unit);
-            foreach(GameObject allay in allayList)
-            {
-                if (allay.TryGetComponent<Unit>(out Unit allayUnit))
-                {
-                    allayUnit.unitDetectTarget.AddTarget(unit);
-                }
-            }
+            enemyList.Add(enemy);
         }
     }
 
-    internal void RemoveEnemyList(GameObject unit)
+    public void RemoveEnemyList(GameObject enemy)
     {
-        if (enemyList.Contains(unit))
+        if(enemyList.Contains(enemy))
         {
-            enemyList.Remove(unit);
-            foreach(GameObject allay in allayList)
+            foreach (GameObject unit in allayList)
             {
-                if (allay.TryGetComponent<Unit>(out Unit allayUnit))
-                {
-                    allayUnit.unitDetectTarget.RemoveTarget(unit);
-                }
+
             }
+            enemyList.Remove(enemy);
         }
     }
     #endregion

@@ -120,11 +120,11 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
                 IglooSpawnGenerator.igloos.Remove(this.gameObject);
             }
             isDestroyed = true;
-            StartCoroutine(DestoryIgloo(destroyTime));
+            StartCoroutine(DestroyIgloo(destroyTime));
         }
     }
 
-    private IEnumerator DestoryIgloo(float time)
+    private IEnumerator DestroyIgloo(float time)
     {
         spriteRenderer.enabled = false;
         yield return new WaitForSeconds(time);

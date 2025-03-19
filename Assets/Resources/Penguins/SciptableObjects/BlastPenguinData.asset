@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uD3ED\uD0C4\uAD11"
   unitDescription: 
+  unitPower: 0
+  unitFaction: 1
   unitType: 0
+  unitSynergyType: 0
   unitHP: 170
   unitMP: 80
   unitSpeed: 3

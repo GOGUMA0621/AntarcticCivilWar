@@ -49,8 +49,8 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     [HideInInspector] public float unitSpeed;
     [HideInInspector] public float unitAttackDistance;
 
-    private float _unitAttackSpeed = 1.0f;
-    private float _unitSenseDistance = 1.0f;
+    private float unitAttackSpeed = 1.0f;
+    private float unitSenseDistance = 1.0f;
 
     #region ÀÌº¥Æ® °ü¸®
     private void OnEnable()
@@ -110,8 +110,8 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
             unitDamage = data.UnitDamage;
             unitSpeed = data.UnitSpeed;
             unitAttackDistance = data.UnitAttackDistance;
-            _unitAttackSpeed = data.UnitAttackSpeed;
-            _unitSenseDistance = data.UnitSenseRadius;
+            unitAttackSpeed = data.UnitAttackSpeed;
+            unitSenseDistance = data.UnitSenseRadius;
             agent.speed = data.UnitSpeed;
 
             if (playerUnitManager != null && tag == "Unit")
@@ -282,6 +282,21 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         }
     }
 
+    public void ResetUnit()
+    {
+        if (data != null)
+        {
+            maxHP = data.UnitHP;
+            maxMP = data.UnitMP;
+            unitDamage = data.UnitDamage;
+            unitSpeed = data.UnitSpeed;
+            unitAttackDistance = data.UnitAttackDistance;
+            unitAttackSpeed = data.UnitAttackSpeed;
+            unitSenseDistance = data.UnitSenseRadius;
+            agent.speed = data.UnitSpeed;
+        }
+    }
+
     IEnumerator KnockBack(float amount)
     {
         if (!data.UnitUnstoppable)
@@ -304,7 +319,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         if (GetUnit() != null)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(this.transform.position, _unitSenseDistance);
+            Gizmos.DrawWireSphere(this.transform.position, unitSenseDistance);
 
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
