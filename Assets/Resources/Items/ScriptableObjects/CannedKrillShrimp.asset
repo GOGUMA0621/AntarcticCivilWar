@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 583fef7f41f85664dacdae417c83ff68, type: 3}
-  m_Name: BardShiftor
+  m_Name: CannedKrillShrimp
   m_EditorClassIdentifier: 
-  Type: 0
-  <Name>k__BackingField: "\uC74C\uC720\uC2DC\uC778\uC758 \uC6B0\uCFE0\uB810\uB808"
-  <Description>k__BackingField: "\uC77C\uBC18 \uD3AD\uADC4\uC744 \uC74C\uC720\uC2DC\uC778
-    \uD3AD\uADC4\uC73C\uB85C\n\uBC14\uAFBC\uB2E4."
+  <Rarity>k__BackingField: 0
+  <Id>k__BackingField: 
+  <Name>k__BackingField: "\uD06C\uB9B4 \uC0C8\uC6B0 \uD1B5\uC870\uB9BC"
+  <Description>k__BackingField: 
+  <AbilityDescription>k__BackingField: 
+  <ItemCooldown>k__BackingField: 0
+  <ItemPrice>k__BackingField: 15
   <Icon>k__BackingField: {fileID: 0}
-  <UnitData>k__BackingField: {fileID: 11400000, guid: 11785d6af0ff4ac41a5e1fdcc25750dc, type: 2}

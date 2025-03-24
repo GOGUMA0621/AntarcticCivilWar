@@ -2,9 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
+
 
 [Serializable]
 public class DamageData
@@ -24,14 +23,19 @@ public class DamageData
 public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ®·Ñ
 {
     public event Action<GameObject> OnDestroyed;
-    
+
+    private Dictionary<StatType, float> baseStats = new();
+    private List<StatModifier> statModifierList = new();
+    private Dictionary<StatType, float> finalStats = new();
+
     public delegate void UnitAttackCountEvent();
 
     public static event UnitAttackCountEvent OnUnitAttackCount;
 
     private StatusEffectManager statusEffectManager;
+
     private Unit _unit;
-    private Vector2 _lastPosition; //¾Ö´Ï¸ÞÀÌ¼Ç ÁÂ¿ì ¹øÀüÀ» À§ÇÑ º¯¼ö
+    private Vector2 _lastPosition; //¾Ö´Ï¸ÞÀÌ¼Ç ÁÂ¿ì ¹ÝÀüÀ» À§ÇÑ º¯¼ö
     private bool _isFacingRight = true; 
     private SciptableObjects.UnitData _currentData; //À¯´ÖÀÇ µ¥ÀÌÅÍ º¯È­ °¨Áö¸¦ À§ÇÑ º¯¼ö
     private bool isUnitDie;
@@ -103,20 +107,27 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     {
         if (data != null)
         {
-            maxHP = data.UnitHP;
-            maxMP = data.UnitMP;
+
+            baseStats.Add(StatType.MaxHealth, data.UnitHP);
+            baseStats.Add(StatType.HealthRegen, 0);
+            baseStats.Add(StatType.MaxMana, data.UnitMP);
+            baseStats.Add(StatType.ManaRegen, 5);
+            baseStats.Add(StatType.AttackDamage, data.UnitDamage);
+            baseStats.Add(StatType.AttackSpeed, data.UnitSpeed);
+            baseStats.Add(StatType.AttackRange, data.UnitAttackDistance);
+            baseStats.Add(StatType.MoveSpeed, data.UnitSpeed);
+            baseStats.Add(StatType.CritChance, 0);
+
+            RecalculateStats();
+
             currentHP = maxHP;
             currentMP = 0;
-            unitDamage = data.UnitDamage;
-            unitSpeed = data.UnitSpeed;
-            unitAttackDistance = data.UnitAttackDistance;
-            unitAttackSpeed = data.UnitAttackSpeed;
             unitSenseDistance = data.UnitSenseRadius;
-            agent.speed = data.UnitSpeed;
+            
 
             if (playerUnitManager != null && tag == "Unit")
             {
-                playerUnitManager.AddAllayList(GetUnit().gameObject);
+                playerUnitManager.AddAllayList(this.gameObject);
             }
 
             if (rb != null)
@@ -268,7 +279,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     {
         if (canMana)
         {
-            currentMP += 5;
+            currentMP += finalStats[StatType.ManaRegen];
         }
     }
 
@@ -314,6 +325,49 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     }
     #endregion
 
+    #region ½ºÅÈ
+    public void AddModifierStat(StatModifier mod)
+    {
+        statModifierList.RemoveAll(m => m.sourceId == mod.sourceId && m.statType == mod.statType);
+        statModifierList.Add(mod);
+        RecalculateStats();
+    }
+
+    public void RecalculateModifier(string sourceId)
+    {
+        statModifierList.RemoveAll(m => m.sourceId == sourceId);
+        RecalculateStats();
+    }
+
+    private void RecalculateStats()
+    {
+        finalStats.Clear();
+
+        foreach (var stat in baseStats)
+        {
+            float add = 0f;
+            float multiple = 1f;
+
+            foreach(var mod in statModifierList.Where(m => m.statType == stat.Key))
+            {
+                if (mod.modifierMethod == ModifierMethod.Additive) 
+                    add += mod.value;
+                else if(mod.modifierMethod == ModifierMethod.Multiplicative)
+                    multiple *= mod.value;
+            }
+            finalStats[stat.Key] = (stat.Value + add) * multiple;
+        }
+
+        maxHP = finalStats[StatType.MaxHealth];
+        maxMP = finalStats[StatType.MaxMana];
+        unitDamage = finalStats[StatType.AttackDamage];
+        unitAttackDistance = finalStats[StatType.AttackRange];
+        unitAttackSpeed = finalStats[StatType.AttackSpeed];
+        agent.speed = finalStats[StatType.MoveSpeed];
+    }
+
+    #endregion
+
     private void OnDrawGizmos() //µð¹ö±×¿ë ±âÁî¸ð
     {
         if (GetUnit() != null)
@@ -324,6 +378,11 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
         }
+    }
+
+    public bool GetIsStunned()
+    {
+        return isStunned;
     }
 
     public bool IsDestroyed()

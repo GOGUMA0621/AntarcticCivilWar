@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerUnitManager : MonoBehaviour
+public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
 {
     public List<GameObject> allayList = new List<GameObject>();
     public List<GameObject> enemyList = new List<GameObject>();
@@ -18,7 +18,7 @@ public class PlayerUnitManager : MonoBehaviour
         if (!allayList.Contains(allay))
         {
             allayList.Add(allay);
-            
+            ApplyItemToUnit(allay.GetComponent<UnitController>());
         }
     }
     public void RemoveAllayList(GameObject allay)
@@ -49,6 +49,32 @@ public class PlayerUnitManager : MonoBehaviour
 
             }
             enemyList.Remove(enemy);
+        }
+    }
+    #endregion
+
+    #region 아이템 효과
+    public void ApplyItemToAllUnit()
+    {
+        foreach (var item in InventoryManager.Instance.inventoryItems)
+        {
+            PassiveItem passiveItem = item.Key.GetComponent<PassiveItem>();
+            foreach (GameObject allay in allayList)
+            {
+                if (TryGetComponent<UnitController>(out UnitController allayController))
+                {
+                    passiveItem.ApplyEffect(allayController);
+                }
+            }
+        }
+    }
+
+    public void ApplyItemToUnit(UnitController unit)
+    {
+        foreach (var item in InventoryManager.Instance.inventoryItems)
+        {
+            PassiveItem passiveItem = item.Key.GetComponent<PassiveItem>();
+            passiveItem.ApplyEffect(unit);
         }
     }
     #endregion

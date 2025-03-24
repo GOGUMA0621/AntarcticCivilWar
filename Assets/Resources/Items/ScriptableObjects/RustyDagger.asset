@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 583fef7f41f85664dacdae417c83ff68, type: 3}
   m_Name: RustyDagger
   m_EditorClassIdentifier: 
-  <Type>k__BackingField: 1
   <Rarity>k__BackingField: 0
-  <Name>k__BackingField: "\uB179\uC2A8 \uB2E8\uAC80"
+  <Id>k__BackingField: 1001
+  <Name>k__BackingField: "\uB0A1\uC740 \uB2E8\uAC80"
   <Description>k__BackingField: 
-  <ItemPrice>k__BackingField: 200
+  <AbilityDescription>k__BackingField: 
+  <ItemCooldown>k__BackingField: 0
+  <ItemPrice>k__BackingField: 8
   <Icon>k__BackingField: {fileID: 21300000, guid: 08d5ec2d201ece949a5e428ba3ea0e63, type: 3}
-  <UnitData>k__BackingField: {fileID: 0}

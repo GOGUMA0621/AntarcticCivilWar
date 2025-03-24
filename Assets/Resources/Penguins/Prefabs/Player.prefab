@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6056289055271762876}
   - component: {fileID: 7423719447488966264}
   - component: {fileID: 6056289055271762877}
-  - component: {fileID: -1108135494495710689}
   - component: {fileID: 6056289055271762878}
   - component: {fileID: 6056289055271762879}
   - component: {fileID: 451828478381709389}
@@ -118,20 +117,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSpeed: 5
   playerPos: {x: 0, y: 0}
---- !u!114 &-1108135494495710689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6056289055271762872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 902e351408443674b912e649c8543ff1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allayList: []
-  enemyList: []
 --- !u!50 &6056289055271762878
 Rigidbody2D:
   serializedVersion: 4
