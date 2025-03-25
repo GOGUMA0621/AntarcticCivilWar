@@ -54,7 +54,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     #endregion
 
     #region 아이템 효과
-    public void ApplyItemToAllUnit()
+    public void ApplyItemsToAllUnit()
     {
         foreach (var item in InventoryManager.Instance.inventoryItems)
         {
@@ -75,6 +75,14 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         {
             PassiveItem passiveItem = item.Key.GetComponent<PassiveItem>();
             passiveItem.ApplyEffect(unit);
+        }
+    }
+
+    public void ApplyItemToUnits(PassiveItem item)
+    {
+        foreach(GameObject allay in allayList)
+        {
+            item.ApplyEffect(allay.GetComponent<UnitController>());
         }
     }
     #endregion

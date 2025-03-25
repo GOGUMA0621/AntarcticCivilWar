@@ -14,15 +14,18 @@ public class InventoryManager : SingleTonBehaviour<InventoryManager>
             inventoryItems[item]++;
             PassiveItem PassiveItem = item.GetComponent<PassiveItem>();
             PassiveItem.IncreaseStack();
+            PlayerUnitManager.Instance.ApplyItemToUnits(PassiveItem);
         }
         else
         {
             GameObject newItemPrefab = Instantiate(item, content);
             PassiveItem newItem = newItemPrefab.GetComponent<PassiveItem>();
+            PlayerUnitManager.Instance.ApplyItemToUnits(newItem);
             inventoryItems.Add(item, 1);
         }
     }
 }
+
 
 [Serializable]
 public class InventoryItem

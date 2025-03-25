@@ -45,12 +45,12 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     public bool canMana = true;
 
     [HideInInspector] public bool isStunned = false;
-    [HideInInspector] public float maxHP;
+     public float maxHP;
     [HideInInspector] public float currentHP { get; private set; }
-    [HideInInspector] public float maxMP;
+     public float maxMP;
     [HideInInspector] public float currentMP { get; private set; }
-    [HideInInspector] public float unitDamage;
-    [HideInInspector] public float unitSpeed;
+     public float unitDamage;
+     public float unitSpeed;
     [HideInInspector] public float unitAttackDistance;
 
     private float unitAttackSpeed = 1.0f;
@@ -125,9 +125,9 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
             unitSenseDistance = data.UnitSenseRadius;
             
 
-            if (playerUnitManager != null && tag == "Unit")
+            if (PlayerUnitManager.Instance.allayList != null && tag == "Unit")
             {
-                playerUnitManager.AddAllayList(this.gameObject);
+                PlayerUnitManager.Instance.AddAllayList(this.gameObject);
             }
 
             if (rb != null)
@@ -260,7 +260,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         isUnitDie = false;
         currentHP = maxHP;
         animator.Play("IdleState");
-        playerUnitManager.AddAllayList(GetUnit().gameObject);
+        PlayerUnitManager.Instance.AddAllayList(GetUnit().gameObject);
     }
 
     public void ApplyEffect(DamageData damage)
