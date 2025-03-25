@@ -5,7 +5,7 @@ using UnityEngine;
 public class InventoryManager : SingleTonBehaviour<InventoryManager>
 {
     public Dictionary<GameObject, int> inventoryItems = new Dictionary<GameObject, int>();
-
+    public RectTransform content;
 
     public void AddItem(GameObject item)
     {
@@ -17,7 +17,7 @@ public class InventoryManager : SingleTonBehaviour<InventoryManager>
         }
         else
         {
-            GameObject newItemPrefab = Instantiate(item, transform);
+            GameObject newItemPrefab = Instantiate(item, content);
             PassiveItem newItem = newItemPrefab.GetComponent<PassiveItem>();
             inventoryItems.Add(item, 1);
         }

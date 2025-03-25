@@ -18,7 +18,7 @@ public class UnitDetectTarget : Unit //À¯´Ö Àû Å½Áö
         unit = transform.parent.GetComponent<Unit>();
         detectCollider = GetComponent<CircleCollider2D>();
 
-        detectCollider.radius = data.UnitSenseRadius;
+        detectCollider.radius = unit.data.UnitSenseRadius;
     }
 
     private void Update()

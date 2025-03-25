@@ -246,7 +246,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //유닛의 전반적인 컨�
 
         if (this.transform.tag == "Unit")
         {
-            playerUnitManager.RemoveAllayList(base.GetUnit().gameObject);
+            PlayerUnitManager.Instance.RemoveAllayList(this.gameObject);
         }
     }
 

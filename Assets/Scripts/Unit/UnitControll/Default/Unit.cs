@@ -38,7 +38,6 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
         distinction = GetComponentInChildren<UnitDistinction>();
         detectTarget = GetComponentInChildren<UnitDetectTarget>();
         attackController = GetComponent<UnitAttackController>();
-        playerUnitManager = playerController.GetComponent<PlayerUnitManager>();
     }
     public Unit GetUnit() { return this; }
     public SciptableObjects.UnitData GetData() { return data; }

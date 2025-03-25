@@ -24,7 +24,7 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
             Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.unitDetectTarget.targetToAttack.position, skillRadius);
             foreach (Collider2D collider in colliders)
             {
-                if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag))
+                if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag) && i is MonoBehaviour unit)
                 {
                     GameObject effect = Instantiate(cutMarkPrefab, unit.transform.position, Quaternion.identity,unit.transform);
                 }
@@ -38,7 +38,7 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
         Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.unitDetectTarget.targetToAttack.position,skillRadius);
         foreach (Collider2D collider in colliders)
         {
-            if (collider.TryGetComponent<Unit>(out Unit unit))
+            if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag) && i is Unit unit)
             {
                 unit.unitController.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None, 0));
             }

@@ -47,7 +47,7 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
             }
         }
     }
-
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Handles.color = Color.green;
@@ -55,4 +55,5 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
         Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, angleRange / 2, radius);
         Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, -angleRange / 2, radius);
     }
+#endif
 }
