@@ -126,15 +126,20 @@ MonoBehaviour:
   baseRadius: 3
   radiusIncrement: 0.5
   collisionCheckRadius: 0.5
-  level01:
-  - {fileID: 11400000, guid: ea3108b7fc0ddd74fa6e371769001982, type: 2}
-  - {fileID: 11400000, guid: 31ffe83036b35444095456912c3f393d, type: 2}
-  - {fileID: 11400000, guid: 9ec8a787535d5da408bf322c9c943042, type: 2}
-  level02:
-  - {fileID: 11400000, guid: bc570d16da29f7b4aa2f15fbb6ab79bd, type: 2}
-  level03: []
-  level04: []
-  level05: []
+  levels:
+  - groupName: level01
+    units:
+    - {fileID: 11400000, guid: ea3108b7fc0ddd74fa6e371769001982, type: 2}
+    - {fileID: 11400000, guid: 31ffe83036b35444095456912c3f393d, type: 2}
+  - groupName: level02
+    units:
+    - {fileID: 11400000, guid: bc570d16da29f7b4aa2f15fbb6ab79bd, type: 2}
+  - groupName: level03
+    units: []
+  - groupName: level04
+    units: []
+  - groupName: level05
+    units: []
 --- !u!61 &11654372319556723
 BoxCollider2D:
   m_ObjectHideFlags: 0

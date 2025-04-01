@@ -96,10 +96,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
 
     private void FixedUpdate()
     {
-        if (_currentData != data)
-        {
-            SetUnit();
-        }
+
         FlipAnimation();
     }
     #region ±âº»¼Â¾÷
@@ -107,7 +104,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     {
         if (data != null)
         {
-
+            baseStats.Clear();
             baseStats.Add(StatType.MaxHealth, data.UnitHP);
             baseStats.Add(StatType.HealthRegen, 0);
             baseStats.Add(StatType.MaxMana, data.UnitMP);
@@ -125,9 +122,9 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
             unitSenseDistance = data.UnitSenseRadius;
             
 
-            if (PlayerUnitManager.Instance.allayList != null && tag == "Unit")
+            if (PlayerUnitManager.instance.allayPrefabList != null && tag == "Unit")
             {
-                PlayerUnitManager.Instance.AddAllayList(this.gameObject);
+                PlayerUnitManager.instance.AddAllayList(this.gameObject);
             }
 
             if (rb != null)
@@ -246,11 +243,11 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
 
         if (this.transform.tag == "Unit")
         {
-            PlayerUnitManager.Instance.RemoveAllayList(this.gameObject);
+            PlayerUnitManager.instance.RemoveAllayList(this.gameObject);
         }
     }
 
-    internal void Revive()
+    internal void Revive() //ÀÏ¾î³ª¶ó
     {
         this.tag = "Unit";
         rb.velocity = Vector2.zero;
@@ -260,7 +257,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         isUnitDie = false;
         currentHP = maxHP;
         animator.Play("IdleState");
-        PlayerUnitManager.Instance.AddAllayList(GetUnit().gameObject);
+        PlayerUnitManager.instance.AddAllayList(this.gameObject);
     }
 
     public void ApplyEffect(DamageData damage)

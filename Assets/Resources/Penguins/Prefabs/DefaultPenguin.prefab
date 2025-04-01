@@ -418,6 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f8c4ad6a20c1744eaed9d826c5a7bf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originPrefab: {fileID: 0}
   data: {fileID: 11400000, guid: 9ad8c6f1c80917e48becd074b3aa898e, type: 2}
   playerController: {fileID: 0}
 --- !u!114 &5257417320873170678
@@ -432,6 +433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c09320f2287412d4c9e9fbd981abcf11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originPrefab: {fileID: 0}
   data: {fileID: 0}
   playerController: {fileID: 0}
   canMana: 1
@@ -453,6 +455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8db8c84b0468ad0428e991d1bb2853bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originPrefab: {fileID: 0}
   data: {fileID: 0}
   playerController: {fileID: 0}
   pfProjectile: {fileID: 0}
@@ -617,6 +620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4626543531fd3db4a83b9422475d889a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originPrefab: {fileID: 0}
   data: {fileID: 0}
   playerController: {fileID: 0}
   targetToAttack: {fileID: 0}

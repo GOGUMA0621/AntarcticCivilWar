@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 583fef7f41f85664dacdae417c83ff68, type: 3}
-  m_Name: Sunlalsses
+  m_Name: Sunlglasses
   m_EditorClassIdentifier: 
   <Rarity>k__BackingField: 0
   <Id>k__BackingField: 
@@ -19,4 +19,4 @@ MonoBehaviour:
   <AbilityDescription>k__BackingField: 
   <ItemCooldown>k__BackingField: 0
   <ItemPrice>k__BackingField: 15
-  <Icon>k__BackingField: {fileID: 0}
+  <Icon>k__BackingField: {fileID: 21300000, guid: b77381ca7a1ceb44eafe3a48bcebd56d, type: 3}

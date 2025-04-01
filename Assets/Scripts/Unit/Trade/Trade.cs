@@ -20,7 +20,7 @@ public class Trade : MonoBehaviour
         if (distanceToPlayer <= 5)
         {
             ClosePlayer();
-            if (InputManager.Instance.GetInterActionPressed())
+            if (InputManager.instance.GetInterActionPressed())
             {
                 if (!isTrade)
                 {

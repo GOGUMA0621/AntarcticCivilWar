@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uD3AD\uADC4"
   unitDescription: 
+  unitPower: 1
+  unitIcon: {fileID: 964315111, guid: 9f30ce13694848342932631afda01349, type: 3}
+  unitFaction: 0
   unitType: 0
+  unitSynergyType: 0
   unitHP: 200
   unitMP: 0
   unitSpeed: 4
@@ -26,14 +30,21 @@ MonoBehaviour:
   unitAttackDistance: 1
   unitSenseRadius: 10
   unitProjectile: {fileID: 0}
-  unitProjectileSpeed: 0
-  unitTrajectoryAnimationCurve:
+  unitProjectileMaxSpeed: 0
+  unitProjectileMaxHeight: 0
+  projectileTrajectoryAnimationCurve:
     serializedVersion: 2
     m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  unitCorrectionAnimationCurve:
+  projectileCorrectionAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileSpeedAnimationCurve:
     serializedVersion: 2
     m_Curve: []
     m_PreInfinity: 2

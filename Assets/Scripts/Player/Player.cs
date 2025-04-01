@@ -5,12 +5,11 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public int coinAmount;
-    public List<SciptableObjects.ItemData> itemList;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        PlayerUnitManager.instance.SpawnPlayerUnits(this.transform.position);
     }
 
     // Update is called once per frame

@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 
 public enum UnitTierType
@@ -46,6 +42,7 @@ namespace SciptableObjects
         public string UnitDescription { get { return unitDescription; } }
         [SerializeField] private int unitPower;
         public int UnitPower { get { return unitPower; } }
+        public Sprite unitIcon;
         public UnitFaction unitFaction;
         public UnitTierType unitType;
         public UnitSynergyType unitSynergyType;

@@ -5,19 +5,12 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-public enum WaveDifficulty
-{
-    easy,
-    normal,
-    hard
-}
 [CreateAssetMenu( fileName = "SpawnUnitsSO", menuName = "Scriptable Object/SpawnUnits")]
 public class SpawnUnitsSO : ScriptableObject
 {
-    public WaveDifficulty waveDifficulty;
     public int index;
 
-    public List<WaveUnits> waveUnits = new List<WaveUnits>();
+    public List<UnitGroup> groupUnits = new List<UnitGroup>();
 
     private int previousIndex; // 이전 인덱스 값 저장
     private double lastEditTime; // 마지막 편집 시간 저장
@@ -72,7 +65,7 @@ public class SpawnUnitsSO : ScriptableObject
 }
 
 [System.Serializable]
-public struct WaveUnits
+public struct UnitGroup
 {
     public GameObject pfUnit;
     public int count;

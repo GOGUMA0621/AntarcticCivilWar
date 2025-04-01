@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +14,19 @@ public class InputManager : SingleTonBehaviour<InputManager>
     {
         base.Awake();
     }
+
+    public void OnClick(InputAction.CallbackContext context)
+    {
+        if (context.started) return;
+
+        if (Camera.main == null || Mouse.current == null) return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        var hit = Physics2D.GetRayIntersection(ray);
+        if (!hit.collider) return;
+
+    }
+
 
     public void MovePressed(InputAction.CallbackContext context)
     {

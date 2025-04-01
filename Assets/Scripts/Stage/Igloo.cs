@@ -49,23 +49,23 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
         switch (level)
         {
             case 1:
-                spawnUnit.SpawnUnits(spawnUnit.level01[Random.Range(0, spawnUnit.level01.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.levels[0].units[Random.Range(0, spawnUnit.levels[0].units.Count)], this.transform.position, "Mercenary");
                 break;
 
             case 2:
-                spawnUnit.SpawnUnits(spawnUnit.level02[Random.Range(0, spawnUnit.level02.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.levels[1].units[Random.Range(0, spawnUnit.levels[1].units.Count)], this.transform.position, "Mercenary");
                 break;
 
             case 3:
-                spawnUnit.SpawnUnits(spawnUnit.level03[Random.Range(0, spawnUnit.level03.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.levels[2].units[Random.Range(0, spawnUnit.levels[2].units.Count)], this.transform.position, "Mercenary");
                 break;
 
             case 4:
-                spawnUnit.SpawnUnits(spawnUnit.level04[Random.Range(0, spawnUnit.level04.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.levels[3].units[Random.Range(0, spawnUnit.levels[3].units.Count)], this.transform.position, "Mercenary");
                 break;
 
             case 5:
-                spawnUnit.SpawnUnits(spawnUnit.level05[Random.Range(0, spawnUnit.level05.Count)], this.transform.position, "Mercenary");
+                spawnUnit.SpawnUnits(spawnUnit.levels[4].units[Random.Range(0, spawnUnit.levels[4].units.Count)], this.transform.position, "Mercenary");
                 break;
 
             default:

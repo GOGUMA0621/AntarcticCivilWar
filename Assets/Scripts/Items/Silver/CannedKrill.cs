@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannedKrillShirimp : StatItem, IPassiveItem
+public class CannedKrill : StatItem, IPassiveItem
 {
     public override string itemId => "CannedKrillShrimp";
 
