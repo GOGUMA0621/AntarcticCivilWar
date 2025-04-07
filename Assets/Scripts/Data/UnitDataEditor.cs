@@ -13,6 +13,7 @@ public class UnitDataEditor : Editor
     private UnitData unitData;
 
     private SerializedProperty unitType;
+    private SerializedProperty unitIcon;
     private SerializedProperty unitFaction;
     private SerializedProperty attackType;
     private SerializedProperty unitSynergyType;
@@ -39,7 +40,7 @@ public class UnitDataEditor : Editor
     {
         unitData = (target as UnitData);
 
-        
+        unitIcon = serializedObject.FindProperty("unitIcon");
         unitType = serializedObject.FindProperty("unitType");
         unitFaction = serializedObject.FindProperty("unitFaction");
         attackType = serializedObject.FindProperty("unitAttackType");
@@ -68,6 +69,7 @@ public class UnitDataEditor : Editor
     {
         serializedObject.Update();
         GUIStyle style = EditorStyles.helpBox;
+        EditorGUILayout.PropertyField(unitIcon);
         EditorGUILayout.LabelField("¿œπ›",EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(unitFaction);
         EditorGUILayout.PropertyField(unitType);

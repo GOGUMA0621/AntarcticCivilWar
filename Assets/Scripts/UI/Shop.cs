@@ -36,22 +36,22 @@ public class Shop : MonoBehaviour
         Debug.Log(button);
     }
 
-    public void BuyItem()
-    {
-        if (_selectedButton != null)
-        {
-            Debug.Log("선택");
-            if (_selectedButton.gameObject.TryGetComponent<ShopItem>(out ShopItem item))
-            {
-                Debug.Log("버튼");
-                if(item.itemData.ItemPrice <= player.coinAmount)
-                {
-                    Debug.Log("돈");
-                    _selectedButton.interactable = false;
-                    _selectedButton = null;
-                    player.itemList.Add(item.itemData);
-                }
-            }
-        }
-    }
+    //public void BuyItem()
+    //{
+    //    if (_selectedButton != null)
+    //    {
+    //        Debug.Log("선택");
+    //        if (_selectedButton.gameObject.TryGetComponent<ShopItem>(out ShopItem item))
+    //        {
+    //            Debug.Log("버튼");
+    //            if(item.itemData.ItemPrice <= player.coinAmount)
+    //            {
+    //                Debug.Log("돈");
+    //                _selectedButton.interactable = false;
+    //                _selectedButton = null;
+    //                InventoryManager.instance.AddItem(item.itemData);
+    //            }
+    //        }
+    //    }
+    //}
 }

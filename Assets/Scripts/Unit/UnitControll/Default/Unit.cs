@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Unit : MonoBehaviour //유닛에 대한 부모 파일
 {
+
+    public GameObject originPrefab;
     protected UnitController controller;
     public UnitController unitController { get { return controller; } }
     protected UnitDistinction distinction;
@@ -41,4 +43,19 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
     }
     public Unit GetUnit() { return this; }
     public SciptableObjects.UnitData GetData() { return data; }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if(originPrefab == null)
+        {
+            var prefab = PrefabUtility.GetCorrespondingObjectFromSource(gameObject);
+            if (prefab != null)
+            {
+                originPrefab = prefab;
+                EditorUtility.SetDirty(this); // 변경사항 저장
+            }
+        }
+    }
+#endif
 }

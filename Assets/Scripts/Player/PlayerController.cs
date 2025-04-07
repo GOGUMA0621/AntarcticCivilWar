@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
-        moveInput = InputManager.Instance.GetMoveDirection() * playerSpeed;
+        moveInput = InputManager.instance.GetMoveDirection() * playerSpeed;
         rb.velocity = new Vector2 (moveInput.x, moveInput.y);
 
         playerPos = rb.position;

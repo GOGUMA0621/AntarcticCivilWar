@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 284167bc32eba104991d7bb9e5f9055f, type: 3}
   m_Name: 2005
   m_EditorClassIdentifier: 
-  waveDifficulty: 0
   index: 2005
-  waveUnits:
+  groupUnits:
   - pfUnit: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
     count: 4
   - pfUnit: {fileID: 2296282596114283240, guid: cc91d15ca82442546b75923665343ba0, type: 3}

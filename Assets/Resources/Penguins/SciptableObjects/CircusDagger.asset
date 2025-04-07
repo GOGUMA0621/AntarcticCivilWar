@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uC11C\uCEE4\uC2A4 \uB2E8\uAC80 \uACE1\uC608 \uD3AD\uADC4"
   unitDescription: 
-  unitPower: 0
+  unitPower: 2
+  unitIcon: {fileID: -1290254670, guid: 3d576a1e9707ec245a493b9f00782323, type: 3}
   unitFaction: 1
   unitType: 0
   unitSynergyType: 1

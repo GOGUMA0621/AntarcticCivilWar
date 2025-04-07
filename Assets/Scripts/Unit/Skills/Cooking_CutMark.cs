@@ -26,7 +26,7 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
             {
                 if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag) && i is MonoBehaviour unit)
                 {
-                    GameObject effect = Instantiate(cutMarkPrefab, unit.transform.position, Quaternion.identity,unit.transform);
+                    Instantiate(cutMarkPrefab, unit.transform.position, Quaternion.identity,unit.transform);
                 }
             }
         }

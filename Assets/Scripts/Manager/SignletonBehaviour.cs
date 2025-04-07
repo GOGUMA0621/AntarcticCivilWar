@@ -5,13 +5,19 @@ using UnityEngine;
 public class SingleTonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
-    public static T Instance
+    public static T instance
     {
         get
         {
             if (_instance == null)
             {
                 _instance = FindAnyObjectByType<T>();
+                if (_instance == null)
+                {
+                    GameObject obj = new GameObject(typeof(T).Name);
+                    _instance = obj.AddComponent<T>();
+                    DontDestroyOnLoad(obj);
+                }
             }
             return _instance;
         }
@@ -19,18 +25,17 @@ public class SingleTonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 
     protected virtual void Awake()
     {
-        if (_instance != null)
+        if (_instance == null)
         {
-            if (_instance != this)
+            _instance = this as T;
+            if (IsRoot(_instance.gameObject))
             {
-                Destroy(gameObject);
+                DontDestroyOnLoad(_instance.gameObject);
             }
-            return;
         }
-        _instance = GetComponent<T>();
-        if (IsRoot(_instance.gameObject))
+        else if(_instance != this)
         {
-            DontDestroyOnLoad(_instance.gameObject);
+            Destroy(gameObject);
         }
     }
 

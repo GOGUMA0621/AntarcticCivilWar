@@ -35,10 +35,17 @@ public abstract class StatItem : PassiveItem, IPassiveItem
     public abstract string itemId { get; }
 }
 
-public abstract class AbilityItem : PassiveItem, IPassiveItem
+public abstract class AttackedItem : PassiveItem, IPassiveItem
 {
 
 }
+
+public abstract class OnHitItem : PassiveItem, IPassiveItem
+{
+
+}
+
+
 
 public interface IPassiveItem
 {
