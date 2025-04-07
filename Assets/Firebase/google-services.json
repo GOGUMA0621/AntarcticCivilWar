@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "727317263659",
+    "project_id": "antarcticcivilwar",
+    "storage_bucket": "antarcticcivilwar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727317263659:android:a2172d85429644766d816e",
+        "android_client_info": {
+          "package_name": "com.GraduationOrDie.AntarticCivilWar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg8lE0Esvck53zvWvRtcD-ac8AIyfwrJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
