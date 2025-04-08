@@ -65,7 +65,7 @@ public class InventoryManager : SingleTonBehaviour<InventoryManager>
     private GameObject InstantiateItem(GameObject item)
     {
         GameObject newItemPrefab = Instantiate(item, content);
-        newItemPrefab.GetComponent<Image>().sprite = item.GetComponent<PassiveItem>().itemData.Icon;
+        newItemPrefab.GetComponent<Image>().sprite = item.GetComponent<Item>().icon;
         return newItemPrefab;
     }
 

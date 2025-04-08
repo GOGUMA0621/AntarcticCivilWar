@@ -64,6 +64,28 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     }
     #endregion
 
+    #region 利焙 包府
+    public void AddEnemyList(GameObject enemy)
+    {
+        if (!enemyList.Contains(enemy))
+        {
+            enemyList.Add(enemy);
+        }
+    }
+
+    public void RemoveEnemyList(GameObject enemy)
+    {
+        if (enemyList.Contains(enemy))
+        {
+            foreach (GameObject unit in allayList)
+            {
+
+            }
+            enemyList.Remove(enemy);
+        }
+    }
+    #endregion
+
     #region 橇府普 包府
     public void SpawnPlayerUnits(Vector3 spawnPos)
     {
@@ -108,28 +130,38 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
             }
         }
     }
-    #endregion
-
-    #region 利焙 包府
-    public void AddEnemyList(GameObject enemy)
+    
+    public void AddUnitSOPrefabList(UnitGroupSO unitGroupSO)
     {
-        if (!enemyList.Contains(enemy))
+        foreach(var unit in unitGroupSO.groupUnits)
         {
-            enemyList.Add(enemy);
-        }
-    }
+            UnitPrefabEntry entry = allayPrefabList.Find(x => x.prefab == unit.pfUnit);
 
-    public void RemoveEnemyList(GameObject enemy)
-    {
-        if (enemyList.Contains(enemy))
-        {
-            foreach (GameObject unit in allayList)
+            if (entry != null)
             {
-
+                entry.count += unit.count;
             }
-            enemyList.Remove(enemy);
+            else
+            {
+                allayPrefabList.Add(new UnitPrefabEntry { prefab = unit.pfUnit, count = unit.count });
+            }
         }
     }
+
+    public void AddUnitSOAllayList(UnitGroupSO unitGroupSO, Vector3 position)
+    {
+        foreach (var unit in unitGroupSO.groupUnits)
+        {
+            for (int i = 0; i < unit.count; i++)
+            {
+                GameObject allay = Instantiate(unit.pfUnit, position, Quaternion.identity);
+                allay.GetComponent<Unit>().originPrefab = unit.pfUnit;
+                allay.tag = "Unit";
+                allayList.Add(allay);
+            }
+        }
+    }
+
     #endregion
 
     #region 酒捞袍 瓤苞

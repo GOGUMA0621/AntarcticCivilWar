@@ -47,8 +47,9 @@ public class GroupSelectionUI : MonoBehaviour
         foreach (var unit in unitGroups[index].units.groupUnits)
         {
             GameObject unitGroup = Instantiate(unitGroupPrefab, groupViewport);
-            unitGroup.GetComponent<Image>().sprite = unit.pfUnit.GetComponent<Unit>().data.unitIcon;
+            unitGroup.GetComponent<SpriteRenderer>().sprite = unit.pfUnit.GetComponent<Unit>().data.unitIcon;
             unitGroup.GetComponentInChildren<TextMeshProUGUI>().text = unit.count.ToString();
+            AnimationChangee(unitGroup.GetComponent<Animator>(), unit.pfUnit.GetComponent<Unit>().data.unitAnimations);
         }
     }
 
@@ -71,11 +72,20 @@ public class GroupSelectionUI : MonoBehaviour
         }
         SceneManager.LoadScene("MainScene");
     }
+
+    private void AnimationChangee(Animator animator, AnimationClip[] clip)
+    {
+        AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController();
+        animatorOverrideController.runtimeAnimatorController = animator.runtimeAnimatorController;
+        animatorOverrideController["Normal"] = clip[0];
+        animatorOverrideController["Selected"] = clip[2];
+        animator.runtimeAnimatorController = animatorOverrideController;
+    }
 }
 [System.Serializable]
 class GroupUnitUI
 {
     public string groupName;
     public string description;
-    public SpawnUnitsSO units;
+    public UnitGroupSO units;
 }

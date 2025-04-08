@@ -9,6 +9,7 @@ TagManager:
   - Royal
   - Ground
   - Mercenary
+  - Interactable
   layers:
   - Default
   - TransparentFX

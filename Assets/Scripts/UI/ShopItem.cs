@@ -10,15 +10,15 @@ public class ShopItem : MonoBehaviour
     public TextMeshProUGUI itemName;
     public TextMeshProUGUI itemPrice;
 
-    public SciptableObjects.ItemData itemData;
+    //public SciptableObjects.ItemData itemData;
 
-    
-    // Start is called before the first frame update
-    void Awake()
-    {
-        shopItemButton = GetComponent<Button>();
-        itemName.text = itemData.Name;
-        itemImage.sprite = itemData.Icon;
-        itemPrice.text = itemData.ItemPrice.ToString();
-    }
+
+    //// Start is called before the first frame update
+    //void Awake()
+    //{
+    //    shopItemButton = GetComponent<Button>();
+    //    itemName.text = itemData.Name;
+    //    itemImage.sprite = itemData.Icon;
+    //    itemPrice.text = itemData.ItemPrice.ToString();
+    //}
 }

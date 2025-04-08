@@ -1,10 +1,14 @@
+using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows.Speech;
 
 public class Igloo : MonoBehaviour, IDamageAble, IStructure
 {
     public event System.Action<GameObject> OnDestroyed;
+
+    [SerializeField] private GameObject pfReward;
 
     private bool isDestroyed = false;
     public float health;
@@ -13,6 +17,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
     
 
     [SerializeField] Sprite[] brokenIgloos = new Sprite[5];
+    private UnitGroupSO selectedGroup;
     private SpriteRenderer spriteRenderer;
     private int stateInfo = 0;
     private SpawnUnit spawnUnit;
@@ -27,6 +32,17 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
         { 100, new List<(int, float)> { (5, 100f) } }
     };
 
+    
+    [SerializeField,SerializedDictionary("Level", "Reward")] 
+    private SerializedDictionary<int, List<UnitGroupSO>> rewardTable = new SerializedDictionary<int, List<UnitGroupSO>>()
+    {
+        { 1, new List<UnitGroupSO>() },
+        { 2, new List<UnitGroupSO>() },
+        { 3, new List<UnitGroupSO>() },
+        { 4, new List<UnitGroupSO>() },
+        { 5, new List<UnitGroupSO>() }
+    };
+
 
     private void Start()
     {
@@ -39,37 +55,16 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
 
     private void Awake()
     {
-        spawnLevel = RandomLevelNum(1);
+        spawnLevel = RandomLevelNum(PlayerUnitManager.instance.playerGroupPower);
         Debug.Log(spawnLevel);
     }
 
     private void RandomNumUnitList(int level)
     {
-
-        switch (level)
+        if (level > 0 || level < 5)
         {
-            case 1:
-                spawnUnit.SpawnUnits(spawnUnit.levels[0].units[Random.Range(0, spawnUnit.levels[0].units.Count)], this.transform.position, "Mercenary");
-                break;
-
-            case 2:
-                spawnUnit.SpawnUnits(spawnUnit.levels[1].units[Random.Range(0, spawnUnit.levels[1].units.Count)], this.transform.position, "Mercenary");
-                break;
-
-            case 3:
-                spawnUnit.SpawnUnits(spawnUnit.levels[2].units[Random.Range(0, spawnUnit.levels[2].units.Count)], this.transform.position, "Mercenary");
-                break;
-
-            case 4:
-                spawnUnit.SpawnUnits(spawnUnit.levels[3].units[Random.Range(0, spawnUnit.levels[3].units.Count)], this.transform.position, "Mercenary");
-                break;
-
-            case 5:
-                spawnUnit.SpawnUnits(spawnUnit.levels[4].units[Random.Range(0, spawnUnit.levels[4].units.Count)], this.transform.position, "Mercenary");
-                break;
-
-            default:
-                break;
+            selectedGroup = spawnUnit.levels[level].units[Random.Range(0, spawnUnit.levels[level].units.Count)];
+            spawnUnit.SpawnUnits(selectedGroup, this.transform.position, "Mercenary");
         }
     }
 
@@ -127,6 +122,8 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
     private IEnumerator DestroyIgloo(float time)
     {
         spriteRenderer.enabled = false;
+        GameObject reward = Instantiate(pfReward, this.transform.position, Quaternion.identity);
+        reward.GetComponent<RewardChest>().OpenChest();
         yield return new WaitForSeconds(time);
         Destroy(gameObject);
     }

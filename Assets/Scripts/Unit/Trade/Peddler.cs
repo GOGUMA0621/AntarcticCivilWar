@@ -13,7 +13,7 @@ public class Peddler : MonoBehaviour, IStatusAble, INeutrality
     [SerializeField] private float speed;
 
     [SerializeField, Range(0f, 1f)] private float[] stateThreshold = new float[1];
-    [SerializeField] List<SpawnUnitsSO> waveUnits;
+    [SerializeField] List<UnitGroupSO> waveUnits;
     private SpawnUnit spawnUnit;
 
     private int currentState = 0;

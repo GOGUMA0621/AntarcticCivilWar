@@ -12,6 +12,7 @@ public class UnitDataEditor : Editor
 {
     private UnitData unitData;
 
+    private SerializedProperty unitAnimations;
     private SerializedProperty unitType;
     private SerializedProperty unitIcon;
     private SerializedProperty unitFaction;
@@ -40,6 +41,7 @@ public class UnitDataEditor : Editor
     {
         unitData = (target as UnitData);
 
+        unitAnimations = serializedObject.FindProperty("unitAnimations");
         unitIcon = serializedObject.FindProperty("unitIcon");
         unitType = serializedObject.FindProperty("unitType");
         unitFaction = serializedObject.FindProperty("unitFaction");
@@ -77,6 +79,9 @@ public class UnitDataEditor : Editor
         EditorGUILayout.PropertyField(unitName);
         EditorGUILayout.PropertyField(unitDescription);
         EditorGUILayout.PropertyField(unitPower);
+
+        EditorGUILayout.LabelField("애니메이션", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(unitAnimations, true);
 
         EditorGUILayout.LabelField("전투", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();

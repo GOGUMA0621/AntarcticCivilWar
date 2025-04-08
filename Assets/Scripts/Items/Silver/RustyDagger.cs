@@ -1,7 +1,6 @@
 
 public class RustyDagger : StatItem
 {
-    public override string itemId => "RustyDagger";
     
     public float damageIncrease = 5f;
     public float stackDamageAmount = 5f;

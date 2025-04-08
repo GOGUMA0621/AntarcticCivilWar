@@ -10,7 +10,7 @@ public class SpawnUnit : MonoBehaviour
 
     public List<UnitGroupRef> levels = new List<UnitGroupRef>();
 
-    public void SpawnUnits(SpawnUnitsSO unitToSpawn, Vector3 positionToSpawn, string tag)
+    public void SpawnUnits(UnitGroupSO unitToSpawn, Vector3 positionToSpawn, string tag)
     {
         List<(GameObject pfUnit, int count)> unitsToSpawn = new List<(GameObject, int)>();
 
@@ -69,5 +69,5 @@ public class SpawnUnit : MonoBehaviour
 public class UnitGroupRef
 {
     public string groupName;
-    public List<SpawnUnitsSO> units = new List<SpawnUnitsSO>();
+    public List<UnitGroupSO> units = new List<UnitGroupSO>();
 }

@@ -7,6 +7,6 @@ public class TitleUI : MonoBehaviour
 {
     public void OnStartButton()
     {
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("LobbyScene");
     }
 }

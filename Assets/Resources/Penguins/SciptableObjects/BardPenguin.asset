@@ -19,6 +19,11 @@ MonoBehaviour:
   unitFaction: 2
   unitType: 0
   unitSynergyType: 0
+  unitAnimations:
+  - {fileID: 7400000, guid: 5abe73adbf9cf1a42b89d9d2a5c4e93b, type: 2}
+  - {fileID: 7400000, guid: b021d8fbdb2244148aed815a772adc95, type: 2}
+  - {fileID: 7400000, guid: dfccdeb7f317f054a8686b295f337650, type: 2}
+  - {fileID: 7400000, guid: ea20b1a2485d3e242a6381b671b51045, type: 2}
   unitHP: 180
   unitMP: 0
   unitSpeed: 3.5

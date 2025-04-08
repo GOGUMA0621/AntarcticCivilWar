@@ -4,13 +4,9 @@ using UnityEngine;
 
 public class CannedKrill : StatItem, IPassiveItem
 {
-    public override string itemId => "CannedKrillShrimp";
-
-    public float healthIncrease = 15f;
-
     public override void ApplyEffect(UnitController unit)
     {
-        float totlaIncrease = healthIncrease * currentStack;
+        float totlaIncrease = effectBaseValue * currentStack;
         unit.AddModifierStat(new StatModifier(itemId, StatType.MaxHealth, totlaIncrease, ModifierMethod.Additive));
     }
 

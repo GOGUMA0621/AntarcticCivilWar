@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class RedMushroom : StatItem
 {
-    public override string itemId =>"RedMushroom";
 
     public float attackRangeIncrease = .5f;
     public float healthIncrease = 10f;

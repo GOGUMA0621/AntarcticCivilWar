@@ -60,7 +60,7 @@ public class StartItemUI : MonoBehaviour
         foreach (var itemSet in itemList[index].itemList)
         {
             GameObject previewItem = Instantiate(objectPrefab, content);
-            previewItem.GetComponent<Image>().sprite = itemSet.item.GetComponent<PassiveItem>().itemData.Icon;
+            previewItem.GetComponent<Image>().sprite = itemSet.item.GetComponent<Item>().icon;
             previewItem.GetComponentInChildren<TextMeshProUGUI>().text = itemSet.stack.ToString();
         }
     }

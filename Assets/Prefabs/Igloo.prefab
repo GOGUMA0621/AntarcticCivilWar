@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a890845357c65c54e82ac4d6d1729120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pfReward: {fileID: 7480554175263575927, guid: 997cdb0377070ba46b9de65bdb966e13, type: 3}
   health: 450
   destroyTime: 10
   brokenIgloos:
@@ -108,6 +109,20 @@ MonoBehaviour:
   - {fileID: -1235120020, guid: 3eb5c2d7b67932d47a543adeee22fca9, type: 3}
   - {fileID: 461618389, guid: 3eb5c2d7b67932d47a543adeee22fca9, type: 3}
   - {fileID: -239925113, guid: 3eb5c2d7b67932d47a543adeee22fca9, type: 3}
+  rewardTable:
+    _serializedList:
+    - Key: 1
+      Value:
+      - {fileID: 11400000, guid: b2f5f29cfb68a7a4b8b5f74c52100bf8, type: 2}
+    - Key: 2
+      Value:
+      - {fileID: 11400000, guid: a5ae61047a705d44b981fc0876354676, type: 2}
+    - Key: 3
+      Value: []
+    - Key: 4
+      Value: []
+    - Key: 5
+      Value: []
 --- !u!114 &3498967493084370786
 MonoBehaviour:
   m_ObjectHideFlags: 0

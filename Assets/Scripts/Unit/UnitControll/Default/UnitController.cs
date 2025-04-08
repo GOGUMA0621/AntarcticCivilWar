@@ -365,6 +365,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //유닛의 전반적인 컨�
 
     #endregion
 
+#if UNITY_EDITOR
     private void OnDrawGizmos() //디버그용 기즈모
     {
         if (GetUnit() != null)
@@ -376,6 +377,7 @@ public class UnitController : Unit,IStatusAble,IDamageAble //유닛의 전반적인 컨�
             Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
         }
     }
+#endif
 
     public bool GetIsStunned()
     {
