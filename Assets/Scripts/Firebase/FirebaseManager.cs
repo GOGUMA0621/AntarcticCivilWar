@@ -51,6 +51,8 @@ public static class FirebaseManager
     public static Dictionary<int, ItemDB> items = new Dictionary<int, ItemDB>();
     public static Dictionary<int, UnitDB> units = new Dictionary<int, UnitDB>();
 
+    public static bool isLoaded => items != null && units != null;
+
     // 파이어베이스 db에 저장되어있는 정보들을 불러오는 과정임. 사용방식은 items[문서ID(아이템 No.)].value;
     public static async Task ItemLoadData()
     {
