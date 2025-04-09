@@ -66,26 +66,73 @@ public static class FirebaseManager
 
             ItemDB item = new ItemDB
             {
-                // Int.Parse()를 사용할 수 도있지만 파베에서 가져온 데이터는 object형식이라네요
-                price = Convert.ToInt32(data["price"]),
+                // Int.Parse()를 사용할 수 도있지만 파베에서 가져온 데이터는 object형식이라네요             
                 name_kr = data["name_kr"].ToString(),
                 name = data["name"].ToString(),
                 type = data["type"].ToString(),
                 ability_type = data["ability_type"].ToString(),
                 rarity = data["rarity"].ToString(),
                 effect = data["effect"].ToString(),
-                des = data["des"].ToString(),
+
+                des = data.ContainsKey("des") ? data["des"].ToString() : "",
 
                 // 존재 여부에 따라 처리함
+                price = data.ContainsKey("price") ? Convert.ToInt32(data["price"]) : 0,
                 cooltime = data.ContainsKey("cooltime") ? Convert.ToInt32(data["cooltime"]) : 0,
-                applied_debuff = data.ContainsKey("applied_debuff") 
-                ? ((List<object>)data["applied_debuff"]).ConvertAll(obj => obj.ToString()) : new List<string>(),
-                
-                base_effect = data.ContainsKey("base_effect") 
-                ? ((List<object>)data["base_effect"]).ConvertAll(obj => Convert.ToSingle(obj)) : new List<float>(),
-                
-                stack_effect = data.ContainsKey("stack_effect")
-                ? ((List<object>)data["stack_effect"]).ConvertAll(obj => Convert.ToSingle(obj)) : new List<float>(),
+                applied_debuff = data.ContainsKey("applied_debuff") switch
+                {
+                    true when data["applied_debuff"] is List<object> list =>
+                        list.ConvertAll(obj => obj.ToString()),
+
+                    true when data["applied_debuff"] is string str =>
+                        new List<string> { str },
+
+                    _ => new List<string>()
+                },
+
+                base_effect = data.ContainsKey("base_effect") switch
+                {
+                    true when data["base_effect"] is List<object> list =>
+                        list.ConvertAll(obj =>
+                        {
+                            try { return Convert.ToSingle(obj); }
+                            catch
+                            {
+                                Debug.LogWarning($"base_effect 리스트 내부 변환 실패: {obj} ({obj?.GetType()})");
+                                return 0f;
+                            }
+                        }),
+
+                    true when data["base_effect"] is float f =>
+                        new List<float> { f },
+
+                    true when data["base_effect"] is int i =>
+                        new List<float> { Convert.ToSingle(i) },
+
+                    _ => new List<float>()
+                },
+
+                stack_effect = data.ContainsKey("stack_effect") switch
+                {
+                    true when data["stack_effect"] is List<object> list =>
+                        list.ConvertAll(obj =>
+                        {
+                            try { return Convert.ToSingle(obj); }
+                            catch
+                            {
+                                Debug.LogWarning($"stack_effect 리스트 내부 변환 실패: {obj} ({obj?.GetType()})");
+                                return 0f;
+                            }
+                        }),
+
+                    true when data["stack_effect"] is float f =>
+                        new List<float> { f },
+
+                    true when data["stack_effect"] is int i =>
+                        new List<float> { Convert.ToSingle(i) },
+
+                    _ => new List<float>()
+                }
             };
 
             items[itemId] = item;
