@@ -10,16 +10,16 @@ public class ItemDB
 {
     public int price;
     public int cooltime;
-    public float base_effect;
-    public float stack_effect;
     public string name_kr;
     public string name;
     public string type;
     public string ability_type;
-    public string applied_debuff;
     public string rarity;
     public string effect;
     public string des;
+    public List<float> base_effect = new();
+    public List<float> stack_effect = new();
+    public List<string> applied_debuff = new();
 }
 
 // 유닛 정보를 가진 클래스임
@@ -76,9 +76,14 @@ public static class FirebaseManager
 
                 // 존재 여부에 따라 처리함
                 cooltime = data.ContainsKey("cooltime") ? Convert.ToInt32(data["cooltime"]) : 0,
-                applied_debuff = data.ContainsKey("applied_debuff") ? data["applied_debuff"].ToString() : "",
-                base_effect = data.ContainsKey("base_effect") ? Convert.ToSingle(data["base_effect"]) : 0,
-                stack_effect = data.ContainsKey("stack_effect") ? Convert.ToSingle(data["stack_effect"]) : 0
+                applied_debuff = data.ContainsKey("applied_debuff") 
+                ? ((List<object>)data["applied_debuff"]).ConvertAll(obj => obj.ToString()) : new List<string>(),
+                
+                base_effect = data.ContainsKey("base_effect") 
+                ? ((List<object>)data["base_effect"]).ConvertAll(obj => Convert.ToSingle(obj)) : new List<float>(),
+                
+                stack_effect = data.ContainsKey("stack_effect")
+                ? ((List<object>)data["stack_effect"]).ConvertAll(obj => Convert.ToSingle(obj)) : new List<float>(),
             };
 
             items[itemId] = item;
