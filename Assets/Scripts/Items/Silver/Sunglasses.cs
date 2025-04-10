@@ -5,11 +5,11 @@ using UnityEngine;
 public class Sunglasses : StatItem
 {
 
-    public float attackSpeedIncrease =15f;
-
     public override void ApplyEffect(UnitController unit)
     {
-        float sumIncrease = attackSpeedIncrease * currentStack;
+        var item = FirebaseManager.items[int.Parse(itemId)];
+
+        float sumIncrease = item.base_effect[0] * currentStack;
         float totalIncrease = 1 + (sumIncrease / 100);
         unit.AddModifierStat(new StatModifier(itemId, StatType.AttackSpeed, totalIncrease, ModifierMethod.Multiplicative));
     }

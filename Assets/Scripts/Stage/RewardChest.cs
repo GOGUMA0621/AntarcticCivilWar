@@ -18,12 +18,29 @@ public class RewardChest : MonoBehaviour
         this.rewardChestViewport = rewardChestViewport;
     }
 
+    public void ConnectReward(UnitGroupSO[] spawnUnitsSO, Item[] item, RectTransform rewardChestViewport)
+    {
+        this.spawnUnitsSO = spawnUnitsSO;
+        this.item = item;
+        this.rewardChestViewport = rewardChestViewport;
+    }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player") && InputManager.instance.GetInterActionPressed())
+        {
+            Debug.Log("º¸»ó ¿ÀÇÂ");
+            OpenChest();
+            Destroy(gameObject);
+        }
+    }
 
     public void OpenChest()
     {
         Time.timeScale = 0;
-        for(int i = 0; i < spawnUnitsSO.Length; i++)
+        RewardUI rewardUIP = FindAnyObjectByType<RewardUI>();
+        rewardUIP.OpenViewport();
+        for (int i = 0; i < spawnUnitsSO.Length; i++)
         {
             GameObject rewardUI = Instantiate(rewardUIPrefab, rewardChestViewport);
             if(spawnUnitsSO.Any())

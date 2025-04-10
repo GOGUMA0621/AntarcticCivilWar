@@ -146,6 +146,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
                 allayPrefabList.Add(new UnitPrefabEntry { prefab = unit.pfUnit, count = unit.count });
             }
         }
+        CalculatePlayerGroupPower();
     }
 
     public void AddUnitSOAllayList(UnitGroupSO unitGroupSO, Vector3 position)
@@ -160,6 +161,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
                 allayList.Add(allay);
             }
         }
+        CalculatePlayerGroupPower();
     }
 
     #endregion

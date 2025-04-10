@@ -2,47 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemManager : SingleTonBehaviour<ItemManager>
+public class PassiveItemManager
 {
-    [SerializeField] private PassiveItem[] silverItems;
-    private PassiveItem[] goldItems;
-    private PassiveItem[] platinumItems;
-    private PassiveItem[] diamondItems;
-    private PassiveItem[] specialItems;
-
-    protected override void Awake()
-    {
-        base.Awake();
-        LoadPassiveItems();
-    }
-
-    private void LoadPassiveItems()
-    {
-        silverItems = Resources.LoadAll<PassiveItem>("Items/Silver");
-        goldItems = Resources.LoadAll<PassiveItem>("Items/Gold");
-        platinumItems = Resources.LoadAll<PassiveItem>("Items/Platinum");
-        diamondItems = Resources.LoadAll<PassiveItem>("Items/Diamond");
-        specialItems = Resources.LoadAll<PassiveItem>("Items/Special");
-    }
+    private PassiveItem[] silverItems = Resources.LoadAll<PassiveItem>("Items/Silver");
+    private PassiveItem[] goldItems = Resources.LoadAll<PassiveItem>("Items/Gold");
+    private PassiveItem[] platinumItems = Resources.LoadAll<PassiveItem>("Items/Platinum");
+    private PassiveItem[] diamondItems = Resources.LoadAll<PassiveItem>("Items/Diamond");
+    private PassiveItem[] specialItems = Resources.LoadAll<PassiveItem>("Items/Special");
 
     public PassiveItem[] GetRewardPassiveItems(int count, ItemRarity rarity)
     {
         PassiveItem[] items = null;
         switch (rarity)
         {
-            case ItemRarity.Silver:
+            case ItemRarity.silver:
                 items = silverItems;
                 break;
-            case ItemRarity.Gold:
+            case ItemRarity.gold:
                 items = goldItems;
                 break;
-            case ItemRarity.Platinum:
+            case ItemRarity.platinum:
                 items = platinumItems;
                 break;
-            case ItemRarity.Diamond:
+            case ItemRarity.diamond:
                 items = diamondItems;
                 break;
-            case ItemRarity.Special:
+            case ItemRarity.special:
                 items = specialItems;
                 break;
         }

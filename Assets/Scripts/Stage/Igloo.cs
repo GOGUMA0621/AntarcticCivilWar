@@ -1,6 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 
@@ -22,6 +23,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
     private int stateInfo = 0;
     private SpawnUnit spawnUnit;
     private int spawnLevel = 0;
+    private RectTransform rewardChestViewport;
 
     private Dictionary<int, List<(int level, float probability)>> probabilityTable = new Dictionary<int, List<(int level, float probability)>>()
     {
@@ -55,7 +57,10 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
 
     private void Awake()
     {
-        spawnLevel = RandomLevelNum(PlayerUnitManager.instance.playerGroupPower);
+        spawnLevel = 1;
+
+        RewardUI rewardUi = FindAnyObjectByType<RewardUI>();
+        rewardChestViewport = rewardUi.rewardChestViewport;
         Debug.Log(spawnLevel);
     }
 
@@ -122,8 +127,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
     private IEnumerator DestroyIgloo(float time)
     {
         spriteRenderer.enabled = false;
-        GameObject reward = Instantiate(pfReward, this.transform.position, Quaternion.identity);
-        reward.GetComponent<RewardChest>().OpenChest();
+        SpawnReward();
         yield return new WaitForSeconds(time);
         Destroy(gameObject);
     }
@@ -136,10 +140,26 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
         if (newState != stateInfo && newState >= 0 && newState < maxState)
         {
             spriteRenderer.sprite = brokenIgloos[newState];
-            RandomNumUnitList(spawnLevel);
+            //RandomNumUnitList(spawnLevel);
             stateInfo = newState;
         }
 
+    }
+
+    private void SpawnReward()
+    {
+        RewardChest rewardChest = Instantiate(pfReward, this.transform.position, Quaternion.identity).GetComponent<RewardChest>();
+        rewardChest.ConnectReward(GetUnitReward(spawnLevel), null, rewardChestViewport);
+    }
+
+    private UnitGroupSO[] GetUnitReward(int level)
+    {
+        UnitGroupSO[] unitGroups = new UnitGroupSO[rewardTable[level].Count];
+        for (int i = 0; i < unitGroups.Length; i++)
+        {
+            unitGroups[i] = rewardTable[level][i];
+        }
+        return unitGroups;
     }
 
     private float GetNormalizedHealth()

@@ -36,11 +36,6 @@ public class UnitFollowState : StateMachineBehaviour
             {
                 animator.SetTrigger("attack");
             }
-
-            if (distanceFromTarget <= controller.unitAttackDistance)
-            {
-                animator.SetTrigger("attack");
-            }
         }
         else
         {
@@ -56,7 +51,7 @@ public class UnitFollowState : StateMachineBehaviour
         Collider2D[] targetObjects = Physics2D.OverlapCircleAll(animator.transform.position, controller.unitAttackDistance - 0.5f);
         foreach (Collider2D targetObject in targetObjects)
         {
-            if (targetObject.gameObject == detect.targetToAttack.gameObject && targetObject is IDamageAble i && !i.IsDestroyed())
+            if (targetObject.gameObject == detect.targetToAttack.gameObject)
             {
                 return true;
             }

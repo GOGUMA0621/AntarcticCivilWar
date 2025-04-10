@@ -6,7 +6,7 @@ public class CannedKrill : StatItem, IPassiveItem
 {
     public override void ApplyEffect(UnitController unit)
     {
-        float totlaIncrease = effectBaseValue * currentStack;
+        float totlaIncrease = effectBaseValue[0] * currentStack;
         unit.AddModifierStat(new StatModifier(itemId, StatType.MaxHealth, totlaIncrease, ModifierMethod.Additive));
     }
 
