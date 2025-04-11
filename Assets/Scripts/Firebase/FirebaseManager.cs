@@ -79,6 +79,7 @@ public static class FirebaseManager
                 // 존재 여부에 따라 처리함
                 price = data.ContainsKey("price") ? Convert.ToInt32(data["price"]) : 0,
                 cooltime = data.ContainsKey("cooltime") ? Convert.ToInt32(data["cooltime"]) : 0,
+                
                 applied_debuff = data.ContainsKey("applied_debuff") switch
                 {
                     true when data["applied_debuff"] is List<object> list =>
