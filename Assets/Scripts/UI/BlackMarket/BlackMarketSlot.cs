@@ -4,27 +4,23 @@ using TMPro;
 
 public class BlackMarketSlot : MonoBehaviour
 {
-    [SerializeField] private Image iconImage;
-    [SerializeField] private Button iconButton;
+    [SerializeField] private Image itemImage;
+    [SerializeField] private Button buyButton;
 
     private ItemDB currentItem;
 
     public void SetItem(ItemDB item)
     {
         currentItem = item;
-        iconImage.sprite = Resources.Load<Sprite>($"Icons/{item.name}");
-        iconButton.onClick.AddListener(OnClickIcon);
-    }
-
-    private void OnClickIcon()
-    {
-        ItemInfoUI.Instance.Open(currentItem);
+        itemImage.sprite = Resources.Load<Sprite>($"Icons/{item.name}");
+        buyButton.onClick.RemoveAllListeners();
+        buyButton.onClick.AddListener(() => ItemBuyUI.Instance.Open(currentItem));
     }
 
     public void ClearSlot()
     {
+        itemImage.sprite = null;
         currentItem = null;
-        iconImage.sprite = null;
-        iconButton.onClick.RemoveAllListeners();
+        buyButton.onClick.RemoveAllListeners();
     }
 }

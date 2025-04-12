@@ -6,59 +6,81 @@ using System.Linq;
 
 public class BlackMarketManager : MonoBehaviour
 {
-    [SerializeField] private BlackMarketSlot[] shopSlots;
-    [SerializeField] private Button refreshButton;
-    [SerializeField] private Button exitButton;
-    [SerializeField] private TextMeshProUGUI currencyText;
+    private bool isvisit = false;
 
-    private List<ItemDB> shopItems = new();
+    [SerializeField] private BlackMarketSlot[] shopSlots;
+    [SerializeField] private Button rerollButton;
+    [SerializeField] private Button closeButton;
+    //[SerializeField] private TextMeshProUGUI currencyText;
+
+    private List<ItemDB> allItems = new();
+    private List<ItemDB> previousItems = new();
+    private List<ItemDB> currentItems = new();
+
 
     private void Start()
     {
-        refreshButton.onClick.AddListener(RefreshShop);
-        exitButton.onClick.AddListener(CloseShop);
+        rerollButton.onClick.AddListener(RerollShop);
+        closeButton.onClick.AddListener(CloseShop);
+        allItems = FirebaseManager.items.Values.ToList();
     }
 
     public void OpenShop()
     {
-        GenerateRandomItems();
+        if (!isvisit)
+        {
+            GenerateRandomItems();
+            isvisit = true;
+        }
+
         UpdateUI();
         gameObject.SetActive(true);
     }
 
-    void GenerateRandomItems()
-    {
-        shopItems.Clear();
-        var allItems = FirebaseManager.items.Values.ToList();
-        shopItems = allItems.OrderBy(x => Random.value).Take(6).ToList();
-    }
-
-    void UpdateUI()
-    {
-        for (int i = 0; i < shopSlots.Length; i++)
-        {
-            if (i < shopItems.Count)
-                shopSlots[i].SetItem(shopItems[i]);
-            else
-                shopSlots[i].ClearSlot();
-        }
-
-        UpdateCurrencyUI();
-    }
-
-    void RefreshShop()
+    private void RerollShop()
     {
         GenerateRandomItems();
         UpdateUI();
     }
 
-    void CloseShop()
+    private void GenerateRandomItems()
     {
-        gameObject.SetActive(false);
+        currentItems.Clear();
+
+        // 이전에 나온 아이템은 이번에는 제외
+        var candidates = allItems.Except(previousItems).OrderBy(x => Random.value).Take(3).ToList();
+
+        // 앞에 나온 아이템 중복 확인하고 돌림
+        if (candidates.Count < 3)
+        {
+            var fallback = allItems.OrderBy(x => Random.value).Take(3 - candidates.Count);
+            candidates.AddRange(fallback);
+        }
+
+        currentItems = candidates;
+        previousItems = new List<ItemDB>(currentItems);
     }
 
-    void UpdateCurrencyUI()
+    private void UpdateUI()
     {
-        currencyText.text = PlayerStats.Currency.ToString();
+        for (int i = 0; i < shopSlots.Length; i++)
+        {
+            if (i < currentItems.Count)
+                shopSlots[i].SetItem(currentItems[i]);
+            else
+                shopSlots[i].ClearSlot();
+        }
+
+        //UpdateCurrencyUI();
+    }
+
+    //private void UpdateCurrencyUI()
+    //{
+    //    currencyText.text = PlayerStats.Currency.ToString();
+    //}
+
+    private void CloseShop()
+    {
+        gameObject.SetActive(false);
     }
 }
