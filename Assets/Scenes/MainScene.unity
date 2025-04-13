@@ -2682,6 +2682,11 @@ MonoBehaviour:
   allayList: []
   allayPrefabList: []
   enemyList: []
+  allaySquadId: 10015
+  allaySquad:
+    id: 0
+    units: []
+    currentTarget: {x: 0, y: 0, z: 0}
   playerGroupPower: 0
 --- !u!1 &669811388
 GameObject:
@@ -5715,51 +5720,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1377033163}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1314970282
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1314970284}
-  - component: {fileID: 1314970283}
-  m_Layer: 0
-  m_Name: ItemManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1314970283
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314970282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86372450939d4994e885a757c43347d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  silverItems: []
---- !u!4 &1314970284
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314970282}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1347973947
@@ -32915,7 +32875,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8.4375
+  orthographic size: 9.515625
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -34556,7 +34516,6 @@ SceneRoots:
   - {fileID: 668798847}
   - {fileID: 136953269}
   - {fileID: 947418873}
-  - {fileID: 1314970284}
   - {fileID: 520734822}
   - {fileID: 1681037858}
   - {fileID: 455544759}

@@ -18,8 +18,6 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
     public UnitAttackController unitAttackController { get { return attackController; } }
     public SciptableObjects.UnitData data;
 
-    protected NavMeshAgent agent;
-    public NavMeshAgent unitAgent {  get { return agent; } }
     protected Rigidbody2D rb;
     protected CircleCollider2D circleCollider;
     protected SpriteRenderer spriteRenderer;
@@ -30,13 +28,12 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
 
     protected virtual void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
         controller = GetComponent<UnitController>();
         rb = GetComponent<Rigidbody2D>();
         circleCollider = GetComponent<CircleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        playerController = GameObject.FindAnyObjectByType<PlayerController>();
         distinction = GetComponentInChildren<UnitDistinction>();
         detectTarget = GetComponentInChildren<UnitDetectTarget>();
         attackController = GetComponent<UnitAttackController>();

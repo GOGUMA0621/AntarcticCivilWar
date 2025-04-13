@@ -4,10 +4,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 
-public class TilemapManager : MonoBehaviour
+public class TilemapManager : SingleTonBehaviour<TilemapManager>
 {
-    public static TilemapManager instance;
-
     private Vector3Int minBounds;
     private Vector3Int maxBounds;
     
@@ -19,9 +17,9 @@ public class TilemapManager : MonoBehaviour
     private HashSet<TileBase> restrictedTileSet;
 
 
-    private void Awake()
+    protected override void Awake()
     {
-        instance = this;
+        base.Awake();
     }
 
     private void Start()
@@ -40,7 +38,6 @@ public class TilemapManager : MonoBehaviour
         if (tileAtSpawn != null && !restrictedTileSet.Contains(tileAtSpawn))
         {
             isValid = true;
-            Vector3 validPoint = tilemap.CellToWorld(spawnTile);
             return isValid;
         }
         else

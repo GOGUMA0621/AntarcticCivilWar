@@ -9,6 +9,7 @@ public class InputManager : SingleTonBehaviour<InputManager>
     private bool movePressed;
     private bool interActionPressed;
     private bool callPressed;
+    private bool revivePressed;
 
     protected override void Awake()
     {
@@ -66,6 +67,18 @@ public class InputManager : SingleTonBehaviour<InputManager>
         }
     }
 
+    public void RevivePressed(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            revivePressed = true;
+        }
+        else if (context.canceled)
+        {
+            revivePressed = false;
+        }
+    }
+
     public Vector2 GetMoveDirection()
     {
         return moveDirection;
@@ -100,8 +113,21 @@ public class InputManager : SingleTonBehaviour<InputManager>
         return result;
     }
 
+    public bool GetRevivePressed()
+    {
+        bool result = revivePressed;
+        revivePressed = false;
+
+        return result;
+    }
+
     public void TriggerCall()
     {
         callPressed = true;
+    }
+
+    public void TtriggerRevive()
+    {
+        revivePressed = true;
     }
 }

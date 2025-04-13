@@ -12,7 +12,9 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private Vector2 lastPosition;
     private SpriteRenderer spriteRenderer;
-    
+
+    private Vector2Int lastGridPosition = Vector2Int.zero;
+
 
     void Start()
     {
@@ -50,5 +52,15 @@ public class PlayerController : MonoBehaviour
         }
 
         lastPosition = currentPosition;
+    }
+
+    private bool HasChangedGridPosition(Vector2Int newGridPosition)
+    {
+        if (newGridPosition != lastGridPosition)
+        {
+            lastGridPosition = newGridPosition;
+            return true;
+        }
+        return false;
     }
 }

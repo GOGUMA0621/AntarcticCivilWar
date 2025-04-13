@@ -34,8 +34,17 @@
                 },
                 {
                     "name": "Click",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "bc4c3446-8246-4e97-960c-95dcd9bc6924",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Revive",
+                    "type": "Button",
+                    "id": "00aff8f8-c078-43fc-ba2e-5e31796767d9",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -240,6 +249,17 @@
                     "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5721b5f3-eb25-4690-b2cd-317340413f08",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Revive",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -258,7 +278,7 @@
                 },
                 {
                     "name": "Point",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "eb97e169-2be5-4aad-a3c3-42ea2e4e9087",
                     "expectedControlType": "Vector2",
                     "processors": "",

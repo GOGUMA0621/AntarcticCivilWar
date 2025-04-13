@@ -21,15 +21,6 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
         detectCollider.radius = unit.data.UnitSenseRadius;
     }
 
-    private void Update()
-    {
-
-        if (targetToAttack == null && targets.Any())
-        {
-            AttackClosestTarget();
-        }
-    }
-
     internal void AttackClosestTarget() //타겟 리스트를 가까운 순으로 정렬하여 공격할 상대값에 값 부여
     {                                   //특정 인터페이스를 후순위로 정렬
         targets = targets

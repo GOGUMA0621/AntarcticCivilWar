@@ -8,7 +8,7 @@ public class RewardUI : MonoBehaviour
 
     private void Start()
     {
-        rewardChestViewport.gameObject.SetActive(false);
+        //rewardChestViewport.gameObject.SetActive(false);
     }
 
     public void OpenViewport()

@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName ="StunStatusEffectSO",menuName = "Scriptable Object/Status Effect/StunStatusEffect")]
 public class StunStatusEffectSO : StatusEffectSO
 {
+    float currentSpeed = 0f;
 
     public override void ApplyEffect(GameObject target)
     {
@@ -12,9 +13,10 @@ public class StunStatusEffectSO : StatusEffectSO
 
         if (isEffectActive)
         {
+            currentSpeed = unit.unitController.unitSpeed;
             unit.unitController.isStunned = true;
             unit.unitAnimator.ResetTrigger("attack");
-            unit.unitAgent.speed = 0;
+            unit.unitController.unitSpeed = 0f;
         }
     }
 
@@ -24,7 +26,7 @@ public class StunStatusEffectSO : StatusEffectSO
         if (unit != null)
         {
             unit.unitController.isStunned = false;
-            unit.unitAgent.speed = unit.unitController.unitSpeed;
+            unit.unitController.unitSpeed = currentSpeed;
         }
     }
 }

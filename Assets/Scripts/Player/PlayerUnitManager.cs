@@ -15,13 +15,32 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     public List<UnitPrefabEntry> allayPrefabList = new List<UnitPrefabEntry>();
     public List<GameObject> enemyList = new List<GameObject>();
 
+    public int allaySquadId = 10015;
+    public UnitSquad allaySquad;
     public int playerGroupPower = 0;
 
     // Start is called before the first frame update
     protected override void Awake()
     {
         base.Awake();
+        //CreateSquad();
     }
+
+    //private void CreateSquad()
+    //{
+    //    allaySquad = new UnitSquad();
+    //    allaySquad.id = allaySquadId;
+    //    allaySquad.units.Clear();
+    //    UnitSquadManager.instance.DeleteSquadById(allaySquad.id);
+    //    foreach (var unit in allayList)
+    //    {
+    //        if (unit.TryGetComponent<UnitController>(out UnitController unitController))
+    //        {
+    //            allaySquad.units.Add(unitController);
+    //        }
+    //    }
+    //    UnitSquadManager.instance.allSquads.Add(allaySquad);
+    //}
 
     #region ¹«¸®·Â
     private void CalculatePlayerGroupPower()
@@ -47,6 +66,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         if (!allayList.Contains(allay))
         {
             allayList.Add(allay);
+            UnitSquadManager.instance.AddUnitToSquadById(allaySquad.id, allay.GetComponent<UnitController>());
             ApplyItemToUnit(allay.GetComponent<UnitController>());
             AddUnitPrefabList(allay.GetComponent<Unit>().originPrefab);
             CalculatePlayerGroupPower();
@@ -58,6 +78,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         {
             allay.GetComponent<UnitController>().ResetUnit();
             allayList.Remove(allay);
+            UnitSquadManager.instance.RemoveUnitToSquadById(allaySquad.id, allay.GetComponent<UnitController>());
             RemoveUnitPrefabList(allay.GetComponent<Unit>().originPrefab);
             CalculatePlayerGroupPower();
         }

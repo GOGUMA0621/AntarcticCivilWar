@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
+using DG.Tweening;
+using Pathfinding;
 
 
 [Serializable]
@@ -20,13 +23,16 @@ public class DamageData
     }
 }
 
-public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ®·Ñ
+public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ®·Ñ
 {
     public event Action<GameObject> OnDestroyed;
 
     private Dictionary<StatType, float> baseStats = new();
     private List<StatModifier> statModifierList = new();
     private Dictionary<StatType, float> finalStats = new();
+
+    private Tween pathTween;
+    private DotweenMoveAvoidance moveAvoidance;
 
     public delegate void UnitAttackCountEvent();
 
@@ -35,26 +41,41 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     private StatusEffectManager statusEffectManager;
 
     private Unit _unit;
+
     private Vector2 _lastPosition; //¾Ö´Ï¸ÞÀÌ¼Ç ÁÂ¿ì ¹ÝÀüÀ» À§ÇÑ º¯¼ö
-    private bool _isFacingRight = true; 
+
+    [SerializeField] private List<Vector2> fullPath = new(); //À¯´ÖÀÇ °æ·Î¸¦ ÀúÀåÇÏ±â À§ÇÑ º¯¼ö
+
+    private bool inCombat = false; //À¯´ÖÀÌ ÀüÅõÁßÀÎÁö È®ÀÎÇÏ±â À§ÇÑ º¯¼ö
+
+    private bool _isFacingRight = true;
+
     private SciptableObjects.UnitData _currentData; //À¯´ÖÀÇ µ¥ÀÌÅÍ º¯È­ °¨Áö¸¦ À§ÇÑ º¯¼ö
     private bool isUnitDie;
+    private AIDestinationSetter _destinationSetter;
+    private AIPath _aiPath;
+
     private Transform _lastAttacker; //³Ë¹éÀ» À§ÇØ ¸¶Áö¸· °ø°ÝÀÚ¸¦ ¾Ë¾Æ³»´Â º¯¼ö
     public IActiveSkill unitSkill;
     public IPasseiveSkillAttack unitPassiveSkill;
     public bool canMana = true;
 
+    private string currentAnimationName;
+
     [HideInInspector] public bool isStunned = false;
-     public float maxHP;
+    public float maxHP;
     [HideInInspector] public float currentHP { get; private set; }
-     public float maxMP;
+    public float maxMP;
     [HideInInspector] public float currentMP { get; private set; }
-     public float unitDamage;
-     public float unitSpeed;
+    public float unitDamage;
+    public float unitSpeed;
     [HideInInspector] public float unitAttackDistance;
 
     private float unitAttackSpeed = 1.0f;
     private float unitSenseDistance = 1.0f;
+    private Vector3 currentTargetWorldPos;
+
+    private IUnitState currentState;
 
     #region ÀÌº¥Æ® °ü¸®
     private void OnEnable()
@@ -73,6 +94,12 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         _lastAttacker = tr;
     }
     #endregion
+    
+    void Awake()
+    {
+        _destinationSetter = GetComponent<AIDestinationSetter>();
+        _aiPath = GetComponent<AIPath>();
+    }
 
     protected override void Start()
     {
@@ -83,22 +110,42 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         data = _unit.data;
         statusEffectManager = GetComponent<StatusEffectManager>();
         _lastPosition = transform.position;
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
+        rb.drag = 0.5f; // ¹°¸®Àû ¸¶Âû·Â Á¶Á¤
         SetUnit();
+
+        ChangeState(new UnitIdleState());
     }
 
     void Update()
     {
-        animator.SetFloat("speed", agent.velocity.magnitude);
-        
+        animator.SetFloat("speed", _aiPath.velocity.magnitude);
+        currentState?.Update();
+        if(!IsDestroyed() && _aiPath.canMove == true && _destinationSetter.target == null)
+        {
+            _aiPath.canMove = false;
+            ChangeState(new UnitIdleState());
+            return;
+        }
+        //rb.velocity = Vector2.right * 5f;
     }
 
     private void FixedUpdate()
     {
+        //Debug.Log($"{name} - FixedUpdate velocity: {rb.velocity}");
 
         FlipAnimation();
     }
+    #region FSM
+
+    public void ChangeState(IUnitState newState)
+    {
+        currentState?.Exit();
+        currentState = newState;
+        currentState.Enter(this);
+    }
+
+    #endregion
+
     #region ±âº»¼Â¾÷
     private void SetUnit()
     {
@@ -120,31 +167,84 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
             currentHP = maxHP;
             currentMP = 0;
             unitSenseDistance = data.UnitSenseRadius;
-            
+
+            SetMoveSpeed(unitSpeed);
 
             if (PlayerUnitManager.instance.allayPrefabList != null && tag == "Unit")
             {
                 PlayerUnitManager.instance.AddAllayList(this.gameObject);
             }
-
-            if (rb != null)
-            {
-                rb.drag = 1.0f;
-            }
-
+            //Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Unit"), LayerMask.NameToLayer("Unit"), true);
             _currentData = data;
         }
     }
+
+
     #endregion
 
-    #region ÀÌµ¿°ü·Ã
-    public void MoveTo(Vector2 targetPos)
+    #region ÀÌµ¿
+
+    public void SetMoveSpeed(float speed)
     {
-        agent.SetDestination(targetPos);
+        unitSpeed = speed;
+        _aiPath.maxSpeed = unitSpeed;
+    }
+
+    public void SetMoveWork(bool canMove)
+    {
+        _aiPath.canMove = canMove;
+    }
+
+    public void SetTargetToMove(Transform target)
+    {
+        _destinationSetter.target = target;
+    }
+
+    public void MoveToTarget(Vector3 targetWorldPos)
+    {
+        if(fullPath != null && fullPath.Count > 0)
+        {
+            return;
+        }
+        List<Vector2Int> path = PathFinding.instance.FindPath(GridManager.instance.WorldToGrid(transform.position), GridManager.instance.WorldToGrid(targetWorldPos));
+        if(path != null)
+        {
+            fullPath = path.Select(v=> (Vector2)v).ToList();
+            Debug.Log($"[ÀÌµ¿ °æ·Î] {name} {fullPath.Count}");
+        }
+    }
+
+    public void MoveAlongPath()
+    {
+        if(fullPath == null || fullPath.Count == 0)
+        {
+            return;
+        }
+        var speed = unitSpeed * Time.deltaTime;
+
+        transform.position = Vector2.MoveTowards(transform.position, fullPath[0], speed);
+        transform.position = new Vector2(transform.position.x, transform.position.y);
+
+        if (Vector2.Distance(transform.position, fullPath[0]) < 0.1f)
+        {
+            fullPath.RemoveAt(0);
+            if (fullPath.Count == 0)
+            {
+                StopMovement();
+                return;
+            }
+        }
+    }
+
+    public void StopMovement()
+    {
+        //Debug.Log($"{name} ÀÌµ¿ ÁßÁö");
+        StopAllCoroutines();
+        rb.velocity = Vector2.zero;
     }
     #endregion
 
-    #region ¾Ö´Ï¸ÞÀÌ¼Ç ¹ÝÀü
+    #region ¾Ö´Ï¸ÞÀÌ¼Ç
     public void FlipAnimation()
     {
         if (!isUnitDie)
@@ -193,6 +293,17 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
 
         _isFacingRight = !_isFacingRight;
     }
+
+    public void SetAnimation(string animationName)
+    {
+        if(currentAnimationName == animationName)
+        {
+            return;
+        }
+
+        animator.Play(animationName);
+        currentAnimationName = animationName;
+    }
     #endregion
 
     #region ÀüÅõ °ü·Ã
@@ -228,17 +339,17 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         currentHP = Mathf.Max(currentHP, 0);
         DoSkill();
         UnitAttackController.OnUnitAttack -= HandleAttackEvent;
-        if (currentHP <= 0 && !isUnitDie) Death();
+        if (currentHP <= 0 && !isUnitDie) Die();
     }
 
-    internal void Death()
+    internal void Die()
     {
+        StopMovement();
         isUnitDie = true;
         OnDestroyed?.Invoke(this.gameObject);
 
-        animator.SetBool("isDie", true);
+        ChangeState(new UnitDieState());
         StartCoroutine(KnockBack(2.0f));
-        agent.enabled = false;
         detectTarget.ClearTarget();
 
         if (this.transform.tag == "Unit")
@@ -251,12 +362,10 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     {
         this.tag = "Unit";
         rb.velocity = Vector2.zero;
-        agent.enabled = true;
         detectTarget.ClearTarget();
-        animator.SetBool("isDie", false);
         isUnitDie = false;
         currentHP = maxHP;
-        animator.Play("IdleState");
+        ChangeState(new UnitIdleState());
         PlayerUnitManager.instance.AddAllayList(this.gameObject);
     }
 
@@ -301,7 +410,6 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
             unitAttackDistance = data.UnitAttackDistance;
             unitAttackSpeed = data.UnitAttackSpeed;
             unitSenseDistance = data.UnitSenseRadius;
-            agent.speed = data.UnitSpeed;
         }
     }
 
@@ -311,13 +419,11 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         {
             if (amount >= 0)
             {
-                agent.enabled = false;
                 Vector2 direction = (this.transform.position - _lastAttacker.position).normalized;
                 rb.AddForce(direction * amount, ForceMode2D.Impulse);
             }
             yield return new WaitForSeconds(0.5f);
             rb.velocity = Vector2.zero;
-            agent.enabled = true;
         }
     }
     #endregion
@@ -360,13 +466,13 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
         unitDamage = finalStats[StatType.AttackDamage];
         unitAttackDistance = finalStats[StatType.AttackRange];
         unitAttackSpeed = finalStats[StatType.AttackSpeed];
-        agent.speed = finalStats[StatType.MoveSpeed];
+        unitSpeed = finalStats[StatType.MoveSpeed];
     }
 
     #endregion
 
 #if UNITY_EDITOR
-    private void OnDrawGizmos() //µð¹ö±×¿ë ±âÁî¸ð
+    private void OnDrawGizmosSelected()
     {
         if (GetUnit() != null)
         {
@@ -375,6 +481,32 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
 
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
+        }
+
+        if (fullPath == null || fullPath.Count == 0)
+            return;
+
+        Gizmos.color = Color.cyan;
+
+        Vector3 prev = transform.position;
+        foreach (var point in fullPath)
+        {
+            Gizmos.DrawLine(prev, point);
+            Gizmos.DrawSphere(point, 0.1f);
+            prev = point;
+        }
+    }
+
+    public void DebugDrawPath(List<Vector2Int> path, Color color, float duration = 1f)
+    {
+        if (path == null || path.Count < 2) return;
+
+        for (int i = 0; i < path.Count - 1; i++)
+        {
+            Vector3 start = GridManager.instance.GridToWorld(path[i]);
+            Vector3 end = GridManager.instance.GridToWorld(path[i + 1]);
+
+            Debug.DrawLine(start, end, color, duration);
         }
     }
 #endif
@@ -388,4 +520,5 @@ public class UnitController : Unit,IStatusAble,IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ
     {
         return isUnitDie;
     }
+
 }
