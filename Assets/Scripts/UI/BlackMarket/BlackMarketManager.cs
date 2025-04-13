@@ -8,6 +8,7 @@ public class BlackMarketManager : MonoBehaviour
 {
     private bool isvisit = false;
 
+    [SerializeField] private GameObject blackMarketUI;
     [SerializeField] private BlackMarketSlot[] shopSlots;
     [SerializeField] private Button rerollButton;
     [SerializeField] private Button closeButton;
@@ -17,12 +18,13 @@ public class BlackMarketManager : MonoBehaviour
     private List<ItemDB> previousItems = new();
     private List<ItemDB> currentItems = new();
 
-
     private void Start()
     {
         rerollButton.onClick.AddListener(RerollShop);
         closeButton.onClick.AddListener(CloseShop);
         allItems = FirebaseManager.items.Values.ToList();
+
+        OpenShop();
     }
 
     public void OpenShop()
@@ -32,9 +34,8 @@ public class BlackMarketManager : MonoBehaviour
             GenerateRandomItems();
             isvisit = true;
         }
-
         UpdateUI();
-        gameObject.SetActive(true);
+        blackMarketUI.SetActive(true);
     }
 
     private void RerollShop()
@@ -81,6 +82,6 @@ public class BlackMarketManager : MonoBehaviour
 
     private void CloseShop()
     {
-        gameObject.SetActive(false);
+        blackMarketUI.SetActive(false);
     }
 }
