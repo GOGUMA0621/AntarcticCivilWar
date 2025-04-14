@@ -22,7 +22,7 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
 
     public void DoActiveSkill()
     {
-        foreach(GameObject target in unit.unitDetectTarget.targets)
+        foreach(GameObject target in unit.detectTarget.targets)
         {
             if (target.TryGetComponent<Unit>(out Unit targetUnit))
             {
@@ -36,13 +36,13 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
 
             if (interV.magnitude <= radius)
             {
-                float dot = Vector2.Dot(interV.normalized, unit.unitDetectTarget.targetToAttack.position);
+                float dot = Vector2.Dot(interV.normalized, unit.detectTarget.targetToAttack.position);
                 float theta = Mathf.Acos(dot);
                 float degree = Mathf.Rad2Deg * theta;
 
                 if (degree <= angleRange / 2f)
                 {
-                    t.GetComponent<Unit>().unitController.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None , 0));
+                    t.GetComponent<Unit>().controller.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None , 0));
                 }
             }
         }

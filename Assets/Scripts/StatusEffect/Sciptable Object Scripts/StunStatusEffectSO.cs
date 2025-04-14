@@ -13,10 +13,10 @@ public class StunStatusEffectSO : StatusEffectSO
 
         if (isEffectActive)
         {
-            currentSpeed = unit.unitController.unitSpeed;
-            unit.unitController.isStunned = true;
-            unit.unitAnimator.ResetTrigger("attack");
-            unit.unitController.unitSpeed = 0f;
+            currentSpeed = unit.controller.unitSpeed;
+            unit.controller.isStunned = true;
+            unit.animator.ResetTrigger("attack");
+            unit.controller.unitSpeed = 0f;
         }
     }
 
@@ -25,8 +25,8 @@ public class StunStatusEffectSO : StatusEffectSO
         base.RemoveEffect(target);
         if (unit != null)
         {
-            unit.unitController.isStunned = false;
-            unit.unitController.unitSpeed = currentSpeed;
+            unit.controller.isStunned = false;
+            unit.controller.unitSpeed = currentSpeed;
         }
     }
 }

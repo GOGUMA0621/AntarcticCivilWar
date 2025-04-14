@@ -19,8 +19,8 @@ public class PassiveStickyBomb : MonoBehaviour, IPasseiveSkillAttack
 
     public void DoPassiveSkill()
     {
-        unit.unitAttackController.SetProjectile(StickyBomb);
-        unit.unitAttackController.Attack();
+        unit.attackController.SetProjectile(StickyBomb);
+        unit.attackController.Attack();
     }
 
     public bool PassiveCondition()
@@ -30,7 +30,7 @@ public class PassiveStickyBomb : MonoBehaviour, IPasseiveSkillAttack
 
     private void AttackCount()
     {
-        unit.unitAttackController.ResetProjectile();
+        unit.attackController.ResetProjectile();
         canPassive = false;
         attackCount++;
         if (attackCount >= 4)

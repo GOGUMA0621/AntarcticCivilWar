@@ -23,7 +23,7 @@ public class DamageData
     }
 }
 
-public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ®·Ñ
+public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ ÄÁÆ®·Ñ
 {
     public event Action<GameObject> OnDestroyed;
 
@@ -31,16 +31,13 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     private List<StatModifier> statModifierList = new();
     private Dictionary<StatType, float> finalStats = new();
 
-    private Tween pathTween;
-    private DotweenMoveAvoidance moveAvoidance;
-
     public delegate void UnitAttackCountEvent();
 
     public static event UnitAttackCountEvent OnUnitAttackCount;
 
     private StatusEffectManager statusEffectManager;
 
-    private Unit _unit;
+    [HideInInspector] public Unit unit;
 
     private Vector2 _lastPosition; //¾Ö´Ï¸ÞÀÌ¼Ç ÁÂ¿ì ¹ÝÀüÀ» À§ÇÑ º¯¼ö
 
@@ -52,8 +49,6 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
 
     private SciptableObjects.UnitData _currentData; //À¯´ÖÀÇ µ¥ÀÌÅÍ º¯È­ °¨Áö¸¦ À§ÇÑ º¯¼ö
     private bool isUnitDie;
-    private AIDestinationSetter _destinationSetter;
-    private AIPath _aiPath;
 
     private Transform _lastAttacker; //³Ë¹éÀ» À§ÇØ ¸¶Áö¸· °ø°ÝÀÚ¸¦ ¾Ë¾Æ³»´Â º¯¼ö
     public IActiveSkill unitSkill;
@@ -61,6 +56,10 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     public bool canMana = true;
 
     private string currentAnimationName;
+    private bool isPaused = false;
+    private string pausedStateName;
+    private float pausedTime;
+
 
     [HideInInspector] public bool isStunned = false;
     public float maxHP;
@@ -73,7 +72,6 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
 
     private float unitAttackSpeed = 1.0f;
     private float unitSenseDistance = 1.0f;
-    private Vector3 currentTargetWorldPos;
 
     private IUnitState currentState;
 
@@ -95,43 +93,36 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     }
     #endregion
     
-    void Awake()
-    {
-        _destinationSetter = GetComponent<AIDestinationSetter>();
-        _aiPath = GetComponent<AIPath>();
-    }
-
-    protected override void Start()
+    protected virtual void Start()
     {
         isUnitDie = false;
-        base.Start();
         unitPassiveSkill = GetComponent<IPasseiveSkillAttack>();
-        _unit = GetComponent<Unit>();
-        data = _unit.data;
+        unit = GetComponent<Unit>();
         statusEffectManager = GetComponent<StatusEffectManager>();
         _lastPosition = transform.position;
-        rb.drag = 0.5f; // ¹°¸®Àû ¸¶Âû·Â Á¶Á¤
+        unit.rb.drag = 0.5f; // ¹°¸®Àû ¸¶Âû·Â Á¶Á¤
         SetUnit();
 
-        ChangeState(new UnitIdleState());
+        currentState = GetInitialState();
+        currentState.Enter(this);
     }
 
-    void Update()
+    private void Update()
     {
-        animator.SetFloat("speed", _aiPath.velocity.magnitude);
+        unit.animator.SetFloat("speed", unit.aiPath.velocity.magnitude);
         currentState?.Update();
-        if(!IsDestroyed() && _aiPath.canMove == true && _destinationSetter.target == null)
+        if(!IsDestroyed() && unit.aiPath.canMove == true && unit.settler.target == null)
         {
-            _aiPath.canMove = false;
+            unit.aiPath.canMove = false;
             ChangeState(new UnitIdleState());
             return;
         }
-        //rb.velocity = Vector2.right * 5f;
+        //_unit.rb.velocity = Vector2.right * 5f;
     }
 
     private void FixedUpdate()
     {
-        //Debug.Log($"{name} - FixedUpdate velocity: {rb.velocity}");
+        //Debug.Log($"{name} - FixedUpdate velocity: {_unit.rb.velocity}");
 
         FlipAnimation();
     }
@@ -144,29 +135,34 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
         currentState.Enter(this);
     }
 
+    protected virtual IUnitState GetInitialState()
+    {
+        return new UnitIdleState();
+    }
+
     #endregion
 
     #region ±âº»¼Â¾÷
     private void SetUnit()
     {
-        if (data != null)
+        if (unit.data != null)
         {
             baseStats.Clear();
-            baseStats.Add(StatType.MaxHealth, data.UnitHP);
+            baseStats.Add(StatType.MaxHealth, unit.data.UnitHP);
             baseStats.Add(StatType.HealthRegen, 0);
-            baseStats.Add(StatType.MaxMana, data.UnitMP);
+            baseStats.Add(StatType.MaxMana, unit.data.UnitMP);
             baseStats.Add(StatType.ManaRegen, 5);
-            baseStats.Add(StatType.AttackDamage, data.UnitDamage);
-            baseStats.Add(StatType.AttackSpeed, data.UnitSpeed);
-            baseStats.Add(StatType.AttackRange, data.UnitAttackDistance);
-            baseStats.Add(StatType.MoveSpeed, data.UnitSpeed);
+            baseStats.Add(StatType.AttackDamage, unit.data.UnitDamage);
+            baseStats.Add(StatType.AttackSpeed, unit.data.UnitSpeed);
+            baseStats.Add(StatType.AttackRange, unit.data.UnitAttackDistance);
+            baseStats.Add(StatType.MoveSpeed, unit.data.UnitSpeed);
             baseStats.Add(StatType.CritChance, 0);
 
             RecalculateStats();
 
             currentHP = maxHP;
             currentMP = 0;
-            unitSenseDistance = data.UnitSenseRadius;
+            unitSenseDistance = unit.data.UnitSenseRadius;
 
             SetMoveSpeed(unitSpeed);
 
@@ -175,7 +171,7 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
                 PlayerUnitManager.instance.AddAllayList(this.gameObject);
             }
             //Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Unit"), LayerMask.NameToLayer("Unit"), true);
-            _currentData = data;
+            _currentData = unit.data;
         }
     }
 
@@ -187,17 +183,22 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     public void SetMoveSpeed(float speed)
     {
         unitSpeed = speed;
-        _aiPath.maxSpeed = unitSpeed;
+        unit.aiPath.maxSpeed = unitSpeed;
     }
 
     public void SetMoveWork(bool canMove)
     {
-        _aiPath.canMove = canMove;
+        unit.aiPath.canMove = canMove;
+    }
+
+    public void ToggleAITrue()
+    {
+        unit.aiPath.canMove = true;
     }
 
     public void SetTargetToMove(Transform target)
     {
-        _destinationSetter.target = target;
+        unit.settler.target = target;
     }
 
     public void MoveToTarget(Vector3 targetWorldPos)
@@ -240,7 +241,7 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     {
         //Debug.Log($"{name} ÀÌµ¿ ÁßÁö");
         StopAllCoroutines();
-        rb.velocity = Vector2.zero;
+        unit.rb.velocity = Vector2.zero;
     }
     #endregion
 
@@ -249,13 +250,13 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     {
         if (!isUnitDie)
         {
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            AnimatorStateInfo stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
             Vector2 currentPosition = transform.position;
             if (stateInfo.IsTag("Battle"))
             {
-                if (detectTarget.targetToAttack != null)
+                if(unit.detectTarget.targetToAttack != null)
                 {
-                    float targetDirection = detectTarget.targetToAttack.transform.position.x - currentPosition.x;
+                    float targetDirection = unit.detectTarget.targetToAttack.transform.position.x - currentPosition.x;
 
                     if (targetDirection > 0 && !_isFacingRight)
                     {
@@ -301,12 +302,34 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
             return;
         }
 
-        animator.Play(animationName);
+        unit.animator.Play(animationName);
         currentAnimationName = animationName;
+    }
+
+    public void PauseAnimation()
+    {
+        if (!isPaused)
+        {
+            AnimatorStateInfo currentState = unit.animator.GetCurrentAnimatorStateInfo(0);
+            pausedTime = currentState.normalizedTime;
+            pausedStateName = currentState.shortNameHash.ToString();
+            unit.animator.speed = 0;
+            isPaused = true;
+        }
+    }
+
+    public void ResumeAnimation()
+    {
+        if (isPaused)
+        {
+            unit.animator.speed = 1;
+            unit.animator.Play(pausedStateName, 0, pausedTime);
+            isPaused = false;
+        }
     }
     #endregion
 
-    #region ÀüÅõ °ü·Ã
+    #region ÀüÅõ
     public void UnitAttack()
     {
         CollectMana();
@@ -321,16 +344,16 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
             }
             else
             {
-                attackController.Attack();
+                unit.attackController.Attack();
             }
         }
         else
         {
-            attackController.Attack();
+            unit.attackController.Attack();
         }
     }
 
-    public void ReceiveDamage(DamageData damage)
+    public virtual void ReceiveDamage(DamageData damage)
     {
         UnitAttackController.OnUnitAttack += HandleAttackEvent;
         currentHP -= damage.damage;
@@ -350,7 +373,7 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
 
         ChangeState(new UnitDieState());
         StartCoroutine(KnockBack(2.0f));
-        detectTarget.ClearTarget();
+        unit.detectTarget.ClearTarget();
 
         if (this.transform.tag == "Unit")
         {
@@ -361,8 +384,8 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     internal void Revive() //ÀÏ¾î³ª¶ó
     {
         this.tag = "Unit";
-        rb.velocity = Vector2.zero;
-        detectTarget.ClearTarget();
+        unit.rb.velocity = Vector2.zero;
+        unit.detectTarget.ClearTarget();
         isUnitDie = false;
         currentHP = maxHP;
         ChangeState(new UnitIdleState());
@@ -393,7 +416,7 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
     {
         if (currentMP >= maxMP && maxMP != 0) 
         {
-            animator.Play("ManaSkill");
+            unit.animator.Play("ManaSkill");
             Debug.Log("¸¶³ª");
             currentMP = 0;
         }
@@ -401,29 +424,29 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
 
     public void ResetUnit()
     {
-        if (data != null)
+        if (unit.data != null)
         {
-            maxHP = data.UnitHP;
-            maxMP = data.UnitMP;
-            unitDamage = data.UnitDamage;
-            unitSpeed = data.UnitSpeed;
-            unitAttackDistance = data.UnitAttackDistance;
-            unitAttackSpeed = data.UnitAttackSpeed;
-            unitSenseDistance = data.UnitSenseRadius;
+            maxHP = unit.data.UnitHP;
+            maxMP = unit.data.UnitMP;
+            unitDamage = unit.data.UnitDamage;
+            unitSpeed = unit.data.UnitSpeed;
+            unitAttackDistance = unit.data.UnitAttackDistance;
+            unitAttackSpeed = unit.data.UnitAttackSpeed;
+            unitSenseDistance = unit.data.UnitSenseRadius;
         }
     }
 
     IEnumerator KnockBack(float amount)
     {
-        if (!data.UnitUnstoppable)
+        if (!unit.data.UnitUnstoppable)
         {
             if (amount >= 0)
             {
                 Vector2 direction = (this.transform.position - _lastAttacker.position).normalized;
-                rb.AddForce(direction * amount, ForceMode2D.Impulse);
+                unit.rb.AddForce(direction * amount, ForceMode2D.Impulse);
             }
             yield return new WaitForSeconds(0.5f);
-            rb.velocity = Vector2.zero;
+            unit.rb.velocity = Vector2.zero;
         }
     }
     #endregion
@@ -474,39 +497,13 @@ public class UnitController : Unit, IStatusAble, IDamageAble //À¯´ÖÀÇ Àü¹ÝÀûÀÎ Ä
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        if (GetUnit() != null)
+        if (unit != null)
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(this.transform.position, unitSenseDistance);
 
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
-        }
-
-        if (fullPath == null || fullPath.Count == 0)
-            return;
-
-        Gizmos.color = Color.cyan;
-
-        Vector3 prev = transform.position;
-        foreach (var point in fullPath)
-        {
-            Gizmos.DrawLine(prev, point);
-            Gizmos.DrawSphere(point, 0.1f);
-            prev = point;
-        }
-    }
-
-    public void DebugDrawPath(List<Vector2Int> path, Color color, float duration = 1f)
-    {
-        if (path == null || path.Count < 2) return;
-
-        for (int i = 0; i < path.Count - 1; i++)
-        {
-            Vector3 start = GridManager.instance.GridToWorld(path[i]);
-            Vector3 end = GridManager.instance.GridToWorld(path[i + 1]);
-
-            Debug.DrawLine(start, end, color, duration);
         }
     }
 #endif

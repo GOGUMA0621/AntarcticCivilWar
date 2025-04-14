@@ -13,7 +13,7 @@ public class RedMushroom : StatItem
         float totalAttackRangeIncrease = attackRangeIncrease * currentStack;
         float totalHealthIncrease = healthIncrease * currentStack;
 
-        if (unit.data.unitAttackType == UnitAttackType.Melee)
+        if (unit.unit.data.unitAttackType == UnitAttackType.Melee)
         {
             unit.AddModifierStat(new StatModifier(itemId, StatType.AttackRange, totalAttackRangeIncrease, ModifierMethod.Additive));
             unit.AddModifierStat(new StatModifier(itemId, StatType.MaxHealth, totalHealthIncrease, ModifierMethod.Additive));

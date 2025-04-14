@@ -19,9 +19,9 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
 
     public void CutMarkEffect()
     {
-        if (unit.unitDetectTarget.targetToAttack != null)
+        if (unit.detectTarget.targetToAttack != null)
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.unitDetectTarget.targetToAttack.position, skillRadius);
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.detectTarget.targetToAttack.position, skillRadius);
             foreach (Collider2D collider in colliders)
             {
                 if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag) && i is MonoBehaviour unit)
@@ -35,12 +35,12 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
     public void DoPassiveSkill()
     {
         animator.Play("PassiveSkill");
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.unitDetectTarget.targetToAttack.position,skillRadius);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.detectTarget.targetToAttack.position,skillRadius);
         foreach (Collider2D collider in colliders)
         {
             if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag) && i is Unit unit)
             {
-                unit.unitController.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None, 0));
+                unit.controller.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None, 0));
             }
         }
 
@@ -48,11 +48,11 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
 
     public bool PassiveCondition()
     {
-        if (unit.unitDetectTarget.targetToAttack != null)
+        if (unit.detectTarget.targetToAttack != null)
         {
-            if (unit.unitDetectTarget.targetToAttack.TryGetComponent<Unit>(out Unit target))
+            if (unit.detectTarget.targetToAttack.TryGetComponent<Unit>(out Unit target))
             {
-                return target.unitController.currentHP <= target.unitController.maxHP / 10;
+                return target.controller.currentHP <= target.controller.maxHP / 10;
             }
         }
         return false;

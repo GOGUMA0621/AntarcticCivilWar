@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-public class UnitAttackController : Unit //유닛 공격 관련
+public class UnitAttackController : MonoBehaviour //유닛 공격 관련
 {
     public delegate void UnitAttackEvent(Transform t);
 
@@ -15,20 +15,18 @@ public class UnitAttackController : Unit //유닛 공격 관련
     public GameObject pfProjectile; //유닛 투사체 프리팹
     
     private Unit unit;
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
         unit = GetComponent<Unit>();
-        data = unit.data;
         if(unit.data.unitAttackType == UnitAttackType.Range)
         {
-            pfProjectile = data.UnitProjectile;
+            pfProjectile = unit.data.UnitProjectile;
         }
     }
 
     internal void Attack()
     {
-        if (!detectTarget.IsDestroyed())
+        if (!unit.detectTarget.IsDestroyed())
         {
             OnUnitAttack?.Invoke(GetComponent<Transform>());
             var attackType = unit.data.unitAttackType;
@@ -50,21 +48,21 @@ public class UnitAttackController : Unit //유닛 공격 관련
     {
         if(pfProjectile != null)
         {
-            if (detectTarget.targetToAttack != null)
+            if (unit.detectTarget.targetToAttack != null)
             {
                 ProjectileController projectile = Instantiate(pfProjectile, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
-                projectile.InitialzeProjectile(detectTarget.targetToAttack, data.UnitMaxProjectileSpeed, data.UnitMaxProjectileHeight,unit);
-                projectile.InitializeAnimaionCurve(data.ProjectileTrajectoryAnimationCurve, data.ProjectileCorrectionAnimationCurve, data.ProjectileSpeedAnimationCurve);
+                projectile.InitialzeProjectile(unit.detectTarget.targetToAttack, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight,unit);
+                projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
             }
         }
     }
 
     void MeleeAttack()
     {
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, data.UnitSenseRadius);
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.data.UnitSenseRadius);
         foreach (Collider2D targetCollider in collider)
         {
-            if (targetCollider.transform == detectTarget.targetToAttack)
+            if (targetCollider.transform == unit.detectTarget.targetToAttack)
             {
                 IDamageAble target = targetCollider.GetComponent<IDamageAble>();
                 target.ReceiveDamage(new DamageData(unit.data.UnitDamage,StatusEffectType.None,0));

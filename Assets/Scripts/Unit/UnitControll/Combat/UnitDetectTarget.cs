@@ -6,14 +6,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static UnitController;
 
-public class UnitDetectTarget : Unit //유닛 적 탐지
+public class UnitDetectTarget : MonoBehaviour //유닛 적 탐지
 {
     public Transform targetToAttack; //공격할 타깃의 위치값
     public List<GameObject> targets; // 타겟 리스트
     private Unit unit;
     private CircleCollider2D detectCollider;
 
-    protected override void Start()
+    private void Start()
     {
         unit = transform.parent.GetComponent<Unit>();
         detectCollider = GetComponent<CircleCollider2D>();
@@ -70,8 +70,9 @@ public class UnitDetectTarget : Unit //유닛 적 탐지
         {
             if (!target.IsDestroyed())
             {
-                if ((this.transform.parent.tag != "Unit" && target.tag == "Mercenary")          //용병은 플레이어의 유닛만을 때리도록 수정
-                    || (this.transform.parent.tag == "Mercenary" && target.tag != "Unit")) return;
+                if (this.transform.parent.tag != "Unit" && (target.tag == "Mercenary")          //용병은 플레이어의 유닛만을 때리도록 수정
+                    || (this.transform.parent.tag == "Mercenary" && target.tag != "Unit")
+                    ) return;
 
                 AddTarget(target.gameObject);
             }

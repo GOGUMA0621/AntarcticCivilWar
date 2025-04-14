@@ -6,13 +6,15 @@ using UnityEngine;
 public class BurnStatusEffectSO : StatusEffectSO
 {
     public int tickDamage;
+    public int duration;
 
     public override void UpdateEffect(GameObject target)
     {
+        activeDuration = duration;
         base.UpdateEffect(target);
         if (isEffectActive)
         {
-            unit.unitController.ReceiveDamage(new DamageData(tickDamage, statusEffectType, 0));
+            unit.controller.ReceiveDamage(new DamageData(tickDamage, statusEffectType, 0));
         }
     }
 }

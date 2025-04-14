@@ -12,7 +12,7 @@ public class BleedStatusEffectSO : StatusEffectSO
         base.UpdateEffect(target);
         if (isEffectActive)
         {
-            unit.unitController.ReceiveDamage(new DamageData(tickDamage, statusEffectType, 0));
+            unit.controller.ReceiveDamage(new DamageData(tickDamage, statusEffectType, 0));
         }
     }
 }

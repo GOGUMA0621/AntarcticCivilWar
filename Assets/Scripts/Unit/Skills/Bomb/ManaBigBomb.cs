@@ -21,12 +21,12 @@ public class ManaBigBomb : MonoBehaviour, IActiveSkill
     public void ThrowBigBomb()
     {
         ProjectileController projectile = Instantiate(_pfBigBomb, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
-        projectile.InitialzeProjectile(unit.unitDetectTarget.targetToAttack, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit);
+        projectile.InitialzeProjectile(unit.detectTarget.targetToAttack, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit);
         projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
     }
 
     public void DoActiveSkill()
     {
-        unit.unitAnimator.Play("ManaSkill");
+        unit.animator.Play("ManaSkill");
     }
 }

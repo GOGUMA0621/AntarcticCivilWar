@@ -2,33 +2,33 @@ using UnityEngine;
 
 public interface IUnitState
 {
-    void Enter(UnitController unit);
+    void Enter(UnitController boss);
     void Update();
     void Exit();
 }
 
 public class UnitIdleState : IUnitState
 {
-    private UnitController unit;
-    public void Enter(UnitController unit)
+    private UnitController unitController;
+    public void Enter(UnitController unitController)
     {
-        this.unit = unit;
-        unit.SetMoveWork(true);
-        unit.SetAnimation("IdleState");
-        if(unit.tag == "Unit")
+        this.unitController = unitController;
+        unitController.SetMoveWork(true);
+        unitController.SetAnimation("IdleState");
+        if(unitController.tag == "Unit")
         {
-            unit.SetTargetToMove(unit.playerController.transform);
+            unitController.SetTargetToMove(unitController.unit.playerController.transform);
         }
     }
     public void Update()
     {
-        if (unit.unitDetectTarget.targetToAttack != null)
+        if (unitController.unit.detectTarget.targetToAttack != null)
         {
-            unit.ChangeState(new UnitFollowState());
+            unitController.ChangeState(new UnitFollowState());
         }
-        else if (unit.unitDetectTarget.targetToAttack == null)
+        else if (unitController.unit.detectTarget.targetToAttack == null)
         {
-            unit.ChangeState(new UnitIdleState());
+            unitController.ChangeState(new UnitIdleState());
         }
     }
     public void Exit()
@@ -39,29 +39,29 @@ public class UnitIdleState : IUnitState
 
 public class UnitFollowState : IUnitState
 {
-    private UnitController unit;
-    public void Enter(UnitController unit)
+    private UnitController unitController;
+    public void Enter(UnitController unitController)
     {
-        this.unit = unit;
+        this.unitController = unitController;
         Debug.Log("FollowState");
-        unit.SetTargetToMove(unit.unitDetectTarget.targetToAttack);
+        unitController.SetTargetToMove(unitController.unit.detectTarget.targetToAttack);
     }
 
     public void Update()
     {
-        var target = unit.unitDetectTarget.targetToAttack;
+        var target = unitController.unit.detectTarget.targetToAttack;
 
         if (target == null || target.TryGetComponent<IDamageAble>(out var damageable) && damageable.IsDestroyed())
         {
-            unit.ChangeState(new UnitIdleState());
+            unitController.ChangeState(new UnitIdleState());
             return;
         }
 
-        float distance = Vector3.Distance(unit.transform.position, target.position);
-        if (distance <= unit.unitAttackDistance)
+        float distance = Vector3.Distance(unitController.transform.position, target.position);
+        if (distance <= unitController.unitAttackDistance)
         {
-            unit.SetMoveWork(false);
-            unit.ChangeState(new UnitAttackState());
+            unitController.SetMoveWork(false);
+            unitController.ChangeState(new UnitAttackState());
         }
     }
 
@@ -73,37 +73,37 @@ public class UnitFollowState : IUnitState
 
 public class UnitAttackState : IUnitState
 {
-    private UnitController unit;
+    private UnitController unitController;
     public void Enter(UnitController unit)
     {
         Debug.Log("AttackState");
-        this.unit = unit;
+        this.unitController = unit;
         unit.SetMoveWork(false);
         unit.SetAnimation("AttackState");
     }
     public void Update()
     {
-        AnimatorStateInfo state = unit.unitAnimator.GetCurrentAnimatorStateInfo(0);
+        AnimatorStateInfo state = unitController.unit.animator.GetCurrentAnimatorStateInfo(0);
         if (state.IsName("AttackState") && state.normalizedTime >= 1f)
         {
-            unit.ChangeState(new UnitIdleState());
+            unitController.ChangeState(new UnitIdleState());
         }
 
-        var target = unit.unitDetectTarget.targetToAttack;
+        var target = unitController.unit.detectTarget.targetToAttack;
 
         if (target == null || target.TryGetComponent<IDamageAble>(out var damageable) && damageable.IsDestroyed())
         {
-            unit.ChangeState(new UnitIdleState());
-            unit.unitDetectTarget.AttackClosestTarget();
-            target = unit.unitDetectTarget.targetToAttack;
-            unit.SetTargetToMove(target);
+            unitController.ChangeState(new UnitIdleState());
+            unitController.unit.detectTarget.AttackClosestTarget();
+            target = unitController.unit.detectTarget.targetToAttack;
+            unitController.SetTargetToMove(target);
         }
         else
         {
-            float distance = Vector3.Distance(unit.transform.position, target.position);
-            if (distance > unit.unitAttackDistance)
+            float distance = Vector3.Distance(unitController.transform.position, target.position);
+            if (distance > unitController.unitAttackDistance)
             {
-                unit.ChangeState(new UnitFollowState());
+                unitController.ChangeState(new UnitFollowState());
             }
         }
     }
@@ -124,7 +124,10 @@ public class UnitDieState : IUnitState
     }
     public void Update()
     {
-        
+        if (InputManager.instance.GetRevivePressed())
+        {
+            unit.Revive();
+        }
     }
     public void Exit()
     {

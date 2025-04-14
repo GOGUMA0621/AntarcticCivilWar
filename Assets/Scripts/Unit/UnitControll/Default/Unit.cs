@@ -1,4 +1,6 @@
 #if UNITY_EDITOR
+using Pathfinding;
+using SciptableObjects;
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -8,23 +10,20 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
 {
 
     public GameObject originPrefab;
-    protected UnitController controller;
-    public UnitController unitController { get { return controller; } }
-    protected UnitDistinction distinction;
-    public UnitDistinction unitDistinction { get { return distinction; } }
-    protected UnitDetectTarget detectTarget;
-    public UnitDetectTarget unitDetectTarget { get { return detectTarget; } }
-    protected UnitAttackController attackController;
-    public UnitAttackController unitAttackController { get { return attackController; } }
-    public SciptableObjects.UnitData data;
-
-    protected Rigidbody2D rb;
-    protected CircleCollider2D circleCollider;
-    protected SpriteRenderer spriteRenderer;
+    public UnitData data;
+    public UnitController controller { get; private set; }
+    public UnitDistinction distinction { get; private set; }
+    public UnitDetectTarget detectTarget { get; private set; }
+    public UnitAttackController attackController { get; private set; }
+    public AIPath aiPath { get; private set; }
+    public Seeker seeker { get; private set; }
+    public AIDestinationSetter settler { get; private set; }
+    public Rigidbody2D rb { get; private set; }
+    public CircleCollider2D circleCollider { get; private set; }
+    public SpriteRenderer spriteRenderer;
     [HideInInspector] public PlayerController playerController;
-    protected PlayerUnitManager playerUnitManager;
-    protected Animator animator;
-    public Animator unitAnimator {  get { return animator; } }
+    public PlayerUnitManager playerUnitManager;
+    public Animator animator { get; private set; }
 
     protected virtual void Start()
     {
@@ -37,6 +36,8 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
         distinction = GetComponentInChildren<UnitDistinction>();
         detectTarget = GetComponentInChildren<UnitDetectTarget>();
         attackController = GetComponent<UnitAttackController>();
+        aiPath = GetComponent<AIPath>();
+        settler = GetComponent<AIDestinationSetter>();
     }
     public Unit GetUnit() { return this; }
     public SciptableObjects.UnitData GetData() { return data; }

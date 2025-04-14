@@ -220,15 +220,15 @@ GameObject:
   - component: {fileID: 4332695332052997046}
   - component: {fileID: 8854620222465688866}
   - component: {fileID: 6345866539272163795}
-  - component: {fileID: 5257417320873170678}
+  - component: {fileID: 4549932607118645986}
   - component: {fileID: 2764380314185021207}
   - component: {fileID: 6747871169830987556}
   - component: {fileID: 8358373545122888125}
   - component: {fileID: 7145379924114461498}
   - component: {fileID: 8940660524419357826}
   m_Layer: 6
-  m_Name: DefaultPenguin
-  m_TagString: Unit
+  m_Name: RushBoss
+  m_TagString: Royal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -292,7 +292,7 @@ SpriteRenderer:
   m_SortingLayerID: -13657995
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: -536595096, guid: 4a398744b381c4e41959d5ef5a5c6789, type: 3}
+  m_Sprite: {fileID: 22659418, guid: 3412e5fd3d1cae84e80da465d31889cf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -313,7 +313,7 @@ Animator:
   m_GameObject: {fileID: 5744230692257079530}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1b1d0954615895942bc9f4ba49331686, type: 2}
+  m_Controller: {fileID: 9100000, guid: f77af786ee19df24b9ccc111674385c3, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -357,7 +357,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.05}
-  m_Size: {x: 0.7478825, y: 0.9023346}
+  m_Size: {x: 1.47, y: 1.68}
   m_Direction: 0
 --- !u!50 &8854620222465688866
 Rigidbody2D:
@@ -399,10 +399,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originPrefab: {fileID: 0}
-  data: {fileID: 11400000, guid: 9ad8c6f1c80917e48becd074b3aa898e, type: 2}
-  rb: {fileID: 0}
+  data: {fileID: 11400000, guid: 510019cd56c1b7a44a97c45c0e067bc1, type: 2}
+  rb: {fileID: 8854620222465688866}
   playerController: {fileID: 0}
---- !u!114 &5257417320873170678
+--- !u!114 &4549932607118645986
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -411,7 +411,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5744230692257079530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c09320f2287412d4c9e9fbd981abcf11, type: 3}
+  m_Script: {fileID: 11500000, guid: 51a89187c916fac47b681ead7b36e8ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unit: {fileID: 0}
@@ -452,8 +452,6 @@ MonoBehaviour:
     _serializedList:
     - Key: 7
       Value: {fileID: 11400000, guid: 4d80986afad075343ada819d99a243ea, type: 2}
-    - Key: 6
-      Value: {fileID: 11400000, guid: eda2073fbb014dd469145145f5a15559, type: 2}
     - Key: 5
       Value: {fileID: 11400000, guid: 1eec5e3b31a277741ba1c5d5e1ca2186, type: 2}
   interval: 0.1
@@ -498,7 +496,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 5
-  radius: 0.5
+  radius: 0.89
   height: 2
   canMove: 1
   maxSpeed: 3
@@ -568,7 +566,7 @@ Transform:
   m_GameObject: {fileID: 6131613577334374775}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.002, y: -0.385, z: 0}
+  m_LocalPosition: {x: -0.002, y: -0.88, z: 0}
   m_LocalScale: {x: 1.03, y: 0.36, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -719,7 +717,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 8
 --- !u!1001 &5460910562061629043
 PrefabInstance:
   m_ObjectHideFlags: 0

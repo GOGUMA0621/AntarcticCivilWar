@@ -50,9 +50,9 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         {
             if (allay.TryGetComponent<UnitController>(out UnitController unitController))
             {
-                if (unitController.data != null)
+                if (unitController.unit.data != null)
                 {
-                    playerGroupPower += unitController.data.UnitPower;
+                    playerGroupPower += unitController.unit.data.UnitPower;
                 }
             }
         }
