@@ -83,6 +83,37 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
             CalculatePlayerGroupPower();
         }
     }
+
+    public void ChangeStateAllayList(string unitState)
+    {
+        foreach (var unit in allayList)
+        {
+            if(unit.TryGetComponent<UnitController>(out UnitController unitController))
+            {
+                switch(unitState)
+                {
+                    case "IdleState":
+                        unitController.GoIdle();
+                        break;
+                    case "FollowState":
+                        unitController.GoFollow();
+                        break;
+                    case "AttackState":
+                        unitController.GoAttack();
+                        break;
+                    case "DieState":
+                        unitController.GoDie();
+                        break;
+                    case "CallState":
+                        unitController.GoCall();
+                        break;
+                    default:
+                        Debug.LogError($"Unknown state: {unitState}");
+                        break;
+                }
+            }
+        }
+    }
     #endregion
 
     #region 적군 관리
@@ -154,8 +185,13 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     
     public void AddUnitSOPrefabList(UnitGroupSO unitGroupSO)
     {
-        foreach(var unit in unitGroupSO.groupUnits)
+        foreach (var unit in unitGroupSO.groupUnits)
         {
+            if (unit.pfUnit == null)
+            {
+                Debug.LogError("pfUnit이 null임");
+                continue;
+            }
             UnitPrefabEntry entry = allayPrefabList.Find(x => x.prefab == unit.pfUnit);
 
             if (entry != null)
@@ -174,6 +210,11 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     {
         foreach (var unit in unitGroupSO.groupUnits)
         {
+            if (unit.pfUnit == null)
+            {
+                Debug.LogError("pfUnit이 null임");
+                continue;
+            }
             for (int i = 0; i < unit.count; i++)
             {
                 GameObject allay = Instantiate(unit.pfUnit, position, Quaternion.identity);
@@ -195,7 +236,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
             PassiveItem passiveItem = item.Key.GetComponent<PassiveItem>();
             foreach (GameObject allay in allayList)
             {
-                if (TryGetComponent<UnitController>(out UnitController allayController))
+                if (allay.TryGetComponent<UnitController>(out UnitController allayController))
                 {
                     passiveItem.ApplyEffect(allayController);
                 }

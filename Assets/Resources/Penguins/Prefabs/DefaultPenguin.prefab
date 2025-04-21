@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 8358373545122888125}
   - component: {fileID: 7145379924114461498}
   - component: {fileID: 8940660524419357826}
+  - component: {fileID: 5964830024186549032}
   m_Layer: 6
   m_Name: DefaultPenguin
   m_TagString: Unit
@@ -400,8 +401,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originPrefab: {fileID: 0}
   data: {fileID: 11400000, guid: 9ad8c6f1c80917e48becd074b3aa898e, type: 2}
-  rb: {fileID: 0}
+  spriteRenderer: {fileID: 0}
   playerController: {fileID: 0}
+  playerUnitManager: {fileID: 0}
 --- !u!114 &5257417320873170678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,6 +422,7 @@ MonoBehaviour:
   isStunned: 0
   maxHP: 0
   maxMP: 0
+  currentMP: 0
   unitDamage: 0
   unitSpeed: 0
   unitAttackDistance: 0
@@ -502,7 +505,7 @@ MonoBehaviour:
   height: 2
   canMove: 1
   maxSpeed: 3
-  gravity: {x: NaN, y: NaN, z: NaN}
+  gravity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -520,12 +523,12 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   maxAcceleration: -2.5
   rotationSpeed: 360
-  slowdownDistance: 0.6
+  slowdownDistance: 1.5
   pickNextWaypointDist: 2
-  endReachedDistance: 0.2
+  endReachedDistance: 1
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
-  whenCloseToDestination: 0
+  whenCloseToDestination: 1
   constrainInsideGraph: 0
 --- !u!114 &8940660524419357826
 MonoBehaviour:
@@ -541,6 +544,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 0}
+--- !u!114 &5964830024186549032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5744230692257079530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98b57ccb009d9e84d8974fb01a8e3f66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sidestepSpeed: 1
+  unitLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  avoidanceStrength: 0.5
 --- !u!1 &6131613577334374775
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,8 +1,8 @@
-#if UNITY_EDITOR
+
 using Pathfinding;
 using SciptableObjects;
 using UnityEditor;
-#endif
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,17 +19,17 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
     public Seeker seeker { get; private set; }
     public AIDestinationSetter settler { get; private set; }
     public Rigidbody2D rb { get; private set; }
-    public CircleCollider2D circleCollider { get; private set; }
+    public CapsuleCollider2D capsuleCollider { get; private set; }
     public SpriteRenderer spriteRenderer;
     [HideInInspector] public PlayerController playerController;
     public PlayerUnitManager playerUnitManager;
     public Animator animator { get; private set; }
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         controller = GetComponent<UnitController>();
         rb = GetComponent<Rigidbody2D>();
-        circleCollider = GetComponent<CircleCollider2D>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         playerController = GameObject.FindAnyObjectByType<PlayerController>();

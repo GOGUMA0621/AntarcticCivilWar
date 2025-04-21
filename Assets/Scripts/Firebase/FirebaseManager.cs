@@ -79,7 +79,7 @@ public static class FirebaseManager
                 // 존재 여부에 따라 처리함
                 price = data.ContainsKey("price") ? Convert.ToInt32(data["price"]) : 0,
                 cooltime = data.ContainsKey("cooltime") ? Convert.ToInt32(data["cooltime"]) : 0,
-                
+
                 applied_debuff = data.ContainsKey("applied_debuff") switch
                 {
                     true when data["applied_debuff"] is List<object> list =>
@@ -105,14 +105,16 @@ public static class FirebaseManager
                         }),
 
                     true when data["base_effect"] is float f =>
-                        new List<float> { f },
-
+                     
+                        new List<float> 
+                        {
+                            f
+                        },
                     true when data["base_effect"] is int i =>
                         new List<float> { Convert.ToSingle(i) },
 
                     _ => new List<float>()
                 },
-
                 stack_effect = data.ContainsKey("stack_effect") switch
                 {
                     true when data["stack_effect"] is List<object> list =>
@@ -136,7 +138,9 @@ public static class FirebaseManager
                 }
             };
 
-            items[itemId] = item;
+            //items[itemId] = item;
+
+            //Debug.Log(items[itemId].base_effect);
 
         }
     }

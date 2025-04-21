@@ -35,6 +35,22 @@ public class PlayerController : MonoBehaviour
 
         FlipAniamtion();
         animator.SetFloat("Speed", rb.velocity.magnitude);
+
+        if(InputManager.instance.GetCallPressed())
+        {
+            if(InputManager.instance.callTriggerd)
+            {
+                Debug.Log("집결 해제");
+                InputManager.instance.callTriggerd = false;
+                PlayerUnitManager.instance.ChangeStateAllayList("IdleState");
+            }
+            else if(!InputManager.instance.callTriggerd)
+            {
+                Debug.Log("집결");
+                InputManager.instance.callTriggerd = true;
+                PlayerUnitManager.instance.ChangeStateAllayList("CallState");
+            }
+        }
     }
 
     void FlipAniamtion()

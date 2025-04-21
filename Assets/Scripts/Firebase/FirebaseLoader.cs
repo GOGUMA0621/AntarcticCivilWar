@@ -6,7 +6,7 @@ public class FirebaseLoader : MonoBehaviour
 {
     public static bool IsLoaded { get; private set; }
 
-    private async void Awake()
+    private async void Start()
     {
         await FirebaseManager.ItemLoadData();
         await FirebaseManager.UnitLoadData();

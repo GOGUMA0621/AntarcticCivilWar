@@ -5,6 +5,7 @@ public class Trade : MonoBehaviour
 {
     public GameObject tradeUI;
     public TextMeshPro textTrader;
+    public BlackMarketManager blackMarketManager;
     bool isTrade = false;
 
     PlayerController playerController;
@@ -24,11 +25,7 @@ public class Trade : MonoBehaviour
             {
                 if (!isTrade)
                 {
-                    OpenShop();
-                }
-                else
-                {
-                    CloseShop();
+                    blackMarketManager.OpenShop();
                 }
             }
         }

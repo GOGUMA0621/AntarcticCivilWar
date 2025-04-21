@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class PengstoAssualtForward :MonoBehaviour, IActiveSkill
 {
-    private bool isPaused = false;
-    private float pausedTime;
-    private string pausedStateName;
     private Animator animator;
 
     private void Start()

@@ -142,6 +142,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: eb97e169-2be5-4aad-a3c3-42ea2e4e9087
     m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4278709205146968988}
+        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+        m_MethodName: RevivePressed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 00aff8f8-c078-43fc-ba2e-5e31796767d9
+    m_ActionName: Game/Revive[/Keyboard/f]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Game

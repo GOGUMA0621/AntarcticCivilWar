@@ -400,8 +400,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originPrefab: {fileID: 0}
   data: {fileID: 11400000, guid: 510019cd56c1b7a44a97c45c0e067bc1, type: 2}
-  rb: {fileID: 8854620222465688866}
+  spriteRenderer: {fileID: 0}
   playerController: {fileID: 0}
+  playerUnitManager: {fileID: 0}
 --- !u!114 &4549932607118645986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,6 +424,7 @@ MonoBehaviour:
   unitDamage: 0
   unitSpeed: 0
   unitAttackDistance: 0
+  servantPrefab: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
 --- !u!114 &2764380314185021207
 MonoBehaviour:
   m_ObjectHideFlags: 0

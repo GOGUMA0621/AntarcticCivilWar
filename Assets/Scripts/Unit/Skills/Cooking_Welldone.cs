@@ -22,14 +22,6 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
 
     public void DoActiveSkill()
     {
-        foreach(GameObject target in unit.detectTarget.targets)
-        {
-            if (target.TryGetComponent<Unit>(out Unit targetUnit))
-            {
-                this.targets.Clear();
-                this.targets.Add(targetUnit.transform);
-            }
-        }
         foreach (Transform t in targets)
         {
             Vector2 interV = t.position - transform.position;
@@ -42,7 +34,7 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
 
                 if (degree <= angleRange / 2f)
                 {
-                    t.GetComponent<Unit>().controller.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None , 0));
+                    t.GetComponent<Unit>().controller.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.Burn , 5));
                 }
             }
         }

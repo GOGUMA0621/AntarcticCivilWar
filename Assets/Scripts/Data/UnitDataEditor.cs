@@ -5,9 +5,9 @@ using UnityEditor;
 using SciptableObjects;
 using Unity.VisualScripting;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(SciptableObjects.UnitData))]
 [CanEditMultipleObjects]
-#if UNITY_EDITOR
 public class UnitDataEditor : Editor
 {
     private UnitData unitData;

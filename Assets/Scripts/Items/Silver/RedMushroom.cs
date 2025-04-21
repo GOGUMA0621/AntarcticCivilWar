@@ -15,8 +15,8 @@ public class RedMushroom : StatItem
 
         if (unit.unit.data.unitAttackType == UnitAttackType.Melee)
         {
-            unit.AddModifierStat(new StatModifier(itemId, StatType.AttackRange, totalAttackRangeIncrease, ModifierMethod.Additive));
-            unit.AddModifierStat(new StatModifier(itemId, StatType.MaxHealth, totalHealthIncrease, ModifierMethod.Additive));
+            unit.AddModifierStat(new StatModifier(itemId.ToString(), StatType.AttackRange, totalAttackRangeIncrease, ModifierMethod.Additive));
+            unit.AddModifierStat(new StatModifier(itemId.ToString(), StatType.MaxHealth, totalHealthIncrease, ModifierMethod.Additive));
         }
     }
 

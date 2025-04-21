@@ -18,7 +18,7 @@ public class ProjectileController : MonoBehaviour
     [SerializeField] private float AOERange = 0f;
     private float moveSpeed;
     private float maxMoveSpeed;
-    private float distanceToTargetDestroyProjectile = 2f;
+    private float distanceToTargetDestroyProjectile = 0.5f;
     private float trajectoryMaxRelativeHeight;
 
     private AnimationCurve trajectoryAniamaionCurve;
@@ -34,6 +34,8 @@ public class ProjectileController : MonoBehaviour
     private float nextPositionYCorrectionAbsolute;
     private float nextPositionXCorrectionAbsolute;
 
+    private bool hasMoved = false;
+    private float existTime = 0f;
 
     private void Start()
     {
@@ -45,36 +47,62 @@ public class ProjectileController : MonoBehaviour
     {
         
         UpdateProjectilePosition();
-        currentVelocity = (transform.position - previousPos) / Time.deltaTime;
 
-        previousPos = transform.position;
-        if (Vector3.Distance(transform.position, target.position) < distanceToTargetDestroyProjectile || Mathf.Approximately(currentVelocity.magnitude, 0))
+        existTime += Time.deltaTime;
+
+        Vector3 currentPos = transform.position;
+        currentVelocity = (currentPos - previousPos) / Time.deltaTime;
+
+        // 최소 1프레임이라도 움직인 뒤 검사하도록
+        if (!hasMoved && currentVelocity.magnitude > 0.01f)
+            hasMoved = true;
+
+        previousPos = currentPos;
+
+        // 실제 거리 기반 파괴 조건
+        if (hasMoved && Vector3.Distance(currentPos, target.position) < distanceToTargetDestroyProjectile)
         {
-            if (this.TryGetComponent<Animator>(out Animator animator))
-            {
-
-                if(animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
-                {
-                    if (target.TryGetComponent<IDamageAble>(out IDamageAble targetUnit))
-                    {
-                        targetUnit.ReceiveDamage(projectileDamageData);
-                        DoAreaOnEffect();
-                    }
-                    Destroy(this.gameObject);
-                }
-            }
-            else
-            {
-                if (target.TryGetComponent<IDamageAble>(out IDamageAble targetUnit))
-                {
-                    targetUnit.ReceiveDamage(projectileDamageData);
-                    DoAreaOnEffect();
-                }
-                Destroy(this.gameObject);
-            }
-            
+            TryHitAndDestroy("Destroy Distance");
+            return;
         }
 
+        // 움직임이 멈춘 경우
+        if (hasMoved && currentVelocity.magnitude < 0.01f)
+        {
+            TryHitAndDestroy("Destroy Velocity 0");
+            return;
+        }
+
+        if(existTime >= 2f)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+    }
+
+    void TryHitAndDestroy(string reason)
+    {
+        if (this.TryGetComponent<Animator>(out Animator animator))
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+            {
+                if(target.TryGetComponent<IDamageAble>(out IDamageAble i))
+                {
+                    i.ReceiveDamage(projectileDamageData); 
+                }
+                //Debug.Log(reason + " + Animator 완료 후 파괴");
+                Destroy(this.gameObject);
+            }
+        }
+        else
+        {
+            if (target.TryGetComponent<IDamageAble>(out IDamageAble i))
+            {
+                i.ReceiveDamage(projectileDamageData);
+            }
+            //Debug.Log(reason + " + 바로 파괴");
+            Destroy(this.gameObject);
+        }
     }
 
     private void DoAreaOnEffect()

@@ -28,7 +28,7 @@ public abstract class Item : MonoBehaviour
 
     object lockObject = new object();
 
-    public string itemId;
+    public int itemId;
     public string itemName;
     public string itemDescription;
     public string itemAbilityDescription;
@@ -41,7 +41,7 @@ public abstract class Item : MonoBehaviour
         await FirebaseManager.ItemLoadData();
         lock (lockObject)
         {
-            var item = FirebaseManager.GetItemByID(int.Parse(itemId));
+            var item = FirebaseManager.GetItemByID(itemId);
             itemName = item.name_kr;
             itemDescription = item.des;
             itemAbilityDescription = item.effect;
@@ -74,7 +74,7 @@ public abstract class PassiveItem : Item, IPassiveItem
     protected override void Start()
     {
         base.Start();
-        var item = FirebaseManager.items[int.Parse(itemId)];
+        var item = FirebaseManager.items[itemId];
         effectBaseValue = item.base_effect;
         effectStackValue = item.stack_effect;
     }

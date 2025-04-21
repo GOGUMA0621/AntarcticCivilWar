@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         PlayerUnitManager.instance.SpawnPlayerUnits(this.transform.position);
+        PlayerUnitManager.instance.ApplyItemsToAllUnit();
     }
 
     // Update is called once per frame

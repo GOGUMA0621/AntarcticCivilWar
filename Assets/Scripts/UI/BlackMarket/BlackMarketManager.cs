@@ -20,11 +20,10 @@ public class BlackMarketManager : MonoBehaviour
 
     private void Start()
     {
+        CloseShop();
         rerollButton.onClick.AddListener(RerollShop);
         closeButton.onClick.AddListener(CloseShop);
         allItems = FirebaseManager.items.Values.ToList();
-
-        OpenShop();
     }
 
     public void OpenShop()

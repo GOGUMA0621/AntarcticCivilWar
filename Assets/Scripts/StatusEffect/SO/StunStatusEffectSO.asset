@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: StunStatusEffectSO
   m_EditorClassIdentifier: 
   statusEffectType: 5
-  activationThreshold: 20
+  activationThreshold: 100
   thresholdReductionMultiplier: 1
-  thresholdReductionEverySecond: 1
-  activeDuration: 1
+  thresholdReductionEverySecond: 10
+  activeDuration: 3
   visualEffectPrefab: {fileID: 0}
   isBuildUpOnlyShow: 0
   isEffectActive: 0

@@ -19,7 +19,7 @@ public class UnitDistinction : MonoBehaviour //유닛 진영 구별을 위해서 임시로 넣
     void Update()
     {
         ChangeColorDistinction();
-        this.transform.localPosition = new Vector3(0, 0, 0); //유닛 위에 띄우기
+        //this.transform.localPosition = new Vector3(0, 0, 0); //유닛 위에 띄우기
     }
 
     void ChangeColorDistinction()

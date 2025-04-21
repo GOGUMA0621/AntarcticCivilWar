@@ -6,6 +6,8 @@ public class InputManager : SingleTonBehaviour<InputManager>
 {
     private Vector2 moveDirection = Vector2.zero;
 
+    public bool callTriggerd = false;
+
     private bool movePressed;
     private bool interActionPressed;
     private bool callPressed;

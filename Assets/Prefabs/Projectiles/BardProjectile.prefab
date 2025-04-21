@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2027217823887622839, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3102988094304739086, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
       propertyPath: shadowPositionDivider
       value: 6

@@ -1,3 +1,4 @@
+using Pathfinding;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,20 +19,19 @@ public class Peddler : MonoBehaviour, IStatusAble, INeutrality
 
     private int currentState = 0;
     private Animator animator;
-    [HideInInspector] public NavMeshAgent agent;
-
+    [HideInInspector] public AIPath aiPath;
+    [HideInInspector] public Seeker seeker;
+    [HideInInspector] public AIDestinationSetter setter;
 
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
-        agent = GetComponent<NavMeshAgent>();
+        aiPath = GetComponent<AIPath>();
+        seeker = GetComponent<Seeker>();
+        setter = GetComponent<AIDestinationSetter>();
         spawnUnit = GetComponent<SpawnUnit>();
         isDie = false;
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
-        agent.speed = speed;
-        agent.isStopped = false;
     }
 
     // Update is called once per frame
@@ -69,10 +69,9 @@ public class Peddler : MonoBehaviour, IStatusAble, INeutrality
         }
     }
 
-    public void MoveToDestination(Vector3 destination)
+    public void SetTargetToMove(Vector3 position)
     {
-        agent.ResetPath();
-        agent.SetDestination(destination);
+        aiPath.destination = position;
     }
 
     private void Die()

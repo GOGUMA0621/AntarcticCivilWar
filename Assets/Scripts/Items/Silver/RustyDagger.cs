@@ -8,7 +8,7 @@ public class RustyDagger : StatItem
     public override void ApplyEffect(UnitController unit)
     {
         float totalIncrease = damageIncrease + (stackDamageAmount * currentStack - 1);
-        unit.AddModifierStat(new StatModifier(itemId, StatType.AttackDamage, totalIncrease, ModifierMethod.Additive));
+        unit.AddModifierStat(new StatModifier(itemId.ToString(), StatType.AttackDamage, totalIncrease, ModifierMethod.Additive));
     }
 
     public override void UpdateEffect(UnitController unit)

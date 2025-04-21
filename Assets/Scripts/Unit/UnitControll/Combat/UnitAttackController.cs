@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -50,7 +49,10 @@ public class UnitAttackController : MonoBehaviour //유닛 공격 관련
         {
             if (unit.detectTarget.targetToAttack != null)
             {
-                ProjectileController projectile = Instantiate(pfProjectile, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
+                GameObject projectileObject = Instantiate(pfProjectile, transform.position, Quaternion.identity);
+                //Debug.Log(projectileObject);
+                projectileObject.SetActive(true);
+                ProjectileController projectile = projectileObject.GetComponent<ProjectileController>();
                 projectile.InitialzeProjectile(unit.detectTarget.targetToAttack, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight,unit);
                 projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
             }
@@ -67,7 +69,7 @@ public class UnitAttackController : MonoBehaviour //유닛 공격 관련
                 IDamageAble target = targetCollider.GetComponent<IDamageAble>();
                 target.ReceiveDamage(new DamageData(unit.data.UnitDamage,StatusEffectType.None,0));
             }
-        }
+        } 
     }
 
     public void ResetProjectile()

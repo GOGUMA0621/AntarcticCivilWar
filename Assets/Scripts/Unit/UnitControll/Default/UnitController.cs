@@ -27,9 +27,13 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
 {
     public event Action<GameObject> OnDestroyed;
 
+    public static Queue<UnitController> DestroyedUnitQueue = new Queue<UnitController>();
+
     private Dictionary<StatType, float> baseStats = new();
     private List<StatModifier> statModifierList = new();
     private Dictionary<StatType, float> finalStats = new();
+
+
 
     public delegate void UnitAttackCountEvent();
 
@@ -43,29 +47,31 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
 
     [SerializeField] private List<Vector2> fullPath = new(); //À¯´ÖÀÇ °æ·Î¸¦ ÀúÀåÇÏ±â À§ÇÑ º¯¼ö
 
-    private bool inCombat = false; //À¯´ÖÀÌ ÀüÅõÁßÀÎÁö È®ÀÎÇÏ±â À§ÇÑ º¯¼ö
+    //private bool inCombat = false; //À¯´ÖÀÌ ÀüÅõÁßÀÎÁö È®ÀÎÇÏ±â À§ÇÑ º¯¼ö
 
     private bool _isFacingRight = true;
 
     private SciptableObjects.UnitData _currentData; //À¯´ÖÀÇ µ¥ÀÌÅÍ º¯È­ °¨Áö¸¦ À§ÇÑ º¯¼ö
-    private bool isUnitDie;
+    protected bool isUnitDie;
+
+    protected bool disableFlip = false; //¾Ö´Ï¸ÞÀÌ¼Ç ÁÂ¿ì ¹ÝÀüÀ» ¸·±â À§ÇÑ º¯¼ö
 
     private Transform _lastAttacker; //³Ë¹éÀ» À§ÇØ ¸¶Áö¸· °ø°ÝÀÚ¸¦ ¾Ë¾Æ³»´Â º¯¼ö
     public IActiveSkill unitSkill;
     public IPasseiveSkillAttack unitPassiveSkill;
     public bool canMana = true;
 
+
     private string currentAnimationName;
     private bool isPaused = false;
-    private string pausedStateName;
+    private int pausedStateHash;
     private float pausedTime;
-
 
     [HideInInspector] public bool isStunned = false;
     public float maxHP;
     [HideInInspector] public float currentHP { get; private set; }
     public float maxMP;
-    [HideInInspector] public float currentMP { get; private set; }
+    [HideInInspector] public float currentMP;
     public float unitDamage;
     public float unitSpeed;
     [HideInInspector] public float unitAttackDistance;
@@ -73,7 +79,8 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     private float unitAttackSpeed = 1.0f;
     private float unitSenseDistance = 1.0f;
 
-    private IUnitState currentState;
+    protected IUnitState currentState;
+    private IUnitState manaSkillState;
 
     #region ÀÌº¥Æ® °ü¸®
     private void OnEnable()
@@ -91,6 +98,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
         //Debug.Log(tr);
         _lastAttacker = tr;
     }
+
+    public void DestroyEvent(GameObject gameObject)
+    {
+        OnDestroyed?.Invoke(gameObject);
+    }
     #endregion
     
     protected virtual void Start()
@@ -100,10 +112,10 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
         unit = GetComponent<Unit>();
         statusEffectManager = GetComponent<StatusEffectManager>();
         _lastPosition = transform.position;
-        unit.rb.drag = 0.5f; // ¹°¸®Àû ¸¶Âû·Â Á¶Á¤
         SetUnit();
 
         currentState = GetInitialState();
+        manaSkillState = GetManaSkillState();
         currentState.Enter(this);
     }
 
@@ -111,13 +123,12 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     {
         unit.animator.SetFloat("speed", unit.aiPath.velocity.magnitude);
         currentState?.Update();
-        if(!IsDestroyed() && unit.aiPath.canMove == true && unit.settler.target == null)
-        {
-            unit.aiPath.canMove = false;
-            ChangeState(new UnitIdleState());
-            return;
-        }
-        //_unit.rb.velocity = Vector2.right * 5f;
+        //if(!IsDestroyed() && unit.aiPath.canMove == true && unit.settler.target == null)
+        //{
+        //    unit.aiPath.canMove = false;
+        //    ChangeState(new UnitIdleState());
+        //    return;
+        //}
     }
 
     private void FixedUpdate()
@@ -126,18 +137,50 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
 
         FlipAnimation();
     }
+    #region Å¥
+    
+
+    #endregion
+
     #region FSM
+    private readonly IUnitState idleState = new UnitIdleState();
+    private readonly IUnitState attackState = new UnitAttackState();
+    private readonly IUnitState followState = new UnitFollowState();
+    private readonly IUnitState dieState = new UnitDieState();
+    private readonly IUnitState callState = new UnitCallState();
+
+    public virtual void GoIdle() => ChangeState(idleState);
+    public virtual void GoAttack() => ChangeState(attackState);
+    public virtual void GoFollow() => ChangeState(followState);
+    public virtual void GoDie() => ChangeState(dieState);
+    public void GoCall() => ChangeState(callState);
 
     public void ChangeState(IUnitState newState)
     {
+        if (currentState?.GetType() == newState.GetType()) 
+        {
+            //Debug.Log($"[FSM] Skip: Already in {newState.GetType().Name}");
+            return;
+        }
+        //Debug.Log($"[FSM] Change State: {currentState?.GetType().Name} -> {newState.GetType().Name}");
         currentState?.Exit();
         currentState = newState;
         currentState.Enter(this);
     }
 
+    public IUnitState GetCurrentState()
+    {
+        return currentState;
+    }
+
     protected virtual IUnitState GetInitialState()
     {
         return new UnitIdleState();
+    }
+
+    protected virtual IUnitState GetManaSkillState()
+    {
+        return new UnitManaSkillState();
     }
 
     #endregion
@@ -159,6 +202,8 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
             baseStats.Add(StatType.CritChance, 0);
 
             RecalculateStats();
+
+            unit.rb.drag = 0.5f;
 
             currentHP = maxHP;
             currentMP = 0;
@@ -198,6 +243,18 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
 
     public void SetTargetToMove(Transform target)
     {
+        if (target == null)
+        {
+            Debug.LogWarning($"[SetTargetToMove] target is null");
+            return;
+        }
+
+        if (unit.settler == null)
+        {
+            Debug.LogError($"[SetTargetToMove] settler is NULL on {unit.name}");
+            return;
+        }
+        Debug.Log($"[SetTargetToMove] {name} {target.name}");
         unit.settler.target = target;
     }
 
@@ -241,6 +298,8 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     {
         //Debug.Log($"{name} ÀÌµ¿ ÁßÁö");
         StopAllCoroutines();
+        unit.aiPath.canMove = false;
+        unit.settler.target = null;
         unit.rb.velocity = Vector2.zero;
     }
     #endregion
@@ -248,45 +307,45 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     #region ¾Ö´Ï¸ÞÀÌ¼Ç
     public void FlipAnimation()
     {
-        if (!isUnitDie)
+        if (isUnitDie || disableFlip) return;
+
+        AnimatorStateInfo stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
+        Vector2 currentPosition = transform.position;
+        if (stateInfo.IsTag("Battle"))
         {
-            AnimatorStateInfo stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
-            Vector2 currentPosition = transform.position;
-            if (stateInfo.IsTag("Battle"))
+            if(unit.detectTarget.targetToAttack != null)
             {
-                if(unit.detectTarget.targetToAttack != null)
-                {
-                    float targetDirection = unit.detectTarget.targetToAttack.transform.position.x - currentPosition.x;
+                float targetDirection = unit.detectTarget.targetToAttack.transform.position.x - currentPosition.x;
 
-                    if (targetDirection > 0 && !_isFacingRight)
-                    {
-                        Flip();
-                    }
-                    else if (targetDirection < 0 && _isFacingRight)
-                    {
-                        Flip();
-                    }
-                }
-            }
-            else
-            {
-                float moveDirection = currentPosition.x - _lastPosition.x;
-
-                if (moveDirection > 0 && !_isFacingRight)
+                if (targetDirection > 0 && !_isFacingRight)
                 {
                     Flip();
                 }
-                else if (moveDirection < 0 && _isFacingRight)
+                else if (targetDirection < 0 && _isFacingRight)
                 {
                     Flip();
                 }
-
-                _lastPosition = currentPosition;
             }
         }
+        else
+        {
+            float moveDirection = currentPosition.x - _lastPosition.x;
+
+            if (moveDirection > 0 && !_isFacingRight)
+            {
+                Flip();
+            }
+            else if (moveDirection < 0 && _isFacingRight)
+            {
+                Flip();
+            }
+
+            _lastPosition = currentPosition;
+        }
+        
     }
 
-    void Flip()
+    protected void Flip()
     {
         Vector2 curentScale = gameObject.transform.localScale;
         curentScale *= new Vector2(-1, 1);
@@ -310,23 +369,37 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     {
         if (!isPaused)
         {
-            AnimatorStateInfo currentState = unit.animator.GetCurrentAnimatorStateInfo(0);
-            pausedTime = currentState.normalizedTime;
-            pausedStateName = currentState.shortNameHash.ToString();
+            AnimatorStateInfo stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
+            pausedStateHash = stateInfo.shortNameHash;
+            pausedTime = stateInfo.normalizedTime + Time.deltaTime;
             unit.animator.speed = 0;
             isPaused = true;
+            Debug.Log($"[¾Ö´Ï¸ÞÀÌ¼Ç ÀÏ½ÃÁ¤Áö]");
         }
     }
 
     public void ResumeAnimation()
     {
-        if (isPaused)
+        StartCoroutine(ResumeCoroutine());
+    }
+
+    private IEnumerator ResumeCoroutine()
+    {
+        if(isPaused)
         {
+            
             unit.animator.speed = 1;
-            unit.animator.Play(pausedStateName, 0, pausedTime);
+            unit.animator.Play(pausedStateHash, 0, pausedTime);
+            yield return new WaitUntil(() => 
+            {
+                var stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
+                return unit.animator.speed > 0f && stateInfo.normalizedTime != pausedTime;
+            });
             isPaused = false;
+            Debug.Log($"[¾Ö´Ï¸ÞÀÌ¼Ç Àç°³] {name} {pausedStateHash} {pausedTime}");
         }
     }
+
     #endregion
 
     #region ÀüÅõ
@@ -344,11 +417,13 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
             }
             else
             {
+                //Debug.Log(name);
                 unit.attackController.Attack();
             }
         }
         else
         {
+            //Debug.Log(name);
             unit.attackController.Attack();
         }
     }
@@ -368,12 +443,14 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     internal void Die()
     {
         StopMovement();
+        DestroyedUnitQueue.Enqueue(this);
         isUnitDie = true;
         OnDestroyed?.Invoke(this.gameObject);
 
         ChangeState(new UnitDieState());
         StartCoroutine(KnockBack(2.0f));
         unit.detectTarget.ClearTarget();
+        unit.capsuleCollider.enabled = false;
 
         if (this.transform.tag == "Unit")
         {
@@ -384,6 +461,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     internal void Revive() //ÀÏ¾î³ª¶ó
     {
         this.tag = "Unit";
+        unit.capsuleCollider.enabled = true;
         unit.rb.velocity = Vector2.zero;
         unit.detectTarget.ClearTarget();
         isUnitDie = false;
@@ -409,6 +487,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
         if (canMana)
         {
             currentMP += finalStats[StatType.ManaRegen];
+            if (currentMP >= maxMP && maxMP > 0)
+            {
+                currentMP = 0;
+                ChangeState(manaSkillState);
+            }
         }
     }
 
@@ -448,6 +531,28 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
             yield return new WaitForSeconds(0.5f);
             unit.rb.velocity = Vector2.zero;
         }
+    }
+
+    public void UnitAddForce(Vector2 amount, ForceMode2D forcemod)
+    {
+        StartCoroutine(UnitAddForceCorutine(amount, forcemod));
+    }
+
+    public IEnumerator UnitAddForceCorutine(Vector2 amount, ForceMode2D forcemod)
+    {
+        if (!unit.data.UnitUnstoppable)
+        {
+            unit.aiPath.canMove = false;
+            unit.rb.AddForce(amount, forcemod);
+        }
+        yield return new WaitForSeconds(0.5f);
+        unit.rb.velocity = Vector2.zero;
+        unit.aiPath.canMove = true;
+    }
+
+    public float GetNormalizedHealth()
+    {
+        return currentHP / maxHP;
     }
     #endregion
 

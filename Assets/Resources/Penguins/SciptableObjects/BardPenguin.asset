@@ -32,7 +32,7 @@ MonoBehaviour:
   unitHasKnockback: 0
   unitUnstoppable: 0
   unitAttackSpeed: 1.5
-  unitAttackDistance: 6
+  unitAttackDistance: 8
   unitSenseRadius: 10
   unitProjectile: {fileID: 7427458923226158902, guid: ba8617c05e66fe44ebada2674aaa2399, type: 3}
   unitProjectileMaxSpeed: 3

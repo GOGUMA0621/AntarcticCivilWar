@@ -231,7 +231,7 @@
                 {
                     "name": "",
                     "id": "14f2025a-0bcf-4e7d-aae0-ace38c0440eb",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
@@ -253,7 +253,7 @@
                 {
                     "name": "",
                     "id": "5721b5f3-eb25-4690-b2cd-317340413f08",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
