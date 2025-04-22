@@ -5,6 +5,7 @@ using TMPro;
 public class BlackMarketSlot : MonoBehaviour
 {
     [SerializeField] private Image itemImage;
+    [SerializeField] private Image itemFrame;
     [SerializeField] private TextMeshProUGUI itemPrice;
     [SerializeField] private Button buyButton;
 
@@ -16,6 +17,8 @@ public class BlackMarketSlot : MonoBehaviour
         currentItem = item;
         //itemImage.sprite = Resources.Load<Sprite>($"Icons/{item.name}");
         itemImage.sprite = Resources.Load<Sprite>("Icons/OldDagger");
+        var itemFrameSprite = PassiveItemManager.GetItemFrame(item.rarity);
+        if(itemFrameSprite != null ) itemFrame.sprite = itemFrameSprite;
         itemPrice.text = item.price.ToString();
         buyButton.onClick.RemoveAllListeners();
         buyButton.onClick.AddListener(() => ItemBuyUI.Instance.Open(currentItem));

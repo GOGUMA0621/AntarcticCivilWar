@@ -24,6 +24,7 @@ public class BlackMarketManager : MonoBehaviour
         rerollButton.onClick.AddListener(RerollShop);
         closeButton.onClick.AddListener(CloseShop);
         allItems = FirebaseManager.items.Values.ToList();
+        Debug.Log($"블랙 마켓 {allItems.Count}");
     }
 
     public void OpenShop()

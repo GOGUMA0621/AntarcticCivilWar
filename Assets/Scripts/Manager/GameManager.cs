@@ -71,7 +71,8 @@ public class GameManager : MonoBehaviour
                 peddlerSpawnTimer = 0f;
                 Vector3Int spawnTile = TilemapManager.instance.GetRandomEdgeSpawnPoint(minOffset, maxOffset);
                 peddler = Instantiate(peddlerSpawnGenerator.pfPeddler, spawnTile, Quaternion.identity).GetComponent<Peddler>();
-                peddler.SetTargetToMove((Vector3)TilemapManager.instance.GetOppositeDestination(spawnTile, minOffset, maxOffset));
+                var targetTile = (Vector3)TilemapManager.instance.GetOppositeDestination(spawnTile, minOffset, maxOffset);
+                peddler.SetTargetToMove(targetTile);
             }
         }
     }

@@ -71,7 +71,10 @@ public class Peddler : MonoBehaviour, IStatusAble, INeutrality
 
     public void SetTargetToMove(Vector3 position)
     {
-        aiPath.destination = position;
+        if (aiPath != null)
+        {
+            aiPath.destination = position;
+        }
     }
 
     private void Die()

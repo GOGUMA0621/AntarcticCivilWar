@@ -36,7 +36,7 @@ public class ItemBuyUI : MonoBehaviour
         itemImg.sprite = Resources.Load<Sprite>("Icons/OldDagger");
         itemName.text = item.name_kr;
         itemDes.text = item.des;
-        itemRarity.text = item.rarity;
+        itemRarity.text = item.rarity.ToString();
         itemPrice.text = item.price.ToString();
 
         gameObject.SetActive(true);

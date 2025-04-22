@@ -17,7 +17,7 @@ public class UnitIdleState : IUnitState
         this.unitController = unitController;
         unitController.unit.aiPath.canMove = true;
         unitController.SetAnimation("IdleState");
-        Debug.Log($"[IdleState] {unitController.name} is idle");
+        //Debug.Log($"[IdleState] {unitController.name} is idle");
 
         if (unitController.tag == "Unit" && unitController.unit.detectTarget.targetToAttack == null)
         {

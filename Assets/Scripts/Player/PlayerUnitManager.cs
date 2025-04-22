@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -12,6 +13,9 @@ public class UnitPrefabEntry
 public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
 {
     [SerializeField] private List<GameObject> allayList = new List<GameObject>();
+
+    private List<PassiveItem> itemUpdateEffects = new();
+
     public List<UnitPrefabEntry> allayPrefabList = new List<UnitPrefabEntry>();
     public List<GameObject> enemyList = new List<GameObject>();
 
@@ -24,6 +28,20 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     {
         base.Awake();
         //CreateSquad();
+    }
+
+    private void Update()
+    {
+        foreach (var allay in allayList) 
+        {
+            if(allay.TryGetComponent<UnitController>(out UnitController unit))
+            {
+                foreach(var effect in itemUpdateEffects)
+                {
+                    effect.UpdateEffect(unit);
+                }
+            }
+        }
     }
 
     //private void CreateSquad()
@@ -250,8 +268,13 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         {
             foreach (var item in InventoryManager.instance.inventoryItems)
             {
-                PassiveItem passiveItem = item.Key.GetComponent<PassiveItem>();
+                var passiveItem = item.Key.GetComponent<PassiveItem>();
                 passiveItem.ApplyEffect(unit);
+
+                if(passiveItem is IPassiveItem updateEffect)
+                {
+                    itemUpdateEffects.Add(passiveItem);
+                }
             }
         }
     }

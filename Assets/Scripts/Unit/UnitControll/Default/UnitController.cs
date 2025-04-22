@@ -6,6 +6,8 @@ using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 using Pathfinding;
+using Unity.VisualScripting;
+using UnityEngine.Rendering;
 
 
 [Serializable]
@@ -33,7 +35,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
     private List<StatModifier> statModifierList = new();
     private Dictionary<StatType, float> finalStats = new();
 
-
+    private List<OnHitItem> onHitItemList = new();
 
     public delegate void UnitAttackCountEvent();
 
@@ -428,6 +430,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
         }
     }
 
+    public virtual void Heal(float amount)
+    {
+        currentHP = Math.Clamp(currentHP += amount, 0f, maxHP);
+    }
+
     public virtual void ReceiveDamage(DamageData damage)
     {
         UnitAttackController.OnUnitAttack += HandleAttackEvent;
@@ -554,6 +561,30 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
     {
         return currentHP / maxHP;
     }
+    #endregion
+
+    #region æ∆¿Ã≈€
+
+    public void RegisterOnHitEffect(OnHitItem effect)
+    {
+        if (!onHitItemList.Contains(effect)) 
+            onHitItemList.Add(effect);
+    }
+
+    public void UnregisterOnHitEffect(OnHitItem effect)
+    {
+        if (onHitItemList.Contains(effect))
+            onHitItemList.Remove(effect);
+    }
+
+    public void TriggerOnHit(IDamageAble target)
+    {
+        foreach(var effect in onHitItemList)
+        {
+            effect.OnHit(this, target);
+        }
+    }
+
     #endregion
 
     #region Ω∫≈»

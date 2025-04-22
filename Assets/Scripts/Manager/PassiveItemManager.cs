@@ -2,15 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PassiveItemManager
+public static class PassiveItemManager
 {
-    private PassiveItem[] silverItems = Resources.LoadAll<PassiveItem>("Items/Silver");
-    private PassiveItem[] goldItems = Resources.LoadAll<PassiveItem>("Items/Gold");
-    private PassiveItem[] platinumItems = Resources.LoadAll<PassiveItem>("Items/Platinum");
-    private PassiveItem[] diamondItems = Resources.LoadAll<PassiveItem>("Items/Diamond");
-    private PassiveItem[] specialItems = Resources.LoadAll<PassiveItem>("Items/Special");
+    private static PassiveItem[] silverItems = Resources.LoadAll<PassiveItem>("Items/Silver");
+    private static PassiveItem[] goldItems = Resources.LoadAll<PassiveItem>("Items/Gold");
+    private static PassiveItem[] platinumItems = Resources.LoadAll<PassiveItem>("Items/Platinum");
+    private static PassiveItem[] diamondItems = Resources.LoadAll<PassiveItem>("Items/Diamond");
+    private static PassiveItem[] specialItems = Resources.LoadAll<PassiveItem>("Items/Special");
 
-    public PassiveItem[] GetRewardPassiveItems(int count, ItemRarity rarity)
+    private static Sprite silverFrame = Resources.Load<Sprite>("Item/ItemFrame/Silver");
+    private static Sprite goldFrame = Resources.Load<Sprite>("Item/ItemFrame/Gold");
+    private static Sprite platinumFrame = Resources.Load<Sprite>("Item/ItemFrame/Platinum");
+    private static Sprite diamondFrame = Resources.Load<Sprite>("Item/ItemFrame/Diamond");
+    private static Sprite specialFrame = Resources.Load<Sprite>("Item/ItemFrame/Special");
+
+    public static PassiveItem[] GetRewardPassiveItems(int count, ItemRarity rarity)
     {
         PassiveItem[] items = null;
         switch (rarity)
@@ -38,7 +44,27 @@ public class PassiveItemManager
         return null;
     }
 
-    private PassiveItem[] GetRandomPassiveItems(PassiveItem[] items, int count)
+    public static Sprite GetItemFrame(ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.silver:
+                return silverFrame;
+            case ItemRarity.gold:
+                return goldFrame;
+            case ItemRarity.platinum:
+                return platinumFrame;
+            case ItemRarity.diamond:
+                return diamondFrame;
+            case ItemRarity.special:
+                return specialFrame;
+
+            default:
+                return null;
+        }
+    }
+
+    private static PassiveItem[] GetRandomPassiveItems(PassiveItem[] items, int count)
     {
         int currentCount = 0;
         PassiveItem[] randomItems = new PassiveItem[count];

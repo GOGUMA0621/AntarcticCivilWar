@@ -7,6 +7,9 @@ using UnityEngine;
 public class ProjectileController : MonoBehaviour
 {
     [SerializeField] private ProjectileVisual visual;
+
+    private Action OnHitCallback;
+
     private Unit unit;
     private Vector3 currentVelocity;
     private Vector3 previousPos;
@@ -88,7 +91,8 @@ public class ProjectileController : MonoBehaviour
             {
                 if(target.TryGetComponent<IDamageAble>(out IDamageAble i))
                 {
-                    i.ReceiveDamage(projectileDamageData); 
+                    i.ReceiveDamage(projectileDamageData);
+                    OnHitAction();
                 }
                 //Debug.Log(reason + " + Animator ¿Ï·á ÈÄ ÆÄ±«");
                 Destroy(this.gameObject);
@@ -99,6 +103,7 @@ public class ProjectileController : MonoBehaviour
             if (target.TryGetComponent<IDamageAble>(out IDamageAble i))
             {
                 i.ReceiveDamage(projectileDamageData);
+                OnHitAction();
             }
             //Debug.Log(reason + " + ¹Ù·Î ÆÄ±«");
             Destroy(this.gameObject);
@@ -115,6 +120,7 @@ public class ProjectileController : MonoBehaviour
                 if(collider.TryGetComponent<IDamageAble>(out IDamageAble target) && collider != this.gameObject && collider.tag != unit.tag)
                 {
                     target.ReceiveDamage(projectileDamageData);
+                    OnHitAction();
                 }
             }
         }
@@ -224,6 +230,17 @@ public class ProjectileController : MonoBehaviour
         this.trajectoryAniamaionCurve = trajectoyAnimationCure;
         this.axisCorrectionAnimationCurve = axisCorrectionAnimationCurve;
         this.speedAnimationCurve = speedAnimationCurve;
+    }
+
+    public void SetOnHitCallback(Action callback)
+    {
+        if (callback == null) return;
+        OnHitCallback = callback;
+    }
+
+    private void OnHitAction()
+    {
+        OnHitCallback?.Invoke();
     }
 
     public Vector3 GetMoveDirection()

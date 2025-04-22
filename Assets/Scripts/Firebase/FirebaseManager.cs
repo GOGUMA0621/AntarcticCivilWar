@@ -14,7 +14,7 @@ public class ItemDB
     public string name;
     public string type;
     public string ability_type;
-    public string rarity;
+    public ItemRarity rarity;
     public string effect;
     public string des;
     public List<float> base_effect = new();
@@ -57,91 +57,101 @@ public static class FirebaseManager
     public static async Task ItemLoadData()
     {
         QuerySnapshot itemDataLoad = await firestore.Collection("items").GetSnapshotAsync();
-
-        foreach (DocumentSnapshot doc in itemDataLoad.Documents)
+        try
         {
-            Dictionary<string, object> data = doc.ToDictionary();
-
-            int itemId = int.Parse(doc.Id); // << 문서ID는 저장될때 문자열로 저장된다네요 그래서 Parse함수 사용
-
-            ItemDB item = new ItemDB
+            foreach (DocumentSnapshot doc in itemDataLoad.Documents)
             {
-                // Int.Parse()를 사용할 수 도있지만 파베에서 가져온 데이터는 object형식이라네요             
-                name_kr = data["name_kr"].ToString(),
-                name = data["name"].ToString(),
-                type = data["type"].ToString(),
-                ability_type = data["ability_type"].ToString(),
-                rarity = data["rarity"].ToString(),
-                effect = data["effect"].ToString(),
+                Dictionary<string, object> data = doc.ToDictionary();
 
-                des = data.ContainsKey("des") ? data["des"].ToString() : "",
+                int itemId = int.Parse(doc.Id); // << 문서ID는 저장될때 문자열로 저장된다네요 그래서 Parse함수 사용
 
-                // 존재 여부에 따라 처리함
-                price = data.ContainsKey("price") ? Convert.ToInt32(data["price"]) : 0,
-                cooltime = data.ContainsKey("cooltime") ? Convert.ToInt32(data["cooltime"]) : 0,
-
-                applied_debuff = data.ContainsKey("applied_debuff") switch
+                ItemDB item = new ItemDB
                 {
-                    true when data["applied_debuff"] is List<object> list =>
-                        list.ConvertAll(obj => obj.ToString()),
+                    // Int.Parse()를 사용할 수 도있지만 파베에서 가져온 데이터는 object형식이라네요             
+                    name_kr = data["name_kr"].ToString(),
+                    name = data["name"].ToString(),
+                    type = data["type"].ToString(),
+                    ability_type = data["ability_type"].ToString(),
+                    rarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), (data["rarity"].ToString())),
+                    effect = data["effect"].ToString(),
 
-                    true when data["applied_debuff"] is string str =>
-                        new List<string> { str },
+                    des = data.ContainsKey("des") ? data["des"].ToString() : "",
 
-                    _ => new List<string>()
-                },
+                    // 존재 여부에 따라 처리함
+                    price = data.ContainsKey("price") ? Convert.ToInt32(data["price"]) : 0,
+                    cooltime = data.ContainsKey("cooltime") ? Convert.ToInt32(data["cooltime"]) : 0,
 
-                base_effect = data.ContainsKey("base_effect") switch
-                {
-                    true when data["base_effect"] is List<object> list =>
-                        list.ConvertAll(obj =>
-                        {
-                            try { return Convert.ToSingle(obj); }
-                            catch
+                    applied_debuff = data.ContainsKey("applied_debuff") switch
+                    {
+                        true when data["applied_debuff"] is List<object> list =>
+                            list.ConvertAll(obj => obj.ToString()),
+
+                        true when data["applied_debuff"] is string str =>
+                            new List<string> { str },
+
+                        _ => new List<string>()
+                    },
+
+                    base_effect = data.ContainsKey("base_effect") switch
+                    {
+                        true when data["base_effect"] is List<object> list =>
+                            list.ConvertAll(obj =>
                             {
-                                Debug.LogWarning($"base_effect 리스트 내부 변환 실패: {obj} ({obj?.GetType()})");
-                                return 0f;
-                            }
-                        }),
+                                try { return Convert.ToSingle(obj); }
+                                catch
+                                {
+                                    Debug.LogWarning($"base_effect 리스트 내부 변환 실패: {obj} ({obj?.GetType()})");
+                                    return 0f;
+                                }
+                            }),
 
-                    true when data["base_effect"] is float f =>
-                     
-                        new List<float> 
-                        {
-                            f
-                        },
-                    true when data["base_effect"] is int i =>
-                        new List<float> { Convert.ToSingle(i) },
+                        true when data["base_effect"] is float f =>
 
-                    _ => new List<float>()
-                },
-                stack_effect = data.ContainsKey("stack_effect") switch
-                {
-                    true when data["stack_effect"] is List<object> list =>
-                        list.ConvertAll(obj =>
-                        {
-                            try { return Convert.ToSingle(obj); }
-                            catch
+                            new List<float>
                             {
-                                Debug.LogWarning($"stack_effect 리스트 내부 변환 실패: {obj} ({obj?.GetType()})");
-                                return 0f;
-                            }
-                        }),
+                                f
+                            },
+                        true when data["base_effect"] is int i =>
+                            new List<float> { Convert.ToSingle(i) },
 
-                    true when data["stack_effect"] is float f =>
-                        new List<float> { f },
+                        _ => new List<float>()
+                    },
+                    stack_effect = data.ContainsKey("stack_effect") switch
+                    {
+                        true when data["stack_effect"] is List<object> list =>
+                            list.ConvertAll(obj =>
+                            {
+                                try { return Convert.ToSingle(obj); }
+                                catch
+                                {
+                                    Debug.LogWarning($"stack_effect 리스트 내부 변환 실패: {obj} ({obj?.GetType()})");
+                                    return 0f;
+                                }
+                            }),
 
-                    true when data["stack_effect"] is int i =>
-                        new List<float> { Convert.ToSingle(i) },
+                        true when data["stack_effect"] is float f =>
+                            new List<float> { f },
 
-                    _ => new List<float>()
-                }
-            };
+                        true when data["stack_effect"] is int i =>
+                            new List<float> { Convert.ToSingle(i) },
 
-            //items[itemId] = item;
+                        _ => new List<float>()
+                    }
+                };
 
-            //Debug.Log(items[itemId].base_effect);
+                items[itemId] = item;
 
+                Debug.Log(itemId);
+
+            }
+        }
+        catch(Exception ex) 
+        {
+            Debug.LogError($"아이템 로드 오류: {ex}");
+        }
+        finally
+        {
+            Debug.Log("아이템 로드 완료");
         }
     }
 
@@ -149,37 +159,48 @@ public static class FirebaseManager
     public static async Task UnitLoadData()
     {
         QuerySnapshot unitDataLoad = await firestore.Collection("units").GetSnapshotAsync();
-
-        foreach (DocumentSnapshot doc in unitDataLoad.Documents)
+        try
         {
-            Dictionary<string, object> data = doc.ToDictionary();
-
-            int unitId = int.Parse(doc.Id);
-
-            UnitDB unit = new UnitDB
+            foreach (DocumentSnapshot doc in unitDataLoad.Documents)
             {
-                hp = Convert.ToInt32(data["hp"]),
-                attack = Convert.ToInt32(data["attack"]),
-                range = Convert.ToInt32(data["range"]),
-                spawn_Stage = Convert.ToInt32(data["spawn_Stage"]),
-                attack_Range = Convert.ToInt32(data["attack_Range"]),
-                attack_Speed = Convert.ToSingle(data["attack_Speed"]),
-                speed = Convert.ToSingle(data["speed"]),
-                name_kr = data["name_kr"].ToString(),
-                name = data["name"].ToString(),
-                type = data["type"].ToString(),
-                group = data["group"].ToString(),
-                attack_Type = data["attack_Type"].ToString(),
+                Dictionary<string, object> data = doc.ToDictionary();
 
-                // 존재 여부에 따라 처리함
-                mana = data.ContainsKey("mana") ? Convert.ToInt32(data["mana"]) : 0,
-                force = data.ContainsKey("force") ? Convert.ToInt32(data["force"]) : 0,
-                drop_Coin = data.ContainsKey("drop_Coin") ? Convert.ToInt32(data["drop_Coin"]) : 0,
-                team = data.ContainsKey("team") ? data["team"].ToString() : ""
-            };
+                int unitId = int.Parse(doc.Id);
+
+                UnitDB unit = new UnitDB
+                {
+                    hp = Convert.ToInt32(data["hp"]),
+                    attack = Convert.ToInt32(data["attack"]),
+                    range = Convert.ToInt32(data["range"]),
+                    spawn_Stage = Convert.ToInt32(data["spawn_Stage"]),
+                    attack_Range = Convert.ToInt32(data["attack_Range"]),
+                    attack_Speed = Convert.ToSingle(data["attack_Speed"]),
+                    speed = Convert.ToSingle(data["speed"]),
+                    name_kr = data["name_kr"].ToString(),
+                    name = data["name"].ToString(),
+                    type = data["type"].ToString(),
+                    group = data["group"].ToString(),
+                    attack_Type = data["attack_Type"].ToString(),
+
+                    // 존재 여부에 따라 처리함
+                    mana = data.ContainsKey("mana") ? Convert.ToInt32(data["mana"]) : 0,
+                    force = data.ContainsKey("force") ? Convert.ToInt32(data["force"]) : 0,
+                    drop_Coin = data.ContainsKey("drop_Coin") ? Convert.ToInt32(data["drop_Coin"]) : 0,
+                    team = data.ContainsKey("team") ? data["team"].ToString() : ""
+                };
 
 
-            units[unitId] = unit;
+                units[unitId] = unit;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"유닛 로드 오류: {ex}");
+        }
+        finally
+        {
+            Debug.Log("유닛 로드 완료");
         }
     }
 

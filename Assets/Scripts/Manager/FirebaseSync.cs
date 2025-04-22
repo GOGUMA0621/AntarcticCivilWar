@@ -8,7 +8,7 @@ public class FirebaseSync : MonoBehaviour
     // Start is called before the first frame update
     private async void Start()
     {
-        if (!FirebaseManager.isLoaded)
+        while (!FirebaseManager.isLoaded)
         {
             await Task.Yield();
         }

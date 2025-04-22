@@ -36,18 +36,17 @@ public abstract class Item : MonoBehaviour
     public int itemPrice;
     public Sprite icon;
 
-    protected async virtual void Start()
+    protected virtual void Start()
     {
-        await FirebaseManager.ItemLoadData();
         lock (lockObject)
         {
             var item = FirebaseManager.GetItemByID(itemId);
-            itemName = item.name_kr;
+            //itemName = item.name_kr;
             itemDescription = item.des;
             itemAbilityDescription = item.effect;
             itemCooldown = item.cooltime;
             itemPrice = item.price;
-            itemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), item.rarity);
+            itemRarity = item.rarity;
         }
     }
 
@@ -103,14 +102,13 @@ public abstract class StatItem : PassiveItem
 
 }
 
-public abstract class AttackedItem : PassiveItem
+public abstract class WhenHitItem : PassiveItem
 {
-
 }
 
 public abstract class OnHitItem : PassiveItem
 {
-
+    public abstract void OnHit(UnitController unit, IDamageAble target);
 }
 
 
