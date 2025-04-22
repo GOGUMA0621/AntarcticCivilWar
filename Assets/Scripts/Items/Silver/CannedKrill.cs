@@ -7,7 +7,8 @@ public class CannedKrill : StatItem, IPassiveItem
 {
     public override void ApplyEffect(UnitController unit)
     {
-        float totlaIncrease = effectBaseValue[0] * currentStack;
+        var item = FirebaseManager.GetItemByID(itemId);
+        float totlaIncrease = item.base_effect[0] * currentStack;
         unit.AddModifierStat(new StatModifier(itemId.ToString(), StatType.MaxHealth, totlaIncrease, ModifierMethod.Additive));
     }
 

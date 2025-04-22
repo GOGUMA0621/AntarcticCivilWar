@@ -590,6 +590,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //À¯´ÖÀÇ À
     #region ½ºÅÈ
     public void AddModifierStat(StatModifier mod)
     {
+        if(baseStats.Count == 0)
+        {
+            SetUnit();
+        }
+
         statModifierList.RemoveAll(m => m.sourceId == mod.sourceId && m.statType == mod.statType);
         statModifierList.Add(mod);
         RecalculateStats();

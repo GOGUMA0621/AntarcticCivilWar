@@ -41,7 +41,7 @@ public abstract class Item : MonoBehaviour
         lock (lockObject)
         {
             var item = FirebaseManager.GetItemByID(itemId);
-            //itemName = item.name_kr;
+            itemName = item.name_kr;
             itemDescription = item.des;
             itemAbilityDescription = item.effect;
             itemCooldown = item.cooltime;
@@ -104,6 +104,7 @@ public abstract class StatItem : PassiveItem
 
 public abstract class WhenHitItem : PassiveItem
 {
+
 }
 
 public abstract class OnHitItem : PassiveItem

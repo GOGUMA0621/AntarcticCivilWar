@@ -5,10 +5,12 @@ using UnityEngine;
 public class WildernessTorch : StatItem
 {
     private bool isTriggerd = false;
-    
+    private float attackSpeed = 0f;
+
     public override void ApplyEffect(UnitController unit)
     {
-        throw new System.NotImplementedException();
+        var item = FirebaseManager.GetItemByID(itemId);
+        attackSpeed = (1 + item.base_effect[1]) * currentStack;
     }
 
     public override void UpdateEffect(UnitController unit)
@@ -16,7 +18,7 @@ public class WildernessTorch : StatItem
         if (!isTriggerd && unit.GetNormalizedHealth() <= 0.4)
         {
             isTriggerd = true;
-            unit.AddModifierStat(new StatModifier(itemName, StatType.AttackSpeed, 1.3f, ModifierMethod.Multiplicative));
+            unit.AddModifierStat(new StatModifier(itemName, StatType.AttackSpeed, attackSpeed, ModifierMethod.Multiplicative));
         }
         else if(isTriggerd && unit.GetNormalizedHealth() >0.4)
         {

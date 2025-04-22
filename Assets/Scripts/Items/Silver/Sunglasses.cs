@@ -20,6 +20,6 @@ public class Sunglasses : StatItem
 
     public override void UpdateEffect(UnitController unit)
     {
-        throw new System.NotImplementedException();
+        return;
     }
 }

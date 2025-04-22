@@ -9,7 +9,13 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StartCoroutine(ApplyItems());
+    }
+
+    private IEnumerator ApplyItems()
+    {
         PlayerUnitManager.instance.SpawnPlayerUnits(this.transform.position);
+        yield return new WaitForFixedUpdate();
         PlayerUnitManager.instance.ApplyItemsToAllUnit();
     }
 

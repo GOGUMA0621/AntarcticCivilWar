@@ -7,13 +7,14 @@ public class RustyDagger : StatItem
 
     public override void ApplyEffect(UnitController unit)
     {
-        float totalIncrease = damageIncrease + (stackDamageAmount * currentStack - 1);
+        var item = FirebaseManager.GetItemByID(itemId);
+        float totalIncrease = item.base_effect[0] * currentStack;
         unit.AddModifierStat(new StatModifier(itemId.ToString(), StatType.AttackDamage, totalIncrease, ModifierMethod.Additive));
     }
 
     public override void UpdateEffect(UnitController unit)
     {
-        throw new System.NotImplementedException();
+        return;
     }
 
     public override void IncreaseStack()
