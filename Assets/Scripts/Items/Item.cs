@@ -6,10 +6,10 @@ using UnityEngine;
 
 public enum ItemRarity
 {
-    silver,
-    gold,
-    platinum,
-    diamond,
+    common,
+    rare,
+    epic,
+    legend,
     special
 }
 
