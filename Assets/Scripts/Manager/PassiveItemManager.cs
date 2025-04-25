@@ -21,16 +21,16 @@ public static class PassiveItemManager
         PassiveItem[] items = null;
         switch (rarity)
         {
-            case ItemRarity.silver:
+            case ItemRarity.common:
                 items = silverItems;
                 break;
-            case ItemRarity.gold:
+            case ItemRarity.rare:
                 items = goldItems;
                 break;
-            case ItemRarity.platinum:
+            case ItemRarity.epic:
                 items = platinumItems;
                 break;
-            case ItemRarity.diamond:
+            case ItemRarity.legend:
                 items = diamondItems;
                 break;
             case ItemRarity.special:
@@ -48,13 +48,13 @@ public static class PassiveItemManager
     {
         switch (rarity)
         {
-            case ItemRarity.silver:
+            case ItemRarity.common:
                 return silverFrame;
-            case ItemRarity.gold:
+            case ItemRarity.rare:
                 return goldFrame;
-            case ItemRarity.platinum:
+            case ItemRarity.epic:
                 return platinumFrame;
-            case ItemRarity.diamond:
+            case ItemRarity.legend:
                 return diamondFrame;
             case ItemRarity.special:
                 return specialFrame;

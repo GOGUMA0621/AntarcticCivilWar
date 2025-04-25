@@ -51,6 +51,16 @@ public class PlayerController : MonoBehaviour
                 PlayerUnitManager.instance.ChangeStateAllayList("CallState");
             }
         }
+
+        if (InputManager.instance.GetRevivePressed())
+        {
+            var deadUnits = UnitController.DestroyedUnitQueue;
+
+            foreach (var unit in deadUnits)
+            {
+                unit.Revive();
+            }
+        }
     }
 
     void FlipAniamtion()
