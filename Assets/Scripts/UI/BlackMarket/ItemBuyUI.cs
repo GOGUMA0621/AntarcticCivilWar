@@ -8,6 +8,8 @@ public class ItemBuyUI : MonoBehaviour
 {
     public static ItemBuyUI Instance;
 
+    [SerializeField] private Player player;
+    [SerializeField] private CanvasGroup blackMarketUI;
     [SerializeField] private Image itemImg;
     [SerializeField] private TextMeshProUGUI itemName;
     [SerializeField] private TextMeshProUGUI itemDes;
@@ -30,10 +32,17 @@ public class ItemBuyUI : MonoBehaviour
 
     public void Open(ItemDB item)
     {
+        blackMarketUI.blocksRaycasts = false;
+
         currentItem = item;
 
-        //itemImg.sprite = Resources.Load<Sprite>($"Icons/{item.name}");
-        itemImg.sprite = Resources.Load<Sprite>("Icons/OldDagger");
+        var sprite = Resources.Load<Sprite>($"Icons/{item.name}");
+
+        if (sprite != null)
+            itemImg.sprite = sprite;
+        else
+            itemImg.sprite = Resources.Load<Sprite>("Icons/OldDagger");
+
         itemName.text = item.name_kr;
         itemDes.text = item.des;
         itemRarity.text = item.rarity.ToString();
@@ -44,23 +53,32 @@ public class ItemBuyUI : MonoBehaviour
 
     private void BuyItem()
     {
-        if (PlayerStats.Currency >= currentItem.price)
+        if (player.coinAmount >= currentItem.price)
         {
-            PlayerStats.Currency -= currentItem.price;
-            //InventorySystem.AddItem(currentItem); // 인벤토리 시스템에서 처리
-            Debug.Log($"{currentItem.name} 아이템 구매 완료!");
+            player.coinAmount -= currentItem.price;
+
+            if (InventoryUI.Instance != null)
+            {
+                InventoryUI.Instance.AddItem(currentItem);
+                Debug.Log($"{currentItem.name} 아이템 구매 완료");
+            }
+            else
+            {
+                Debug.LogWarning("InventoryUI 인스턴스가 없습니다!");
+            }
+          
 
             Close();
-            // 상점 재화 UI 갱신하려면 BlackMarketManager의 public 메서드 호출 가능
         }
         else
         {
-            Debug.Log("재화가 부족합니다!");
+            Debug.Log("재화가 부족합니다");
         }
     }
 
     public void Close()
     {
         gameObject.SetActive(false);
+        blackMarketUI.blocksRaycasts = true;
     }
 }

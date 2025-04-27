@@ -4,8 +4,9 @@ using TMPro;
 
 public class BlackMarketSlot : MonoBehaviour
 {
-    [SerializeField] private Image itemImage;
+    [SerializeField] private Image itemImg;
     [SerializeField] private Image itemFrame;
+    [SerializeField] private Image slotFrame;
     [SerializeField] private TextMeshProUGUI itemPrice;
     [SerializeField] private Button buyButton;
 
@@ -15,10 +16,18 @@ public class BlackMarketSlot : MonoBehaviour
     {
         Debug.Log(item.name);
         currentItem = item;
-        //itemImage.sprite = Resources.Load<Sprite>($"Icons/{item.name}");
-        itemImage.sprite = Resources.Load<Sprite>("Icons/OldDagger");
-        var itemFrameSprite = PassiveItemManager.GetItemFrame(item.rarity);
-        if(itemFrameSprite != null ) itemFrame.sprite = itemFrameSprite;
+
+        var ItemSprite = Resources.Load<Sprite>($"Icons/{item.name}");
+        var raritySprite = Resources.Load<Sprite>($"Frame/{item.rarity}");
+        //var itemFrameSprite = PassiveItemManager.GetItemFrame(item.rarity);
+
+        if (ItemSprite != null && raritySprite != null)
+        {
+            itemImg.sprite = ItemSprite;
+            slotFrame.sprite = raritySprite;
+            //itemFrame.sprite = itemFrameSprite;
+        }
+
         itemPrice.text = item.price.ToString();
         buyButton.onClick.RemoveAllListeners();
         buyButton.onClick.AddListener(() => ItemBuyUI.Instance.Open(currentItem));
@@ -26,7 +35,7 @@ public class BlackMarketSlot : MonoBehaviour
 
     public void ClearSlot()
     {
-        itemImage.sprite = null;
+        itemImg.sprite = null;
         currentItem = null;
         buyButton.onClick.RemoveAllListeners();
     }
