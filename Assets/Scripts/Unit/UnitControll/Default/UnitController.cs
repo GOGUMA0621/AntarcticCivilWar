@@ -1,14 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using DG.Tweening;
-using Pathfinding;
-using Unity.VisualScripting;
-using UnityEngine.Rendering;
-
 
 [Serializable]
 public class DamageData
@@ -460,10 +454,10 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
         {
             PlayerUnitManager.instance.AddUnitToRevive(this);
 
-            if (this.transform.tag == "Unit")
-            {
-                PlayerUnitManager.instance.RemoveAllayList(this.gameObject);
-            }
+        }
+        if (this.transform.tag == "Unit")
+        {
+            PlayerUnitManager.instance.RemoveAllayList(this.gameObject);
         }
     }
 

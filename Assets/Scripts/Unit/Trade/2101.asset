@@ -15,4 +15,4 @@ MonoBehaviour:
   index: 2101
   groupUnits:
   - pfUnit: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
-    count: 10
+    count: 5

@@ -4523,8 +4523,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pfIgloo: {fileID: 569016863655856572, guid: ab79898a32a6db349b02b3bd1d4b21cf, type: 3}
   iglooRange: 0
-  iglooSpawnRate: 0
-  iglooSpawnNum: 4
+  iglooSpawnRate: 20
+  iglooSpawnNum: 3
 --- !u!114 &814582634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4532,7 +4532,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 814582630}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e10a74e3134dc844bfe79f0425c9144, type: 3}
   m_Name: 
@@ -4558,7 +4558,7 @@ MonoBehaviour:
   bossHPBar: {fileID: 2104794498}
   bossHPGauge: {fileID: 993069431}
   bossPrefab: {fileID: 5744230692257079530, guid: 90c78fb71ebcb1e42a5858b77f41e2c7, type: 3}
-  bossSpawnTime: 10
+  bossSpawnTime: 180
   peddlerSpawnGenerator: {fileID: 814582634}
   peddlerSpawnTime: 30
   peddlerSpawnTimer: 0

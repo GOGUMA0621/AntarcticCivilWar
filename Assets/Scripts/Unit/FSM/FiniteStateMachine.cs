@@ -162,7 +162,7 @@ public class UnitDieState : IUnitState
         unit.SetAnimation("DieState");
     }
     public void Update()
-    {   
+    {
     }
     public void Exit()
     {

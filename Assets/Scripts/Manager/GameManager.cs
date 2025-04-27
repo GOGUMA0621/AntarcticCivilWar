@@ -59,18 +59,18 @@ public class GameManager : MonoBehaviour
                 isGeneratedBoss = false;
             }
         }
-        if(peddler == null)
-        {
-            peddlerSpawnTimer += Time.deltaTime;
-            if(peddlerSpawnTimer >= peddlerSpawnTime)
-            {
-                peddlerSpawnTimer = 0f;
-                Vector3Int spawnTile = TilemapManager.instance.GetRandomEdgeSpawnPoint(minOffset, maxOffset);
-                peddler = Instantiate(peddlerSpawnGenerator.pfPeddler, spawnTile, Quaternion.identity).GetComponent<Peddler>();
-                var targetTile = (Vector3)TilemapManager.instance.GetOppositeDestination(spawnTile, minOffset, maxOffset);
-                peddler.SetTargetToMove(targetTile);
-            }
-        }
+        //if(peddler == null)
+        //{
+        //    peddlerSpawnTimer += Time.deltaTime;
+        //    if(peddlerSpawnTimer >= peddlerSpawnTime)
+        //    {
+        //        peddlerSpawnTimer = 0f;
+        //        Vector3Int spawnTile = TilemapManager.instance.GetRandomEdgeSpawnPoint(minOffset, maxOffset);
+        //        peddler = Instantiate(peddlerSpawnGenerator.pfPeddler, spawnTile, Quaternion.identity).GetComponent<Peddler>();
+        //        var targetTile = (Vector3)TilemapManager.instance.GetOppositeDestination(spawnTile, minOffset, maxOffset);
+        //        peddler.SetTargetToMove(targetTile);
+        //    }
+        //}
     }
 
     private void BossTimer(float time)

@@ -53,7 +53,6 @@ public class Peddler : MonoBehaviour, IStatusAble, INeutrality
 
     public void ApplyEffect(DamageData damage)
     {
-        throw new System.NotImplementedException();
     }
 
     private void ChangeState(float health)

@@ -25,6 +25,9 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
     private int spawnLevel = 0;
     private RectTransform rewardChestViewport;
 
+    private List<float> triggerThresholds = new List<float> { 0.66f, 0.33f, 0.0f };
+    private HashSet<float> triggeredThresholds = new HashSet<float>();
+
     private Dictionary<int, List<(int level, float probability)>> probabilityTable = new Dictionary<int, List<(int level, float probability)>>()
     {
         { 25, new List<(int, float)> { (1, 60f), (2, 40f) } },
@@ -112,6 +115,8 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
     {
         currentHealth -= damage.damage;
         UpdateIglooState();
+        CheckHealthTriggers();
+
         if (currentHealth <= 0f)
         {
             OnDestroyed?.Invoke(this.gameObject);
@@ -140,10 +145,22 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
         if (newState != stateInfo && newState >= 0 && newState < maxState)
         {
             spriteRenderer.sprite = brokenIgloos[newState];
-            //RandomNumUnitList(spawnLevel);
             stateInfo = newState;
         }
 
+    }
+
+    private void CheckHealthTriggers()
+    {
+        float healthPercent = GetNormalizedHealth();
+        foreach (var threshold in triggerThresholds)
+        {
+            if (!triggeredThresholds.Contains(threshold) && healthPercent <= threshold)
+            {
+                triggeredThresholds.Add(threshold);
+                RandomNumUnitList(spawnLevel);
+            }
+        }
     }
 
     private void SpawnReward()

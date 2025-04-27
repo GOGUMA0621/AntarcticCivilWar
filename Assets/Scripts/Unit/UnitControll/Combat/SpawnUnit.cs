@@ -49,6 +49,8 @@ public class SpawnUnit : MonoBehaviour
 
                 var (unitPrefab, count) = unitsToSpawn[unitIndex]; // 현재 소환할 유닛 선택
                 GameObject summonedUnit = Instantiate(unitPrefab, spawnPos, Quaternion.identity);
+                var summon = summonedUnit.GetComponent<Unit>();
+                summon.originPrefab = unitPrefab;
                 summonedUnit.tag = tag;
 
                 spawnedCount++; // 소환된 유닛 개수 증가

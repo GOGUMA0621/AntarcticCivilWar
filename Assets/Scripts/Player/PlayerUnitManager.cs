@@ -19,7 +19,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     public List<UnitPrefabEntry> allayPrefabList = new List<UnitPrefabEntry>();
     public List<GameObject> enemyList = new List<GameObject>();
 
-    public Queue<UnitController> unitToRevive = new Queue<UnitController>();
+    public List<UnitController> unitToRevive = new List<UnitController>();
 
     public int allaySquadId = 10015;
     public UnitSquad allaySquad;
@@ -77,16 +77,16 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     public void AddUnitToRevive(UnitController unitController)
     {
         if (unitToRevive.Contains(unitController)) return;
-        unitToRevive.Enqueue(unitController);
+        unitToRevive.Add(unitController);
     }
 
     public void ReviveAllUnit()
     {
-        while(unitToRevive.Count > 0)
+        foreach(UnitController unitController in unitToRevive)
         {
-            var unit = unitToRevive.Dequeue();
-            unit.Revive();
+            unitController.Revive();
         }
+        unitToRevive.Clear();
     }
 
     #endregion
