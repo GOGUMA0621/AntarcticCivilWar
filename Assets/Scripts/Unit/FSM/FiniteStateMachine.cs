@@ -60,7 +60,7 @@ public class UnitFollowState : IUnitState
         }
         else
         {
-            Debug.LogWarning("[FollowState] targetToAttack is null");
+            //Debug.LogWarning("[FollowState] targetToAttack is null");
         }
     }
 
@@ -71,7 +71,7 @@ public class UnitFollowState : IUnitState
 
         if (!targets.Any())
         {
-            Debug.LogWarning("[FollowState] No targets available");
+            //Debug.LogWarning("[FollowState] No targets available");
             unitController.GoIdle();
             return;
         }
@@ -79,7 +79,7 @@ public class UnitFollowState : IUnitState
         float distance = Vector3.Distance(unitController.transform.position, target.position);
         if (distance <= unitController.unitAttackDistance)
         {
-            Debug.Log($"[FollowState] {unitController.name} distance too close");
+            //Debug.Log($"[FollowState] {unitController.name} distance too close");
             unitController.GoAttack();
             return;
         }
@@ -107,7 +107,7 @@ public class UnitAttackState : IUnitState
 
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
         {
-            Debug.Log($"[AttackState] {unitController.name} attack finished");
+            //Debug.Log($"[AttackState] {unitController.name} attack finished");
             unitController.GoIdle();
             return;
         }
@@ -119,13 +119,13 @@ public class UnitAttackState : IUnitState
 
             if (newTarget != null)
             {
-                Debug.Log($"[AttackState] New target: {newTarget.name}");
+                //Debug.Log($"[AttackState] New target: {newTarget.name}");
                 unitController.SetTargetToMove(newTarget);
                 unitController.GoFollow();
             }
             else
             {
-                Debug.LogWarning("[AttackState] targetToAttack is null");
+                //Debug.LogWarning("[AttackState] targetToAttack is null");
                 unitController.GoIdle();
             }
             return;
@@ -135,7 +135,7 @@ public class UnitAttackState : IUnitState
             float distance = Vector3.Distance(unitController.transform.position, target.position);
             if (distance > unitController.unitAttackDistance)
             {
-                Debug.Log($"[AttackState] {unitController.name} distance too far");
+                //Debug.Log($"[AttackState] {unitController.name} distance too far");
                 unitController.GoFollow();
                 return;
             }
@@ -162,12 +162,7 @@ public class UnitDieState : IUnitState
         unit.SetAnimation("DieState");
     }
     public void Update()
-    {
-        if (InputManager.instance.GetRevivePressed() && unit.tag != "Unit")
-        {
-            Debug.Log("ReviveState");
-            unit.Revive();
-        }
+    {   
     }
     public void Exit()
     {

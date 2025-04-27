@@ -19,6 +19,8 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     public List<UnitPrefabEntry> allayPrefabList = new List<UnitPrefabEntry>();
     public List<GameObject> enemyList = new List<GameObject>();
 
+    public Queue<UnitController> unitToRevive = new Queue<UnitController>();
+
     public int allaySquadId = 10015;
     public UnitSquad allaySquad;
     public int playerGroupPower = 0;
@@ -61,21 +63,32 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     //}
 
     #region 公府仿
-    private void CalculatePlayerGroupPower()
+    public void CalculatePlayerGroupPower()
     {
         int playerGroupPower = 0;
-        foreach (GameObject allay in allayList)
+        foreach (var allay in allayPrefabList)
         {
-            if (allay.TryGetComponent<UnitController>(out UnitController unitController))
-            {
-                if (unitController.unit.data != null)
-                {
-                    playerGroupPower += unitController.unit.data.UnitPower;
-                }
-            }
+            var allaydata = allay.prefab.GetComponent<Unit>().data;
+            playerGroupPower += allaydata.UnitPower * allay.count;
         }
         this.playerGroupPower = playerGroupPower;
     }
+
+    public void AddUnitToRevive(UnitController unitController)
+    {
+        if (unitToRevive.Contains(unitController)) return;
+        unitToRevive.Enqueue(unitController);
+    }
+
+    public void ReviveAllUnit()
+    {
+        while(unitToRevive.Count > 0)
+        {
+            var unit = unitToRevive.Dequeue();
+            unit.Revive();
+        }
+    }
+
     #endregion
 
     #region  酒焙 包府
@@ -84,7 +97,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         if (!allayList.Contains(allay))
         {
             allayList.Add(allay);
-            UnitSquadManager.instance.AddUnitToSquadById(allaySquad.id, allay.GetComponent<UnitController>());
+            //UnitSquadManager.instance.AddUnitToSquadById(allaySquad.id, allay.GetComponent<UnitController>());
             ApplyItemToUnit(allay.GetComponent<UnitController>());
             AddUnitPrefabList(allay.GetComponent<Unit>().originPrefab);
             CalculatePlayerGroupPower();
@@ -171,6 +184,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
                 allayList.Add(allay);
             }
         }
+        CalculatePlayerGroupPower();
     }
 
     public void AddUnitPrefabList(GameObject prefab)

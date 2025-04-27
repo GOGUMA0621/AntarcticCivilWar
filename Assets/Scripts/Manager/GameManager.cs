@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -53,7 +49,7 @@ public class GameManager : MonoBehaviour
             BossTimer(bossSpawnTime);
             bossTimerGauge.fillAmount = 1 - GetNormalizedBossTimer();
         }
-        if(boss != null && isGeneratedBoss)
+        if(boss != null)
         {
             UpdateBossHPBar();
             if (boss.IsDestroyed())
@@ -94,12 +90,15 @@ public class GameManager : MonoBehaviour
         bossHPBar.SetActive(true);
         bossHPGauge.fillAmount = 1f;
         Vector3Int spawnTile = TilemapManager.instance.GetRandomSpawnPoint();
-        boss = Instantiate(bossPrefab, spawnTile, Quaternion.identity).GetComponent<BossController>();
+        GameObject bossObj = Instantiate(bossPrefab, (Vector3)spawnTile, Quaternion.identity);
+        boss = bossObj.GetComponent<BossController>();
     }
 
     private void UpdateBossHPBar()
     {
-        bossHPGauge.fillAmount = boss.GetNormalizedHealth();
+        float normalized = boss.GetNormalizedHealth();
+        Debug.Log(normalized.ToString());
+        bossHPGauge.fillAmount = normalized;
     }
 
     private float GetNormalizedBossTimer()

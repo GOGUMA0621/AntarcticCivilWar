@@ -16,7 +16,7 @@ public class RushBossIdleState : IUnitState
         //Debug.Log("IdleState");
         if (boss.unit.detectTarget.targetToAttack != null)
         {
-            boss.GoIdle();
+            boss.GoFollow();
         }
         else if (boss.unit.detectTarget.targetToAttack == null)
         {
@@ -126,12 +126,10 @@ public class RushBossDieState : IUnitState
     }
     public void Update()
     {
-        throw new System.NotImplementedException();
     }
 
     public void Exit()
     {
-        throw new System.NotImplementedException();
     }
 }
 
@@ -181,7 +179,7 @@ public class RushBossManaSkillState : IUnitState
         //Debug.Log(boss.unit.animator.GetCurrentAnimatorStateInfo(0).normalizedTime.ToString());
         if (boss.unit.animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
         {
-            Debug.Log("스킬 사용");
+            Debug.Log("보스 스킬 사용");
             boss.GoIdle();
         }
     }

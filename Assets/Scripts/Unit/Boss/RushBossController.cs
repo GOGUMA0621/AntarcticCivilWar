@@ -74,6 +74,12 @@ public class RushBossController : BossController
     {
         float damageBase = damage.damage;
         float damageAmount = damageBase * 0.9f;
+
+        if(currentHP <= 0f)
+        {
+            Die();
+        }
+
         if (currentHP <= maxHP * 0.5f)
         {
             float reducedDamage = damageBase * 0.8f;
@@ -109,7 +115,7 @@ public class RushBossController : BossController
 
     public void AdvanceForward()
     {
-        Debug.Log($"AdvanceForward called. isTriggered: {isTriggered}, coroutine: {coroutine != null}");
+        //Debug.Log($"AdvanceForward called. isTriggered: {isTriggered}, coroutine: {coroutine != null}");
         if (isTriggered || coroutine != null) return; // 이미 대시 중이면 대시를 하지 않음
         isTriggered = true;
         coroutine = StartCoroutine(DashForward(3f));
@@ -135,7 +141,7 @@ public class RushBossController : BossController
                 .SetEase(Ease.Linear)
                 .OnComplete(() =>
                 {
-                    Debug.Log("대시 완료");
+                    //Debug.Log("대시 완료");
                     ResumeAnimation();
                 });
         }
@@ -150,7 +156,7 @@ public class RushBossController : BossController
     public void StartJump()
     {
         PauseAnimation();
-        Debug.Log($"StartJump called. isTriggered: {isTriggered}");
+        //Debug.Log($"StartJump called. isTriggered: {isTriggered}");
         if (isTriggered) return; // 이미 대시 중이면 대시를 하지 않음
         isTriggered = true;
 
@@ -173,7 +179,7 @@ public class RushBossController : BossController
             .SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
-                Debug.Log(transform.position.z);
+                //Debug.Log(transform.position.z);
                 isTriggered = false; // 여기서만 초기화
                 coroutine = null; // 코루틴 종료 후 null로 설정
                 ResumeAnimation();
@@ -201,7 +207,7 @@ public class RushBossController : BossController
             transform.DOLocalMoveZ(target.z, fallDuration) // 다시 원래 Z로
                 .SetEase(Ease.InQuad).OnComplete(() =>
                 { 
-                    Debug.Log("점프 완료");
+                    //Debug.Log("점프 완료");
                     ResumeAnimation();
                 });
 
@@ -287,15 +293,15 @@ public class RushBossController : BossController
                 Debug.Log("대시 시작 완료");
                 isTriggered = false;
                 coroutine = null; // 코루틴 종료 후 null로 설정
-                Debug.Log(isTriggered);
-                SetUntarget();
-                InstantiateServant(10);
+                //Debug.Log(isTriggered);
+                //SetUntarget();
+                InstantiateServant(5);
             });
         yield return new WaitForSeconds(0.5f);
         ResumeAnimation();
 
-        yield return new WaitForSeconds(2f);
-        isUnitDie = false;
+        //yield return new WaitForSeconds(2f);
+        //isUnitDie = false;
     }
 
     public void DogFightEnd()

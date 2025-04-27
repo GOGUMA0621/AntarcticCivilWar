@@ -155,6 +155,11 @@ MonoBehaviour:
   rewardIcon: {fileID: 0}
   rewardName: {fileID: 5197788310495579396}
   rewardDescription: {fileID: 0}
+  images:
+  - {fileID: 3599339973333176828}
+  - {fileID: 4120747173393182958}
+  - {fileID: 2052353210824120479}
+  - {fileID: 1264901602056263055}
   rewardUnitGroup: {fileID: 0}
   rewardItem: {fileID: 0}
 --- !u!114 &3955041155589298938

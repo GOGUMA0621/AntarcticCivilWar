@@ -14,7 +14,6 @@ public class CannedKrill : StatItem, IPassiveItem
 
     public override void UpdateEffect(UnitController unit)
     {
-        throw new System.NotImplementedException();
     }
 
 }

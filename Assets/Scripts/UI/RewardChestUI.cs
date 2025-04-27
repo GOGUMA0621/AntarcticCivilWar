@@ -10,6 +10,8 @@ public class RewardChestUI : MonoBehaviour
     public TextMeshProUGUI rewardName;
     public TextMeshProUGUI rewardDescription;
 
+    public Image[] images;
+
     public UnitGroupSO rewardUnitGroup;
     public Item rewardItem;
 

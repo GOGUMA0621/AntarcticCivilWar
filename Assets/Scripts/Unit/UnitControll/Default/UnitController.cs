@@ -29,8 +29,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
 {
     public event Action<GameObject> OnDestroyed;
 
-    public static Queue<UnitController> DestroyedUnitQueue = new Queue<UnitController>();
-
     private Dictionary<StatType, float> baseStats = new();
     private List<StatModifier> statModifierList = new();
     private Dictionary<StatType, float> finalStats = new();
@@ -213,10 +211,10 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
 
             SetMoveSpeed(unitSpeed);
 
-            if (PlayerUnitManager.instance.allayPrefabList != null && tag == "Unit")
-            {
-                PlayerUnitManager.instance.AddAllayList(this.gameObject);
-            }
+            //if (PlayerUnitManager.instance.allayPrefabList != null && tag == "Unit")
+            //{
+            //    PlayerUnitManager.instance.AddAllayList(this.gameObject);
+            //}
             //Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Unit"), LayerMask.NameToLayer("Unit"), true);
             _currentData = unit.data;
         }
@@ -247,16 +245,16 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
     {
         if (target == null)
         {
-            Debug.LogWarning($"[SetTargetToMove] target is null");
+            //Debug.LogWarning($"[SetTargetToMove] target is null");
             return;
         }
 
         if (unit.settler == null)
         {
-            Debug.LogError($"[SetTargetToMove] settler is NULL on {unit.name}");
+            //Debug.LogError($"[SetTargetToMove] settler is NULL on {unit.name}");
             return;
         }
-        Debug.Log($"[SetTargetToMove] {name} {target.name}");
+        //Debug.Log($"[SetTargetToMove] {name} {target.name}");
         unit.settler.target = target;
     }
 
@@ -450,7 +448,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
     internal void Die()
     {
         StopMovement();
-        DestroyedUnitQueue.Enqueue(this);
         isUnitDie = true;
         OnDestroyed?.Invoke(this.gameObject);
 
@@ -459,9 +456,14 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //¿Ø¥÷¿« ¿
         unit.detectTarget.ClearTarget();
         unit.capsuleCollider.enabled = false;
 
-        if (this.transform.tag == "Unit")
+        if (this.tag != "Unit")
         {
-            PlayerUnitManager.instance.RemoveAllayList(this.gameObject);
+            PlayerUnitManager.instance.AddUnitToRevive(this);
+
+            if (this.transform.tag == "Unit")
+            {
+                PlayerUnitManager.instance.RemoveAllayList(this.gameObject);
+            }
         }
     }
 
