@@ -25,13 +25,18 @@ public class ItemBuyUI : MonoBehaviour
     {
         Instance = this;
         gameObject.SetActive(false);
-
-        closeButton.onClick.AddListener(Close);
-        buyButton.onClick.AddListener(BuyItem);
     }
 
+    /// <summary>
+    /// 아이템 구매창 열림
+    /// </summary>
+    /// <param name="item"></param>
     public void Open(ItemDB item)
     {
+        closeButton.onClick.AddListener(Close);
+
+        buyButton.onClick.AddListener(BuyItem);
+
         blackMarketUI.blocksRaycasts = false;
 
         currentItem = item;
@@ -51,6 +56,9 @@ public class ItemBuyUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    /// <summary>
+    /// 아이템 구매
+    /// </summary>
     private void BuyItem()
     {
         if (player.coinAmount >= currentItem.price)
@@ -80,5 +88,9 @@ public class ItemBuyUI : MonoBehaviour
     {
         gameObject.SetActive(false);
         blackMarketUI.blocksRaycasts = true;
+
+        //ㅈ고수의 훈수
+        buyButton.onClick.RemoveAllListeners();
+        closeButton.onClick.RemoveAllListeners();
     }
 }

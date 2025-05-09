@@ -141,7 +141,7 @@ public static class FirebaseManager
 
                 items[itemId] = item;
 
-                //Debug.Log(itemId);
+                Debug.Log(itemId);
 
             }
         }

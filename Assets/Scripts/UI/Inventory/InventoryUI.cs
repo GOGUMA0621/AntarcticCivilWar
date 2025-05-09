@@ -50,7 +50,6 @@ public class InventoryUI : MonoBehaviour
             isExpanded = false;
         }
     }
-
     public void AddItem(ItemDB item)
     {
         ownedItems.Add(item);

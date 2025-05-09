@@ -44,6 +44,9 @@ public class BlackMarketManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// 아이템 리롤하고 집어넣기 굿굿
+    /// </summary>
     private void GenerateRandomItems()
     {
         currentItems.Clear();
@@ -62,6 +65,7 @@ public class BlackMarketManager : MonoBehaviour
         previousItems = new List<ItemDB>(currentItems);
     }
 
+
     private void UpdateUI()
     {
         for (int i = 0; i < shopSlots.Length; i++)
@@ -72,13 +76,7 @@ public class BlackMarketManager : MonoBehaviour
                 shopSlots[i].ClearSlot();
         }
 
-        //UpdateCurrencyUI();
     }
-
-    //private void UpdateCurrencyUI()
-    //{
-    //    currencyText.text = PlayerStats.Currency.ToString();
-    //}
 
     private void CloseShop()
     {
