@@ -17,30 +17,6 @@ public class PlacementGridManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 월드 좌표를 그리드 셀 좌표(Vector2Int)로 변환합니다.
-    /// </summary>
-    /// <param name="worldPos">변환할 월드 좌표</param>
-    /// <returns>해당 위치의 그리드 좌표</returns>
-    public Vector2Int WorldToGrid(Vector3 worldPos)
-    {
-        int x = Mathf.FloorToInt((worldPos.x - origin.x) / cellSize);
-        int y = Mathf.FloorToInt((worldPos.y - origin.y) / cellSize);
-        return new Vector2Int(x, y);
-    }
-
-    /// <summary>
-    /// 그리드 셀 좌표를 해당 셀의 중심 월드 좌표(Vector3)로 변환.
-    /// </summary>
-    /// <param name="gridPos">변환할 그리드 좌표</param>
-    /// <returns>그리드 셀의 중심에 해당하는 월드 좌표</returns>
-    public Vector3 GridToWorld(Vector2Int gridPos)
-    {
-        return new Vector3(gridPos.x * cellSize + cellSize * 0.5f,
-                           gridPos.y * cellSize + cellSize * 0.5f,
-                           0f) + origin;
-    }
-
-    /// <summary>
     /// 지정한 그리드 좌표에 유닛을 배치할 수 있는지 확인합니다.
     /// </summary>
     /// <param name="pos">확인할 그리드 좌표</param>
@@ -60,7 +36,7 @@ public class PlacementGridManager : MonoBehaviour
         if (!CanPlace(pos)) return;
 
         grid[pos.x, pos.y] = unit;
-        unit.transform.position = GridToWorld(pos);
+        unit.transform.position = GridUtility.GridToWorld(pos, origin, cellSize);
     }
 
     /// <summary>
@@ -89,7 +65,7 @@ public class PlacementGridManager : MonoBehaviour
     /// </summary>
     /// <param name="pos">지정한 그리드 좌표</param>
     /// <returns>해당 위치에 배치된 유닛 객체를 반환</returns>
-    public Unit GetUnitAt(Vector2Int pos)
+    public Unit GetUnitByPos(Vector2Int pos)
     {
         if (!IsInsideGrid(pos)) return null;
 

@@ -65,14 +65,21 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         worldPos.z = 0f;
 
-        Vector2Int gridPos = grid.WorldToGrid(worldPos);
+        Vector2Int gridPos = GridUtility.WorldToGrid(worldPos, grid.origin, grid.cellSize);
 
         if (grid.CanPlace(gridPos))
         {
-            GameObject placedUnit = Instantiate(unitPrefab);
-            grid.PlaceUnit(placedUnit.GetComponent<Unit>(), gridPos);
+            grid.PlaceUnit(previewUnit.GetComponent<Unit>(), gridPos);
         }
 
-            Destroy(previewUnit);
+        var col = previewUnit.GetComponentInChildren<Collider2D>();
+        if (col != null) col.enabled = true;
+
+        var rb = previewUnit.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.simulated = true;
+            rb.isKinematic = false;
+        }
     }
 }
