@@ -7,7 +7,6 @@ public abstract class BossController : UnitController
     protected override void Start()
     {
         base.Start();
-        currentState = GetInitialState();
         currentState?.Enter(this);
     }
 

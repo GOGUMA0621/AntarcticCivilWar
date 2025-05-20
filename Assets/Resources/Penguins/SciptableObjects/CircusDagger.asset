@@ -18,7 +18,10 @@ MonoBehaviour:
   unitIcon: {fileID: -1290254670, guid: 3d576a1e9707ec245a493b9f00782323, type: 3}
   unitFaction: 1
   unitType: 0
-  unitSynergyType: 1
+  unitSynergyTags:
+  - Resistance
+  - Rogue
+  - Circus
   unitAnimations:
   - {fileID: 7400000, guid: c456586aba9bd094190dabf487cb3183, type: 2}
   - {fileID: 7400000, guid: 070e8a26099811e4f87b266cda66da27, type: 2}

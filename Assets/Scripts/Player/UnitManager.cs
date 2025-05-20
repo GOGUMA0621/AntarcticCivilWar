@@ -10,26 +10,24 @@ public class UnitPrefabEntry
     public int count;
 }
 
-public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
+public class UnitManager : SingleTonBehaviour<UnitManager>
 {
-    [SerializeField] private List<GameObject> allayList = new List<GameObject>();
+    [SerializeField] public List<UnitController> allayList = new List<UnitController>();
+    [SerializeField] public List<UnitController> enemyList = new List<UnitController>();
+
+
 
     private List<PassiveItem> itemUpdateEffects = new();
 
     public List<UnitPrefabEntry> allayPrefabList = new List<UnitPrefabEntry>();
-    public List<GameObject> enemyList = new List<GameObject>();
 
     public List<UnitController> unitToRevive = new List<UnitController>();
 
-    public int allaySquadId = 10015;
-    public UnitSquad allaySquad;
     public int playerGroupPower = 0;
 
-    // Start is called before the first frame update
     protected override void Awake()
     {
         base.Awake();
-        //CreateSquad();
     }
 
     private void Update()
@@ -45,22 +43,6 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
             }
         }
     }
-
-    //private void CreateSquad()
-    //{
-    //    allaySquad = new UnitSquad();
-    //    allaySquad.id = allaySquadId;
-    //    allaySquad.units.Clear();
-    //    UnitSquadManager.instance.DeleteSquadById(allaySquad.id);
-    //    foreach (var unit in allayList)
-    //    {
-    //        if (unit.TryGetComponent<UnitController>(out UnitController unitController))
-    //        {
-    //            allaySquad.units.Add(unitController);
-    //        }
-    //    }
-    //    UnitSquadManager.instance.allSquads.Add(allaySquad);
-    //}
 
     #region 公府仿
     public void CalculatePlayerGroupPower()
@@ -92,25 +74,23 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     #endregion
 
     #region  酒焙 包府
-    public void AddAllayList(GameObject allay)
+    public void AddAllayList(UnitController allay)
     {
         if (!allayList.Contains(allay))
         {
             allayList.Add(allay);
-            //UnitSquadManager.instance.AddUnitToSquadById(allaySquad.id, allay.GetComponent<UnitController>());
-            ApplyItemToUnit(allay.GetComponent<UnitController>());
-            AddUnitPrefabList(allay.GetComponent<Unit>().originPrefab);
+            ApplyItemToUnit(allay);
+            AddUnitPrefabList(allay.unit.originPrefab);
             CalculatePlayerGroupPower();
         }
     }
-    public void RemoveAllayList(GameObject allay)
+    public void RemoveAllayList(UnitController allay)
     {
         if (allayList.Contains(allay))
         {
-            allay.GetComponent<UnitController>().ResetUnit();
+            allay.ResetUnit();
             allayList.Remove(allay);
-            UnitSquadManager.instance.RemoveUnitToSquadById(allaySquad.id, allay.GetComponent<UnitController>());
-            RemoveUnitPrefabList(allay.GetComponent<Unit>().originPrefab);
+            RemoveUnitPrefabList(allay.unit.originPrefab);
             CalculatePlayerGroupPower();
         }
     }
@@ -148,7 +128,7 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     #endregion
 
     #region 利焙 包府
-    public void AddEnemyList(GameObject enemy)
+    public void AddEnemyList(UnitController enemy)
     {
         if (!enemyList.Contains(enemy))
         {
@@ -156,14 +136,10 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         }
     }
 
-    public void RemoveEnemyList(GameObject enemy)
+    public void RemoveEnemyList(UnitController enemy)
     {
         if (enemyList.Contains(enemy))
         {
-            foreach (GameObject unit in allayList)
-            {
-
-            }
             enemyList.Remove(enemy);
         }
     }
@@ -179,9 +155,10 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
             for(int i = 0; i < unit.count; i++)
             {
                 GameObject allay = Instantiate(unit.prefab, spawnPos, Quaternion.identity);
-                allay.GetComponent<Unit>().originPrefab = unit.prefab;
+                UnitController allayController = allay.GetComponent<UnitController>();
+                allayController.unit.originPrefab = unit.prefab;
                 allay.tag = "Unit";
-                allayList.Add(allay);
+                allayList.Add(allayController);
             }
         }
         CalculatePlayerGroupPower();
@@ -250,9 +227,11 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
             for (int i = 0; i < unit.count; i++)
             {
                 GameObject allay = Instantiate(unit.pfUnit, position, Quaternion.identity);
-                allay.GetComponent<Unit>().originPrefab = unit.pfUnit;
+                UnitController allayController = allay.GetComponent<UnitController>();
+                allayController.unit.originPrefab = unit.pfUnit;
                 allay.tag = "Unit";
-                allayList.Add(allay);
+
+                allayList.Add(allayController);
             }
         }
         CalculatePlayerGroupPower();
@@ -266,12 +245,9 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
         foreach (var item in InventoryManager.instance.inventoryItems)
         {
             PassiveItem passiveItem = item.Key.GetComponent<PassiveItem>();
-            foreach (GameObject allay in allayList)
+            foreach (UnitController allay in allayList)
             {
-                if (allay.TryGetComponent<UnitController>(out UnitController allayController))
-                {
-                    passiveItem.ApplyEffect(allayController);
-                }
+                passiveItem.ApplyEffect(allay);
             }
         }
     }
@@ -297,11 +273,12 @@ public class PlayerUnitManager : SingleTonBehaviour<PlayerUnitManager>
     {
         if (InventoryManager.instance.inventoryItems.Any())
         {
-            foreach (GameObject allay in allayList)
+            foreach (UnitController allay in allayList)
             {
-                item.ApplyEffect(allay.GetComponent<UnitController>());
+                item.ApplyEffect(allay);
             }
         }
     }
     #endregion
+
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum UnitTierType
@@ -6,13 +7,6 @@ public enum UnitTierType
     Normal,
     Special,
     Minion
-}
-
-public enum UnitSynergyType
-{
-    None,
-    Circus,
-    Summoner,
 }
 
 public enum UnitFaction
@@ -45,7 +39,8 @@ namespace SciptableObjects
         public Sprite unitIcon;
         public UnitFaction unitFaction;
         public UnitTierType unitType;
-        public UnitSynergyType unitSynergyType;
+        public List<String> unitSynergyTags = new List<string>();
+
 
         public AnimationClip[] unitAnimations;
 

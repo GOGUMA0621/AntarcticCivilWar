@@ -27,8 +27,8 @@ public class GameManager : MonoBehaviour
     [Header("이글루 생성")]
     [SerializeField] private IglooSpawnGenerator iglooSpawnGenerator;
     [SerializeField] private GameObject iglooPrefab;
-    [SerializeField] private float iglooSpawnTime = 30f;
-    private float iglooSpawnTimer = 0f;
+    //[SerializeField] private float iglooSpawnTime = 30f;
+    //private float iglooSpawnTimer = 0f;
     private Peddler peddler;
 
     private bool isGeneratedBoss = false;

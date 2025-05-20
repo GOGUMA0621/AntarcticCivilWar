@@ -132,4 +132,14 @@ public class InputManager : SingleTonBehaviour<InputManager>
     {
         revivePressed = true;
     }
+
+    public Vector3 GetMouseWorldPosition()
+    {
+        Vector3 mouseScreenPos = Mouse.current.position.ReadValue();
+        //Debug.Log(mouseScreenPos);
+        //Debug.Log(Camera.main.ScreenToWorldPoint(mouseScreenPos));
+        return Camera.main.ScreenToWorldPoint(mouseScreenPos);
+    }
+
+    
 }

@@ -23,7 +23,7 @@ public class WildernessTorch : StatItem
         else if(isTriggerd && unit.GetNormalizedHealth() >0.4)
         {
             isTriggerd = false;
-            unit.RecalculateModifier(itemName);
+            unit.RemoveModifierStats(itemName);
         }
     }
 }

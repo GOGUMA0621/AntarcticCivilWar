@@ -1,97 +1,70 @@
-using AYellowpaper.SerializedCollections;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class StatusEffectManager : MonoBehaviour
 {
-    [SerializeField] private SerializedDictionary<StatusEffectType, StatusEffectSO> statusEffectToApplyListDict = new();
+    private List<StatusEffectInstance> activeStatusEffects = new List<StatusEffectInstance>();
+    private Dictionary<StatusEffectInstance, StatusEffectSO> instanceToSO = new Dictionary<StatusEffectInstance, StatusEffectSO>();
 
-    private SerializedDictionary<StatusEffectType, StatusEffectSO> enabledEffects = new();
+    public event Action<StatusEffectSO> OnStatusEffectApplied;
+    public event Action<StatusEffectSO, float> OnStatusEffectUpdated;
+    public event Action<StatusEffectSO> OnStatusEffectRemoved;
 
-    private Dictionary<StatusEffectType, StatusEffectSO> statusEffectCacheDict = new Dictionary<StatusEffectType, StatusEffectSO>();
+    private IDamageAble target;
 
-    [SerializeField, Tooltip("StatusEffectSO에서 UpdateCall이 어떤 간격에서 동작하는가")] private float interval = .1f;
-    private float currentInterval = 0f;
-    private float lastInterval = 0f;
-
-    public UnityAction<StatusEffectSO, float> ActiveStatus;
-    public UnityAction<StatusEffectSO> DeactiveStatusEffect;
-    public UnityAction<StatusEffectSO, float, float> UpdateStatusEffect;
-
-    private void Start()
+    private void Awake()
     {
-        
+        target = transform.root.GetComponent<IDamageAble>();
+
     }
 
     private void Update()
     {
-        currentInterval += Time.deltaTime;
-        if (currentInterval > lastInterval + interval)
+        foreach(var statusEffect in activeStatusEffects)
         {
-            UpdateEffects(gameObject);
-            lastInterval = currentInterval;
-        }
-    }
-
-    public void OnStatusTriggerBuildup(StatusEffectType effectType, float buildAmount)
-    {
-        if (!enabledEffects.ContainsKey(effectType))
-        {
-            var effectToAdd = CreateEffctObject(effectType, statusEffectToApplyListDict[effectType]);
-
-            enabledEffects[effectType] = effectToAdd;
-
-            ActiveStatus?.Invoke(effectToAdd, effectToAdd.GetCurrentDurationNormalized()); 
-        }
-        if (!enabledEffects[effectType].isEffectActive)
-        {
-            enabledEffects[effectType].AddBuildup(buildAmount, gameObject);
-            UpdateStatusEffect?.Invoke(enabledEffects[effectType], enabledEffects[effectType].GetCurrentThresholdNormalized(),
-                enabledEffects[effectType].GetCurrentDurationNormalized());
-        }
-        else
-        {
-            int tickDamageAmount = (int)Mathf.Ceil(buildAmount / 4);
-        }
-
-    }
-
-    private StatusEffectSO CreateEffctObject(StatusEffectType effectType, StatusEffectSO statusEffect)
-    {
-        if (!statusEffectCacheDict.ContainsKey(effectType))
-        {
-            statusEffectCacheDict[effectType] = Instantiate(statusEffect);
-        }
-
-        return statusEffectCacheDict[effectType];
-    }
-
-    public void UpdateEffects(GameObject target)
-    {
-        foreach (var effect in enabledEffects.ToList())
-        {
-            effect.Value.UpdateCall(target, interval);
-
-            UpdateStatusEffect?.Invoke(effect.Value, effect.Value.GetCurrentThresholdNormalized(), effect.Value.GetCurrentDurationNormalized());
-
-            if (effect.Value.CanStatusVisualBeRemoved())
+            statusEffect.UpdateCall(Time.deltaTime);
+            if(statusEffect.ShouldTick())
             {
-                RemoveEffect(effect.Key);
+                statusEffect.Tick();
+            }
+
+            if (instanceToSO.TryGetValue(statusEffect, out var so))
+            {
+                float normalizedDuration = Mathf.Clamp01(statusEffect.remainingDuration / statusEffect.source.activeDuration);
+                OnStatusEffectUpdated?.Invoke(so, normalizedDuration);
+            }
+
+            if (statusEffect.IsExpired())
+            {
+                RemoveStatusEffect(statusEffect);
             }
         }
     }
 
-    private void RemoveEffect(StatusEffectType effectType)
+    public void ApplyStatusEffect(StatusEffectSO so)
     {
-        if (enabledEffects.ContainsKey(effectType))
-        {
-            DeactiveStatusEffect?.Invoke(enabledEffects[effectType]);
+        var instance = activeStatusEffects.Find(x => x.source == so);
 
-            enabledEffects[effectType].RemoveEffect(gameObject);
+        if (instance != null)
+        {
+            RemoveStatusEffect(instance);
         }
+
+        instance = new StatusEffectInstance(so);
+        activeStatusEffects.Add(instance);
+
+        OnStatusEffectApplied?.Invoke(so);
+    }
+
+    private void RemoveStatusEffect(StatusEffectInstance instance)
+    {
+        if(instanceToSO.TryGetValue(instance, out var so))
+        {
+            OnStatusEffectRemoved?.Invoke(so);
+        }
+
+        activeStatusEffects.Remove(instance);
+        instanceToSO.Remove(instance);
     }
 }

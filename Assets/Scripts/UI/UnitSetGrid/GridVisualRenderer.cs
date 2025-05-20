@@ -47,6 +47,7 @@ public class GridVisualRenderer : MonoBehaviour
         lr.widthMultiplier = 0.05f;
         lr.startColor = Color.green;
         lr.endColor = Color.green;
-        lr.sortingOrder = -1;
+        lr.sortingLayerName = "Ground";
+        lr.sortingOrder = 1;
     }
 }

@@ -42,18 +42,18 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("집결 해제");
                 InputManager.instance.callTriggerd = false;
-                PlayerUnitManager.instance.ChangeStateAllayList("IdleState");
+                UnitManager.instance.ChangeStateAllayList("IdleState");
             }
             else if(!InputManager.instance.callTriggerd)
             {
                 Debug.Log("집결");
                 InputManager.instance.callTriggerd = true;
-                PlayerUnitManager.instance.ChangeStateAllayList("CallState");
+                UnitManager.instance.ChangeStateAllayList("CallState");
             }
         }
         if (InputManager.instance.GetRevivePressed())
         {
-            PlayerUnitManager.instance.ReviveAllUnit();
+            UnitManager.instance.ReviveAllUnit();
         }
     }
 

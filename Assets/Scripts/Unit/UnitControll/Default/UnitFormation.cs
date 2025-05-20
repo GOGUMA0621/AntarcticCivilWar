@@ -64,23 +64,23 @@ namespace UnitFormation
 
             int steps = 0;
 
-            while (queue.Count > 0 && steps++ < 1000)
-            {
-                Vector2Int current = queue.Dequeue();
+            // while (queue.Count > 0 && steps++ < 1000)
+            // {
+            //     Vector2Int current = queue.Dequeue();
 
-                if (GridManager.instance.HasNode(current) && GridManager.instance.GetNode(current).isWalkable)
-                    return current;
+            //     if ()
+            //         return current;
 
-                foreach (var dir in directions)
-                {
-                    Vector2Int next = current + dir;
-                    if (!visited.Contains(next) && WithinRange(origin, next, maxRange))
-                    {
-                        visited.Add(next);
-                        queue.Enqueue(next);
-                    }
-                }
-            }
+            //     foreach (var dir in directions)
+            //     {
+            //         Vector2Int next = current + dir;
+            //         if (!visited.Contains(next) && WithinRange(origin, next, maxRange))
+            //         {
+            //             visited.Add(next);
+            //             queue.Enqueue(next);
+            //         }
+            //     }
+            // }
 
             return origin;
         }

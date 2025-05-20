@@ -14,9 +14,9 @@ public class Player : MonoBehaviour
 
     private IEnumerator ApplyItems()
     {
-        PlayerUnitManager.instance.SpawnPlayerUnits(this.transform.position);
+        UnitManager.instance.SpawnPlayerUnits(this.transform.position);
         yield return new WaitForFixedUpdate();
-        PlayerUnitManager.instance.ApplyItemsToAllUnit();
+        UnitManager.instance.ApplyItemsToAllUnit();
     }
 
     // Update is called once per frame

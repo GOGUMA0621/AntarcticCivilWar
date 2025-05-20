@@ -1,17 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
-public class UnitAttackController : MonoBehaviour //À¯´Ö °ø°Ý °ü·Ã
+public class UnitAttackController : MonoBehaviour 
 {
-    public delegate void UnitAttackEvent(Transform t);
+    public Action<Transform> OnAttackTransform; 
 
-    public static event UnitAttackEvent OnUnitAttack;
-
-
-    public GameObject pfProjectile; //À¯´Ö Åõ»çÃ¼ ÇÁ¸®ÆÕ
+    public GameObject pfProjectile;
     
     private Unit unit;
     private void Start()
@@ -27,15 +22,15 @@ public class UnitAttackController : MonoBehaviour //À¯´Ö °ø°Ý °ü·Ã
     {
         if (!unit.detectTarget.IsDestroyed())
         {
-            OnUnitAttack?.Invoke(GetComponent<Transform>());
+            OnAttackTransform?.Invoke(GetComponent<Transform>());
             var attackType = unit.data.unitAttackType;
             switch (attackType)
             {
-                case (UnitAttackType.Melee):
+                case UnitAttackType.Melee:
                     MeleeAttack();
                     break;
 
-                case (UnitAttackType.Range):
+                case UnitAttackType.Range:
                     RangeAttack();
                     break;
 

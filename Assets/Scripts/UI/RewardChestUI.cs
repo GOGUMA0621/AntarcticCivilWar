@@ -21,8 +21,8 @@ public class RewardChestUI : MonoBehaviour
 
         try
         {
-            PlayerUnitManager.instance.AddUnitSOPrefabList(rewardUnitGroup);
-            PlayerUnitManager.instance.AddUnitSOAllayList(rewardUnitGroup, playerTransform.position);
+            UnitManager.instance.AddUnitSOPrefabList(rewardUnitGroup);
+            UnitManager.instance.AddUnitSOAllayList(rewardUnitGroup, playerTransform.position);
         }
         catch(System.Exception e)
         {

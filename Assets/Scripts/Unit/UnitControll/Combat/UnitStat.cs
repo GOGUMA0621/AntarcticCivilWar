@@ -10,7 +10,9 @@ public enum StatType
     AttackRange,
     MoveSpeed,
     AOEDamage,
-    CritChance
+    CritChance,
+    Endurance,
+    DamageAmp
 }
 
 public enum ModifierMethod

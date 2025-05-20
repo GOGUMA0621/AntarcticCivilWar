@@ -33,12 +33,11 @@ public class StatusEffectUI : MonoBehaviour
     private void Start()
     {
         statusEffectManagerRef = GetComponentInParent<StatusEffectManager>();
+        statusEffectManagerRef.OnStatusEffectApplied += OnActiveStatus;
+        statusEffectManagerRef.OnStatusEffectUpdated += OnUpdateStatusEffect;
+        statusEffectManagerRef.OnStatusEffectRemoved += OnDeactiveStatusEffect;
 
         statusEffectToIconDict = new Dictionary<StatusEffectSO, StatusEffectIconCache>();
-
-        statusEffectManagerRef.ActiveStatus += OnActiveStatus;
-        statusEffectManagerRef.UpdateStatusEffect += OnUpdateStatusEffect;
-        statusEffectManagerRef.DeactiveStatusEffect += OnDeactiveStatusEffect;
     }
 
     private void Update()
@@ -68,23 +67,28 @@ public class StatusEffectUI : MonoBehaviour
         return new StatusEffectIconCache(createdStatusIcon, statusBuildRadialFill, statusActiveTimerRadial, statusIcon);
     }
 
-    private void OnActiveStatus( StatusEffectSO statusEffect, float buildAmount)
+    private void OnActiveStatus( StatusEffectSO statusEffect)
     {
         StatusEffectIconCache statusEffectIconCache = CreateStatusIcon(statusEffect);
         statusEffectToIconDict[statusEffect] = statusEffectIconCache;
 
-        OnUpdateStatusEffect(statusEffect, buildAmount, 0);
+        OnUpdateStatusEffect(statusEffect, 0);
     }
 
-    private void OnUpdateStatusEffect(StatusEffectSO statusEffect, float buildAmount, float duration)
+    private void OnUpdateStatusEffect(StatusEffectSO statusEffect, float duration)
     {
-        statusEffectToIconDict[statusEffect].statusBuildupFill.fillAmount = buildAmount;
-        statusEffectToIconDict[statusEffect].statusActiveTimerFill.fillAmount = duration;
+        if (statusEffectToIconDict.TryGetValue(statusEffect, out var cache))
+        {
+            cache.statusActiveTimerFill.fillAmount = duration;
+        }
     }
 
     private void OnDeactiveStatusEffect(StatusEffectSO statusEffect)
     {
-        statusEffectToIconDict[statusEffect].statusIconContainer.SetActive(false);
+        if (statusEffectToIconDict.TryGetValue(statusEffect, out var cache))
+        {
+            cache.statusIconContainer.SetActive(false);
+        }
     }
 
 }

@@ -16,8 +16,8 @@ public class UnitDataEditor : Editor
     private SerializedProperty unitType;
     private SerializedProperty unitIcon;
     private SerializedProperty unitFaction;
+    private SerializedProperty unitSynergyTags;
     private SerializedProperty attackType;
-    private SerializedProperty unitSynergyType;
     private SerializedProperty unitName;
     private SerializedProperty unitDescription;
     private SerializedProperty unitPower;
@@ -45,8 +45,8 @@ public class UnitDataEditor : Editor
         unitIcon = serializedObject.FindProperty("unitIcon");
         unitType = serializedObject.FindProperty("unitType");
         unitFaction = serializedObject.FindProperty("unitFaction");
+        unitSynergyTags = serializedObject.FindProperty("unitSynergyTags");
         attackType = serializedObject.FindProperty("unitAttackType");
-        unitSynergyType = serializedObject.FindProperty("unitSynergyType");
         unitName = serializedObject.FindProperty("unitName");
         unitDescription = serializedObject.FindProperty("unitDescription");
         unitPower = serializedObject.FindProperty("unitPower");
@@ -75,10 +75,10 @@ public class UnitDataEditor : Editor
         EditorGUILayout.LabelField("일반",EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(unitFaction);
         EditorGUILayout.PropertyField(unitType);
-        EditorGUILayout.PropertyField(unitSynergyType);
         EditorGUILayout.PropertyField(unitName);
         EditorGUILayout.PropertyField(unitDescription);
         EditorGUILayout.PropertyField(unitPower);
+        EditorGUILayout.PropertyField(unitSynergyTags, true);
 
         EditorGUILayout.LabelField("애니메이션", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(unitAnimations, true);

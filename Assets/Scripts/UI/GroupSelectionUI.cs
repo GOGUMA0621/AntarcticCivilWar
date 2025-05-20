@@ -67,7 +67,7 @@ public class GroupSelectionUI : MonoBehaviour
         {
             for(int i = 0; i < unit.count; i++)
             {
-                PlayerUnitManager.instance.AddUnitPrefabList(unit.pfUnit);
+                UnitManager.instance.AddUnitPrefabList(unit.pfUnit);
             }
         }
         SceneManager.LoadScene("MainScene");

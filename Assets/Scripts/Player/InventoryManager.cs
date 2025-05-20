@@ -18,13 +18,13 @@ public class InventoryManager : SingleTonBehaviour<InventoryManager>
             SetItemStack(item);
             PassiveItem PassiveItem = item.GetComponent<PassiveItem>();
             PassiveItem.IncreaseStack();
-            PlayerUnitManager.instance.ApplyItemToUnits(PassiveItem);
+            UnitManager.instance.ApplyItemToUnits(PassiveItem);
         }
         else
         {
             GameObject newItemPrefab = InstantiateItem(item);
             PassiveItem newItem = newItemPrefab.GetComponent<PassiveItem>();
-            PlayerUnitManager.instance.ApplyItemToUnits(newItem);
+            UnitManager.instance.ApplyItemToUnits(newItem);
             inventoryItems.Add(item, 1);
         }
     }
@@ -37,7 +37,7 @@ public class InventoryManager : SingleTonBehaviour<InventoryManager>
             SetItemStack(item);
             PassiveItem passiveItem = item.GetComponent<PassiveItem>();
             passiveItem.DecreaseStack();
-            PlayerUnitManager.instance.ApplyItemToUnits(passiveItem);
+            UnitManager.instance.ApplyItemToUnits(passiveItem);
         }
         else
         {

@@ -402,7 +402,6 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 510019cd56c1b7a44a97c45c0e067bc1, type: 2}
   spriteRenderer: {fileID: 0}
   playerController: {fileID: 0}
-  playerUnitManager: {fileID: 0}
 --- !u!114 &4549932607118645986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,12 +414,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51a89187c916fac47b681ead7b36e8ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unit: {fileID: 0}
+  unit: {fileID: 6345866539272163795}
   fullPath: []
   canMana: 1
   isStunned: 0
   maxHP: 0
   maxMP: 0
+  currentMP: 0
   unitDamage: 0
   unitSpeed: 0
   unitAttackDistance: 0
@@ -450,13 +450,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa07024d4403aca43a0790158e1aa82f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statusEffectToApplyListDict:
-    _serializedList:
-    - Key: 7
-      Value: {fileID: 11400000, guid: 4d80986afad075343ada819d99a243ea, type: 2}
-    - Key: 5
-      Value: {fileID: 11400000, guid: 1eec5e3b31a277741ba1c5d5e1ca2186, type: 2}
-  interval: 0.1
 --- !u!114 &8358373545122888125
 MonoBehaviour:
   m_ObjectHideFlags: 0

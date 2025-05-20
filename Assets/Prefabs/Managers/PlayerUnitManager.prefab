@@ -41,9 +41,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6142489052129734221}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 902e351408443674b912e649c8543ff1, type: 3}
+  m_Script: {fileID: 11500000, guid: f75c1ef1948c09c409cc9ebb889b0e9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   allayList: []
   enemyList: []
+  allayPrefabList: []
+  unitToRevive: []
   playerGroupPower: 0

@@ -8,7 +8,7 @@ public class RushBossIdleState : IUnitState
     public void Enter(UnitController unitController)
     {
         boss = unitController as BossController;
-        boss.SetMoveWork(true);
+        boss.StartMovement();
         boss.SetAnimation("IdleState");
     }
     public void Update()
@@ -97,14 +97,14 @@ public class RushBossAttackState : IUnitState
         float distance = Vector3.Distance(boss.transform.position, target.position);
 
         // 거리가 공격 범위보다 멀면 추적 상태로 전환
-        if (distance > boss.unitAttackDistance)
+        if (boss.RemainedDistance > boss.unitAttackDistance)
         {
             boss.GoFollow();
             return;
         }
 
         // 가까우면 이동 멈춤 상태 유지
-        boss.unit.aiPath.canMove = false;
+        boss.StopMovement();
     }
 
     public void Exit()
@@ -120,7 +120,7 @@ public class RushBossDieState : IUnitState
     public void Enter(UnitController unitController)
     {
         this.boss = unitController as BossController;
-        boss.SetMoveWork(false);
+        boss.StopMovement();
         boss.SetAnimation("DieState");
         boss.SetTargetToMove(null);
     }
@@ -139,7 +139,7 @@ public class RushBossBattlefieldCrusherState : IUnitState
     public void Enter(UnitController unitController)
     {
         this.boss = unitController as BossController;
-        boss.SetMoveWork(false);
+        boss.StopMovement();
         boss.SetAnimation("BattleFieldCrush");
         boss.SetTargetToMove(null);
     }
@@ -169,7 +169,7 @@ public class RushBossManaSkillState : IUnitState
     public void Enter(UnitController unitController)
     {
         this.boss = unitController as BossController;
-        boss.SetMoveWork(false);
+        boss.StopMovement();
         boss.SetAnimation("ManaSkill");
         boss.SetTargetToMove(null);
         boss.canMana = false;
@@ -185,9 +185,9 @@ public class RushBossManaSkillState : IUnitState
     }
     public void Exit()
     {
-        boss.SetMoveWork(true);
+        boss.StartMovement();
         boss.canMana = true;
-        boss.currentMP = 0;
+        boss.SetCurrentMana(0);
     }
 } 
 
@@ -197,7 +197,7 @@ public class RushBossDogFightState : IUnitState
     public void Enter(UnitController unitController)
     {
         this.boss = unitController as BossController;
-        boss.SetMoveWork(false);
+        boss.StopMovement();
         boss.SetAnimation("DogFight");
         boss.SetTargetToMove(null);
     }
@@ -211,6 +211,6 @@ public class RushBossDogFightState : IUnitState
     }
     public void Exit()
     {
-        boss.SetMoveWork(true);
+        boss.StartMovement();
     }
 }

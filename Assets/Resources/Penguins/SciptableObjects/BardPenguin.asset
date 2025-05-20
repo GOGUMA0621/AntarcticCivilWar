@@ -18,7 +18,8 @@ MonoBehaviour:
   unitIcon: {fileID: 927596032, guid: 7dd18ccfeb4ad48438a471908f8e3f1b, type: 3}
   unitFaction: 2
   unitType: 0
-  unitSynergyType: 0
+  unitSynergyTags:
+  - Neutral
   unitAnimations:
   - {fileID: 7400000, guid: 5abe73adbf9cf1a42b89d9d2a5c4e93b, type: 2}
   - {fileID: 7400000, guid: b021d8fbdb2244148aed815a772adc95, type: 2}

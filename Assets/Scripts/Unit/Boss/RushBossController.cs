@@ -1,11 +1,6 @@
 using DG.Tweening;
-using Pathfinding;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Android;
-using UnityEngine.UIElements;
 
 public class RushBossController : BossController
 {
@@ -50,10 +45,6 @@ public class RushBossController : BossController
     private readonly IUnitState followState = new RushBossFollowState();
     private readonly IUnitState dieState = new RushBossDieState();
 
-    protected override IUnitState GetInitialState()
-    {
-        return new RushBossIdleState();
-    }
 
     protected override IUnitState GetManaSkillState()
     {
@@ -129,7 +120,7 @@ public class RushBossController : BossController
         try
         {
             PauseAnimation();
-            unit.aiPath.canMove = false;
+            StopMovement();
 
             float dashDuration = 0.2f;
 
@@ -168,7 +159,7 @@ public class RushBossController : BossController
         Debug.Log($"JumpStart called");
         PauseAnimation();
 
-        unit.aiPath.canMove = false;
+        StopMovement();
 
         float jumpHeight = 3f;
         float jumpDuration = 0.7f; // »ó½Â ½Ã°£
@@ -249,7 +240,7 @@ public class RushBossController : BossController
 
     public void RushEnd()
     {
-        unit.aiPath.canMove = true;
+        StartMovement();
         unit.detectTarget.targetToAttack = null;
         unit.detectTarget.SortClosetTarget();
         if (unit.detectTarget.targetToAttack != null)
@@ -276,7 +267,7 @@ public class RushBossController : BossController
     private IEnumerator DogFightStartCoroutine(float distance)
     {
         
-        unit.aiPath.canMove = false;
+        StopMovement();
         isTriggered = true;
 
         float dashDuration = 0.4f;
@@ -316,7 +307,7 @@ public class RushBossController : BossController
     private IEnumerator DashBackword(float distance)
     {
         PauseAnimation();
-        unit.aiPath.canMove = false;
+        StopMovement();
         isTriggered = true;
         disableFlip = true;
 
@@ -368,11 +359,6 @@ public class RushBossController : BossController
             servant.GetComponent<UnitController>().AddModifierStat(new StatModifier("Æë½ºÅä", StatType.AttackDamage, 1.3f, ModifierMethod.Multiplicative));
             servant.GetComponent<UnitController>().AddModifierStat(new StatModifier("Æë½ºÅä", StatType.MoveSpeed, 1.5f, ModifierMethod.Multiplicative));
         }
-    }
-
-    public void ToggleAI(bool toggle)
-    {
-        unit.aiPath.canMove = toggle;
     }
 
     public void MeleeAttack(float damage)

@@ -18,7 +18,10 @@ MonoBehaviour:
   unitIcon: {fileID: 189068871, guid: d7ebd7b9f878ec643a8642a9fb8e0be0, type: 3}
   unitFaction: 1
   unitType: 0
-  unitSynergyType: 0
+  unitSynergyTags:
+  - Resistance
+  - Pengta_Force
+  - King
   unitAnimations:
   - {fileID: 7400000, guid: cb98fc014d20115489c1b4c67c611f50, type: 2}
   - {fileID: 7400000, guid: 954471df2a2fd09428d7649652f44ebb, type: 2}

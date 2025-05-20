@@ -19,10 +19,10 @@ public class UnitSquad
         for (int i = 0; i < units.Count; i++)
         {
             Vector3 worldPos = positions[i];
-            Vector2Int grid = GridManager.instance.WorldToGrid(worldPos);
-            Vector2Int validGrid = UnitFormationUtility.FindClosestWalkable(grid);
-            Vector3 finalWorld = GridManager.instance.GridToWorld(validGrid);
-            units[i].MoveToTarget(finalWorld);
+            // Vector2Int grid = GridManager.instance.WorldToGrid(worldPos);
+            // Vector2Int validGrid = UnitFormationUtility.FindClosestWalkable(grid);
+            // Vector3 finalWorld = GridManager.instance.GridToWorld(validGrid);
+            // units[i].MoveToTarget(finalWorld);
         }
     }
 
@@ -52,11 +52,11 @@ public class UnitSquadManager : SingleTonBehaviour<UnitSquadManager>
         if (squad != null)
         {
             squad.SetMoveTarget(worldTarget, formation);
-            //Debug.Log($"½ºÄõµå ID {squadId}°¡ ¸ñÇ¥ À§Ä¡·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+            //Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID {squadId}ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½.");
         }
         else
         {
-            Debug.LogWarning($"½ºÄõµå ID {squadId}¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù. ÀÌµ¿ ¸í·É ½ÇÆÐ.");
+            Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID {squadId}ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
@@ -66,11 +66,11 @@ public class UnitSquadManager : SingleTonBehaviour<UnitSquadManager>
         if (squad != null)
         {
             squad.AddUnit(unit);
-            Debug.Log($"À¯´Ö {unit.name}ÀÌ ½ºÄõµå ID {squadId}¿¡ Ãß°¡µÇ¾ú½À´Ï´Ù.");
+            Debug.Log($"ï¿½ï¿½ï¿½ï¿½ {unit.name}ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID {squadId}ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
         else
         {
-            Debug.LogWarning($"½ºÄõµå ID {squadId}¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù. À¯´Ö Ãß°¡ ½ÇÆÐ.");
+            Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID {squadId}ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
@@ -82,16 +82,16 @@ public class UnitSquadManager : SingleTonBehaviour<UnitSquadManager>
             if (squad.units.Contains(unit))
             {
                 squad.units.Remove(unit);
-                Debug.Log($"À¯´Ö {unit.name}ÀÌ ½ºÄõµå ID {squadId}¿¡¼­ Á¦°ÅµÇ¾ú½À´Ï´Ù.");
+                Debug.Log($"ï¿½ï¿½ï¿½ï¿½ {unit.name}ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID {squadId}ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÅµÇ¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             }
             else
             {
-                Debug.LogWarning($"½ºÄõµå ID {squadId}¿¡ À¯´Ö {unit.name}ÀÌ ¾ø½À´Ï´Ù.");
+                Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID {squadId}ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ {unit.name}ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             }
         }
         else
         {
-            Debug.LogWarning($"½ºÄõµå ID {squadId}¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù. À¯´Ö Á¦°Å ½ÇÆÐ.");
+            Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID {squadId}ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
@@ -106,8 +106,8 @@ public class UnitSquadManager : SingleTonBehaviour<UnitSquadManager>
         var squad = allSquads.FirstOrDefault(s => s.id == id);
         if (squad != null)
         {
-            squad.units.Clear(); // À¯´Ö ¸®½ºÆ® ÃÊ±âÈ­
-            allSquads.Remove(squad); // ½ºÄõµå ÀÚÃ¼ Á¦°Å
+            squad.units.Clear(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­
+            allSquads.Remove(squad); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
         }
     }
 }

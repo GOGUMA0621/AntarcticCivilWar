@@ -64,8 +64,33 @@ PrefabInstance:
       propertyPath: data
       value: 
       objectReference: {fileID: 11400000, guid: 11785d6af0ff4ac41a5e1fdcc25750dc, type: 2}
+    - target: {fileID: 6345866539272163795, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: originPrefab
+      value: 
+      objectReference: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -389174071693072058}
   m_SourcePrefab: {fileID: 100100000, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+--- !u!1 &2296282596114283240 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+  m_PrefabInstance: {fileID: 5794324829149370882}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-389174071693072058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2296282596114283240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d266e43786ee754b8edf68cb378e1c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  synergyIconsPreview: []

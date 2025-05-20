@@ -15,27 +15,21 @@ public class UnitIdleState : IUnitState
     public void Enter(UnitController unitController)
     {
         this.unitController = unitController;
-        unitController.unit.aiPath.canMove = true;
+        unitController.StartMovement();
         unitController.SetAnimation("IdleState");
-        //Debug.Log($"[IdleState] {unitController.name} is idle");
-
-        if (unitController.tag == "Unit" && unitController.unit.detectTarget.targetToAttack == null)
-        {
-            unitController.SetTargetToMove(unitController.unit.playerController.transform);
-        }
     }
+
     public void Update()
     {
-        if (unitController.unit.detectTarget.targets.Any())
-        {
-            unitController.unit.detectTarget.SortClosetTarget();
-            var newTarget = unitController.unit.detectTarget.targetToAttack;
-            if (newTarget != null)
-            {
-                //Debug.Log($"New Target {newTarget.name}");
-                unitController.GoFollow();  
-            }
-        }
+        //if (unitController.unit.detectTarget.targets.Any())
+        //{
+        //    unitController.unit.detectTarget.SortClosetTarget();
+        //    var newTarget = unitController.unit.detectTarget.targetToAttack;
+        //    if (newTarget != null)
+        //    {
+        //        unitController.GoFollow();  
+        //    }
+        //}
     }
     public void Exit()
     {
@@ -54,13 +48,7 @@ public class UnitFollowState : IUnitState
         if (target != null)
         {
             unitController.SetTargetToMove(target);
-            unitController.ToggleAITrue(); // aiPath.canMove = true;
-            unitController.SetMoveSpeed(unitController.unitSpeed); // 속도 재설정
-            //Debug.Log($"[FollowState] Set target: {target.name}");
-        }
-        else
-        {
-            //Debug.LogWarning("[FollowState] targetToAttack is null");
+            unitController.StartMovement();
         }
     }
 
@@ -71,15 +59,12 @@ public class UnitFollowState : IUnitState
 
         if (!targets.Any())
         {
-            //Debug.LogWarning("[FollowState] No targets available");
             unitController.GoIdle();
             return;
         }
 
-        float distance = Vector3.Distance(unitController.transform.position, target.position);
-        if (distance <= unitController.unitAttackDistance)
+        if (unitController.RemainedDistance <= unitController.unitAttackDistance)
         {
-            //Debug.Log($"[FollowState] {unitController.name} distance too close");
             unitController.GoAttack();
             return;
         }
@@ -98,7 +83,6 @@ public class UnitAttackState : IUnitState
         //Debug.Log("AttackState");
         this.unitController = unit;
         unit.SetAnimation("AttackState");
-        //Debug.Log($"AttackState {unit.name}");
     }
     public void Update()
     {
@@ -107,7 +91,6 @@ public class UnitAttackState : IUnitState
 
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
         {
-            //Debug.Log($"[AttackState] {unitController.name} attack finished");
             unitController.GoIdle();
             return;
         }
@@ -119,28 +102,24 @@ public class UnitAttackState : IUnitState
 
             if (newTarget != null)
             {
-                //Debug.Log($"[AttackState] New target: {newTarget.name}");
                 unitController.SetTargetToMove(newTarget);
                 unitController.GoFollow();
             }
             else
             {
-                //Debug.LogWarning("[AttackState] targetToAttack is null");
                 unitController.GoIdle();
             }
             return;
         }
         else
         {
-            float distance = Vector3.Distance(unitController.transform.position, target.position);
-            if (distance > unitController.unitAttackDistance)
+            if (unitController.RemainedDistance > unitController.unitAttackDistance)
             {
-                //Debug.Log($"[AttackState] {unitController.name} distance too far");
                 unitController.GoFollow();
                 return;
             }
         }
-        unitController.unit.aiPath.canMove = false;
+        unitController.StopMovement();
     }
 
     public void Exit()
@@ -158,7 +137,7 @@ public class UnitDieState : IUnitState
     public void Enter(UnitController unit)
     {
         this.unit = unit;
-        unit.SetMoveWork(false);
+        unit.StopMovement();
         unit.SetAnimation("DieState");
     }
     public void Update()
@@ -177,7 +156,7 @@ public class UnitManaSkillState : IUnitState
     {
         this.unit = unit;
         unit.canMana = false;
-        unit.SetMoveWork(false);
+        unit.StopMovement();
         unit.SetAnimation("ManaSkillState");
         unit.unitSkill.DoActiveSkill();
     }
@@ -191,9 +170,9 @@ public class UnitManaSkillState : IUnitState
     }
     public void Exit()
     {
-        unit.currentMP = 0;
+        unit.SetCurrentMana(0);
         unit.canMana = true;
-        unit.SetMoveWork(true);
+        unit.StartMovement();
     }
 }
 
@@ -205,8 +184,7 @@ public class UnitCallState : IUnitState
         this.unit = unit;
         unit.SetAnimation("IdleState");
         unit.StopMovement();
-        unit.unit.settler.target = unit.unit.playerController.transform;
-        unit.SetMoveWork(true);
+        unit.StartMovement();
     }
     public void Update()
     {
@@ -216,7 +194,6 @@ public class UnitCallState : IUnitState
     {
         if (unit.unit.detectTarget.targetToAttack == null)
         {
-            unit.unit.settler.target = null;
         }
     }
 }

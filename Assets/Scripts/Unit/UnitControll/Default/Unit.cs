@@ -2,7 +2,6 @@
 using Pathfinding;
 using SciptableObjects;
 using UnityEditor;
-
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,18 +10,15 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
 
     public GameObject originPrefab;
     public UnitData data;
+    //public NavMeshAgent agent { get; private set; }
     public UnitController controller { get; private set; }
     public UnitDistinction distinction { get; private set; }
     public UnitDetectTarget detectTarget { get; private set; }
     public UnitAttackController attackController { get; private set; }
-    public AIPath aiPath { get; private set; }
-    public Seeker seeker { get; private set; }
-    public AIDestinationSetter settler { get; private set; }
     public Rigidbody2D rb { get; private set; }
     public CapsuleCollider2D capsuleCollider { get; private set; }
     public SpriteRenderer spriteRenderer;
     [HideInInspector] public PlayerController playerController;
-    public PlayerUnitManager playerUnitManager;
     public Animator animator { get; private set; }
 
     protected virtual void Awake()
@@ -32,15 +28,14 @@ public class Unit : MonoBehaviour //유닛에 대한 부모 파일
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        playerController = GameObject.FindAnyObjectByType<PlayerController>();
+        playerController = FindAnyObjectByType<PlayerController>();
         distinction = GetComponentInChildren<UnitDistinction>();
         detectTarget = GetComponentInChildren<UnitDetectTarget>();
         attackController = GetComponent<UnitAttackController>();
-        aiPath = GetComponent<AIPath>();
-        settler = GetComponent<AIDestinationSetter>();
+        //agent = GetComponent<NavMeshAgent>();
     }
     public Unit GetUnit() { return this; }
-    public SciptableObjects.UnitData GetData() { return data; }
+    public UnitData GetData() { return data; }
 
 #if UNITY_EDITOR
     private void OnValidate()

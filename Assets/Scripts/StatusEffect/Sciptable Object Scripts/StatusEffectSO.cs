@@ -17,13 +17,18 @@ public abstract class StatusEffectSO : ScriptableObject
 {
     public StatusEffectType statusEffectType;
 
+    [Header("빌드 업 세팅")]
     public float activationThreshold;
     public float thresholdReductionMultiplier = 1f;
     public float thresholdReductionEverySecond = 1f;
 
+    [Header("효과 세팅")]
     public float activeDuration;
+    public float tickInterval = .25f;
 
+    [Header("시각적 효과")]
     public GameObject visualEffectPrefab;
+    public Sprite iconSprite;
 
     private float currentThreshold;
     private float remainingDuration;
@@ -31,8 +36,6 @@ public abstract class StatusEffectSO : ScriptableObject
 
     [HideInInspector] public bool isBuildUpOnlyShow;
     [HideInInspector] public bool isEffectActive;
-
-    public float tickInterval = .25f;
     private float tickIntervalCD;
 
     protected Unit unit;

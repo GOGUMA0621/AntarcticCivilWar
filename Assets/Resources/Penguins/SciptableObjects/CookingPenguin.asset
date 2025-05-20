@@ -18,7 +18,10 @@ MonoBehaviour:
   unitIcon: {fileID: -531321111, guid: c8b7ccf359b9706488a647eec77dbadb, type: 3}
   unitFaction: 1
   unitType: 1
-  unitSynergyType: 0
+  unitSynergyTags:
+  - Resistance
+  - Warrior
+  - King
   unitAnimations:
   - {fileID: 7400000, guid: a0b3d8481b3b3894c80216499675c7ea, type: 2}
   - {fileID: 7400000, guid: 84b3cbb394f472241b73daa9b103087f, type: 2}
