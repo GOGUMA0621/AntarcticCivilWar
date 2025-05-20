@@ -9,7 +9,7 @@ public class UnitSlot : MonoBehaviour
     [SerializeField] private GameObject unitPrefab;
     private UnitDragFromUI dragHandler;
 
-    [Header("Å×½ºÆ®¿ë")]
+    [Header("í…ŒìŠ¤íŠ¸ìš©")]
     [SerializeField] private Sprite testSprite;
     [SerializeField] private GameObject testUnitPrefab;
 
@@ -17,23 +17,23 @@ public class UnitSlot : MonoBehaviour
     {
         dragHandler = GetComponentInChildren<UnitDragFromUI>();
         if (dragHandler == null)
-            Debug.LogWarning("UnitSlotÀÇ ÀÚ½Ä¿¡¼­ UnitDragFromUI¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("UnitSlotì˜ ìì‹ì—ì„œ UnitDragFromUIë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
     }
 
     void Start()
     {
-        // Å×½ºÆ®¿ë À¯´Ö ¼³Á¤
+        // í…ŒìŠ¤íŠ¸ìš© ìœ ë‹› ì„¤ì •
         SetUnit(testSprite, testUnitPrefab);
     }
 
     /// <summary>
-    /// ¾ÆÀÌÄÜ ÀÌ¹ÌÁö¿Í µå·¡±×ÇÒ À¯´Ö ÇÁ¸®ÆÕÀ» ½½·Ô¿¡ ¼³Á¤.
+    /// ì•„ì´ì½˜ ì´ë¯¸ì§€ì™€ ë“œë˜ê·¸í•  ìœ ë‹› í”„ë¦¬íŒ¹ì„ ìŠ¬ë¡¯ì— ì„¤ì •.
     /// </summary>
-    /// <param name="unitIcon">À¯´Ö ¾ÆÀÌÄÜÀ¸·Î »ç¿ëÇÒ ½ºÇÁ¶óÀÌÆ®</param>
-    /// <param name="unitPrefab">µå·¡±× ½Ã ÀÎ°ÔÀÓ¿¡ ¹èÄ¡µÉ À¯´Ö ÇÁ¸®ÆÕ</param>
+    /// <param name="unitIcon">ìœ ë‹› ì•„ì´ì½˜ìœ¼ë¡œ ì‚¬ìš©í•  ìŠ¤í”„ë¼ì´íŠ¸</param>
+    /// <param name="unitPrefab">ë“œë˜ê·¸ ì‹œ ì¸ê²Œì„ì— ë°°ì¹˜ë  ìœ ë‹› í”„ë¦¬íŒ¹</param>
     public void SetUnit(Sprite unitIcon, GameObject unitPrefab)
     {
-        Debug.Log($"SetUnit È£ÃâµÊ - {unitPrefab.name}");
+        Debug.Log($"SetUnit í˜¸ì¶œë¨ - {unitPrefab.name}");
         icon.sprite = unitIcon;
         this.unitPrefab = unitPrefab;
 
@@ -43,8 +43,8 @@ public class UnitSlot : MonoBehaviour
     }
 
     /// <summary>
-    /// À¯´ÖÀÌ ¹èÄ¡µÇ¾úÀ» ¶§ ÇØ´ç ½½·ÔÀ» ÃÊ±âÈ­.
-    /// ¾ÆÀÌÄÜ°ú µå·¡±× ±â´ÉÀ» ºñÈ°¼ºÈ­.
+    /// ìœ ë‹›ì´ ë°°ì¹˜ë˜ì—ˆì„ ë•Œ í•´ë‹¹ ìŠ¬ë¡¯ì„ ì´ˆê¸°í™”.
+    /// ì•„ì´ì½˜ê³¼ ë“œë˜ê·¸ ê¸°ëŠ¥ì„ ë¹„í™œì„±í™”.
     /// </summary>
     public void Clear()
     {

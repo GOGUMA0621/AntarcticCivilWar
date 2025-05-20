@@ -247,8 +247,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
             RecalculateStats();
 
-            unit.rb.drag = 0.5f;
-
             currentHP = maxHP;
             currentMP = 0;
             unitSenseDistance = unit.data.UnitSenseRadius;

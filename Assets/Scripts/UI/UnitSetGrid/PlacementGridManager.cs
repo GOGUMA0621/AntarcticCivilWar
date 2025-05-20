@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlacementGridManager : MonoBehaviour
 {
-    public int width = 10;      // ±×¸®µå °¡·Î Å©±â
-    public int height = 10;     // ±×¸®µå ¼¼·Î Å©±â
-    public float cellSize = 1f; // ÇÑ Ä­ Å©±â 
+    public int width = 10;      // ê·¸ë¦¬ë“œ ê°€ë¡œ í¬ê¸°
+    public int height = 10;     // ê·¸ë¦¬ë“œ ì„¸ë¡œ í¬ê¸°
+    public float cellSize = 1f; // í•œ ì¹¸ í¬ê¸° 
     public Vector3 origin = Vector3.zero;
 
-    private Unit[,] grid;       // À¯´Ö ¹èÄ¡ »óÅÂ ÀúÀå
+    private Unit[,] grid;       // ìœ ë‹› ë°°ì¹˜ ìƒíƒœ ì €ì¥
 
     void Awake()
     {
@@ -17,42 +17,43 @@ public class PlacementGridManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ±×¸®µå ÁÂÇ¥¿¡ À¯´ÖÀ» ¹èÄ¡ÇÒ ¼ö ÀÖ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+    /// ì§€ì •í•œ ê·¸ë¦¬ë“œ ì¢Œí‘œì— ìœ ë‹›ì„ ë°°ì¹˜í•  ìˆ˜ ìˆëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="pos">È®ÀÎÇÒ ±×¸®µå ÁÂÇ¥</param>
-    /// <returns>ÇØ´ç À§Ä¡°¡ ±×¸®µå ¹üÀ§ and À¯´Ö ¾øÀ¸¸é true¹İÈ¯</returns>
+    /// <param name="pos">í™•ì¸í•  ê·¸ë¦¬ë“œ ì¢Œí‘œ</param>
+    /// <returns>í•´ë‹¹ ìœ„ì¹˜ê°€ ê·¸ë¦¬ë“œ ë²”ìœ„ and ìœ ë‹› ì—†ìœ¼ë©´ trueë°˜í™˜</returns>
     public bool CanPlace(Vector2Int pos)
     {
         return IsInsideGrid(pos) && grid[pos.x, pos.y] == null;
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ±×¸®µå ÁÂÇ¥¿¡ À¯´ÖÀ» ¹èÄ¡ and À¯´Ö ¿ÀºêÁ§Æ®¸¦ ÇØ´ç À§Ä¡·Î ÀÌµ¿.
+    /// ì§€ì •í•œ ê·¸ë¦¬ë“œ ì¢Œí‘œì— ìœ ë‹›ì„ ë°°ì¹˜ and ìœ ë‹› ì˜¤ë¸Œì íŠ¸ë¥¼ í•´ë‹¹ ìœ„ì¹˜ë¡œ ì´ë™.
     /// </summary>
-    /// <param name="unit">¹èÄ¡ÇÒ À¯´Ö</param>
-    /// <param name="pos">¹èÄ¡ÇÒ ±×¸®µå ÁÂÇ¥</param>
+    /// <param name="unit">ë°°ì¹˜í•  ìœ ë‹›</param>
+    /// <param name="pos">ë°°ì¹˜í•  ê·¸ë¦¬ë“œ ì¢Œí‘œ</param>
     public void PlaceUnit(Unit unit, Vector2Int pos)
     {
         if (!CanPlace(pos)) return;
 
         grid[pos.x, pos.y] = unit;
         unit.transform.position = GridUtility.GridToWorld(pos, origin, cellSize);
+        SynergyManager.instance.RegisterUnit(unit.controller, true);
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ±×¸®µå ÁÂÇ¥°¡ À¯È¿ÇÑ ±×¸®µå ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎ.
+    /// ì§€ì •í•œ ê·¸ë¦¬ë“œ ì¢Œí‘œê°€ ìœ íš¨í•œ ê·¸ë¦¬ë“œ ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸.
     /// </summary>
-    /// <param name="pos">È®ÀÎÇÒ ±×¸®µå ÁÂÇ¥</param>
-    /// <returns>ÁÂÇ¥°¡ 0 ÀÌ»óÀÌ°í, ³Êºñ ¹× ³ôÀÌ ¹üÀ§ ³»¿¡ ÀÖÀ¸¸é true ¹İÈ¯</returns>
+    /// <param name="pos">í™•ì¸í•  ê·¸ë¦¬ë“œ ì¢Œí‘œ</param>
+    /// <returns>ì¢Œí‘œê°€ 0 ì´ìƒì´ê³ , ë„ˆë¹„ ë° ë†’ì´ ë²”ìœ„ ë‚´ì— ìˆìœ¼ë©´ true ë°˜í™˜</returns>
     public bool IsInsideGrid(Vector2Int pos)
     {
         return pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height;
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ±×¸®µå ÁÂÇ¥¿¡¼­ À¯´ÖÀ» Á¦°Å.
+    /// ì§€ì •í•œ ê·¸ë¦¬ë“œ ì¢Œí‘œì—ì„œ ìœ ë‹›ì„ ì œê±°.
     /// </summary>
-    /// <param name="pos">Á¦°ÅÇÒ À¯´ÖÀÇ ±×¸®µå ÁÂÇ¥</param>
+    /// <param name="pos">ì œê±°í•  ìœ ë‹›ì˜ ê·¸ë¦¬ë“œ ì¢Œí‘œ</param>
     public void RemoveUnit(Vector2Int pos)
     {
         if (!IsInsideGrid(pos)) return;
@@ -61,10 +62,10 @@ public class PlacementGridManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ±×¸®µå ÁÂÇ¥¿¡ ÀÖ´Â À¯´ÖÀ» ¹İÈ¯.
+    /// ì§€ì •í•œ ê·¸ë¦¬ë“œ ì¢Œí‘œì— ìˆëŠ” ìœ ë‹›ì„ ë°˜í™˜.
     /// </summary>
-    /// <param name="pos">ÁöÁ¤ÇÑ ±×¸®µå ÁÂÇ¥</param>
-    /// <returns>ÇØ´ç À§Ä¡¿¡ ¹èÄ¡µÈ À¯´Ö °´Ã¼¸¦ ¹İÈ¯</returns>
+    /// <param name="pos">ì§€ì •í•œ ê·¸ë¦¬ë“œ ì¢Œí‘œ</param>
+    /// <returns>í•´ë‹¹ ìœ„ì¹˜ì— ë°°ì¹˜ëœ ìœ ë‹› ê°ì²´ë¥¼ ë°˜í™˜</returns>
     public Unit GetUnitByPos(Vector2Int pos)
     {
         if (!IsInsideGrid(pos)) return null;
