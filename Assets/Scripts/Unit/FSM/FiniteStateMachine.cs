@@ -8,9 +8,34 @@ public interface IUnitState
     void Exit();
 }
 
+public class UnitPlaceState : IUnitState
+{
+    private UnitController unitController;
+    private UnitDragController dragController;
+
+    public void Enter(UnitController unitController)
+    {
+        this.unitController = unitController;
+        dragController = unitController.GetComponent<UnitDragController>();
+        dragController.enabled = true;
+        unitController.SetAnimation("IdleState");
+        unitController.StopMovement();
+    }
+
+    public void Update()
+    {
+        
+    }
+    public void Exit()
+    {
+        dragController.enabled = false;
+    }
+}
+
 public class UnitIdleState : IUnitState
 {
     private UnitController unitController;
+    private UnitDragController dragController;
 
     public void Enter(UnitController unitController)
     {

@@ -6,10 +6,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static UnitController;
 
-public class UnitDetectTarget : MonoBehaviour //À¯´Ö Àû Å½Áö
+public class UnitDetectTarget : MonoBehaviour //ìœ ë‹› ì  íƒì§€
 {
-    public Transform targetToAttack; //°ø°İÇÒ Å¸±êÀÇ À§Ä¡°ª
-    public List<GameObject> targets; // Å¸°Ù ¸®½ºÆ®
+    public Transform targetToAttack; //ê³µê²©í•  íƒ€ê¹ƒì˜ ìœ„ì¹˜ê°’
+    public List<GameObject> targets; // íƒ€ê²Ÿ ë¦¬ìŠ¤íŠ¸
     private Unit unit;
     private CircleCollider2D detectCollider;
 
@@ -21,11 +21,11 @@ public class UnitDetectTarget : MonoBehaviour //À¯´Ö Àû Å½Áö
         detectCollider.radius = unit.data.UnitSenseRadius;
     }
 
-    internal void SortClosetTarget() //Å¸°Ù ¸®½ºÆ®¸¦ °¡±î¿î ¼øÀ¸·Î Á¤·ÄÇÏ¿© °ø°İÇÒ »ó´ë°ª¿¡ °ª ºÎ¿©
-    {                                   //Æ¯Á¤ ÀÎÅÍÆäÀÌ½º¸¦ ÈÄ¼øÀ§·Î Á¤·Ä
+    internal void SortClosetTarget() //íƒ€ê²Ÿ ë¦¬ìŠ¤íŠ¸ë¥¼ ê°€ê¹Œìš´ ìˆœìœ¼ë¡œ ì •ë ¬í•˜ì—¬ ê³µê²©í•  ìƒëŒ€ê°’ì— ê°’ ë¶€ì—¬
+    {                                   //íŠ¹ì • ì¸í„°í˜ì´ìŠ¤ë¥¼ í›„ìˆœìœ„ë¡œ ì •ë ¬
         targets = targets
-            .OrderBy(t => t.TryGetComponent(out IStructure _) ? 1 : 0) // Æ¯Á¤ ·¹ÀÌ¾î¸¦ °¡Áø °´Ã¼¸¦ ÈÄ¼øÀ§·Î ¹èÄ¡
-            .ThenBy(t => Vector2.Distance(transform.position, t.transform.position)) // °°Àº ±×·ì ³»¿¡¼­´Â °Å¸®¼ø Á¤·Ä
+            .OrderBy(t => t.TryGetComponent(out IStructure _) ? 1 : 0) // íŠ¹ì • ë ˆì´ì–´ë¥¼ ê°€ì§„ ê°ì²´ë¥¼ í›„ìˆœìœ„ë¡œ ë°°ì¹˜
+            .ThenBy(t => Vector2.Distance(transform.position, t.transform.position)) // ê°™ì€ ê·¸ë£¹ ë‚´ì—ì„œëŠ” ê±°ë¦¬ìˆœ ì •ë ¬
             .ToList();
 
         if (targets.Any())
@@ -34,25 +34,25 @@ public class UnitDetectTarget : MonoBehaviour //À¯´Ö Àû Å½Áö
         }
     }
 
-    public void AddTarget(GameObject target) //Å¸±ê ¸®½ºÆ®¿¡ Ãß°¡
+    public void AddTarget(GameObject target) //íƒ€ê¹ƒ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
     {
         if (!targets.Contains(target) && target.TryGetComponent(out IDamageAble i) && !i.IsDestroyed())
         {
-            i.OnDestroyed += RemoveTarget;  //Å¸±ê ¸®½ºÆ®¿¡ µé¾î°¡¸é¼­ ÆÄ±«È®ÀÎ ÀÌº¥Æ®¿¡ µî·Ï
+            i.OnDestroyed += RemoveTarget;  //íƒ€ê¹ƒ ë¦¬ìŠ¤íŠ¸ì— ë“¤ì–´ê°€ë©´ì„œ íŒŒê´´í™•ì¸ ì´ë²¤íŠ¸ì— ë“±ë¡
             targets.Add(target);
             SortClosetTarget();
         }
     }
 
-    public void RemoveTarget(GameObject target) // Å¸±ê ¸®½ºÆ®¿¡¼­ Á¦°Å
+    public void RemoveTarget(GameObject target) // íƒ€ê¹ƒ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
     {
         if (targets.Contains(target))
         {
             
             if (target.TryGetComponent(out IDamageAble i))
             {
-                //Debug.Log($"{this.gameObject}ÀÇ Å¸°Ù Á¦°Å {target.gameObject}");
-                i.OnDestroyed -= RemoveTarget; //Å¸±ê ¸®½ºÆ®¿¡ Á¸Àç ÇÏÁö ¾ÊÀ¸¹Ç·Î ÀÌº¥Æ®¿¡¼­ Á¦°Å
+                //Debug.Log($"{this.gameObject}ì˜ íƒ€ê²Ÿ ì œê±° {target.gameObject}");
+                i.OnDestroyed -= RemoveTarget; //íƒ€ê¹ƒ ë¦¬ìŠ¤íŠ¸ì— ì¡´ì¬ í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ ì´ë²¤íŠ¸ì—ì„œ ì œê±°
                 targets.Remove(target);
             }
            
@@ -66,14 +66,10 @@ public class UnitDetectTarget : MonoBehaviour //À¯´Ö Àû Å½Áö
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent(out IDamageAble i) && i is MonoBehaviour target && target.tag != this.transform.parent.tag)
+        if(collision.TryGetComponent(out IDamageAble i) && i is UnitController target && target.isAllay != unit.controller.isAllay) //ì êµ°ê³¼ ì•„êµ°ì„ êµ¬ë¶„í•˜ê¸° ìœ„í•œ ì¡°ê±´
         {
             if (!target.IsDestroyed())
             {
-                if (this.transform.parent.tag != "Unit" && (target.tag == "Mercenary")          //¿ëº´Àº ÇÃ·¹ÀÌ¾îÀÇ À¯´Ö¸¸À» ¶§¸®µµ·Ï ¼öÁ¤
-                    || (this.transform.parent.tag == "Mercenary" && target.tag != "Unit")
-                    ) return;
-
                 AddTarget(target.gameObject);
             }
         }
@@ -84,9 +80,9 @@ public class UnitDetectTarget : MonoBehaviour //À¯´Ö Àû Å½Áö
         RemoveTarget(collision.gameObject);
     }
 
-    public void ClearTarget() //Å¸±ê ¸®½ºÆ® ÃÊ±âÈ­
+    public void ClearTarget() //íƒ€ê¹ƒ ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
     {
-        //Debug.Log("Å¸°Ù Å¬¸®¾î");
+        //Debug.Log("íƒ€ê²Ÿ í´ë¦¬ì–´");
         targets.Clear();
         targetToAttack = null;
     }

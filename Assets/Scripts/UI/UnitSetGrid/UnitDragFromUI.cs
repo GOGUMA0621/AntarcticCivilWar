@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -17,20 +15,33 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
 
     /// <summary>
-    /// À¯´Ö ½½·Ô¿¡¼­ µå·¡±×¸¦ ½ÃÀÛÇÒ ¶§ È£Ãâ
-    /// ÇÁ¸®ºä À¯´ÖÀ» »ı¼ºÇÏ°í Ãæµ¹ ¹× ¹°¸® È¿°ú¸¦ ºñÈ°¼ºÈ­
+    /// ìœ ë‹› ìŠ¬ë¡¯ì—ì„œ ë“œë˜ê·¸ë¥¼ ì‹œì‘í•  ë•Œ í˜¸ì¶œ
+    /// í”„ë¦¬ë·° ìœ ë‹›ì„ ìƒì„±í•˜ê³  ì¶©ëŒ ë° ë¬¼ë¦¬ íš¨ê³¼ë¥¼ ë¹„í™œì„±í™”
     /// </summary>
     public void OnBeginDrag(PointerEventData eventData)
     {
 
         if (unitPrefab == null)
         {
-            Debug.LogWarning("unitPrefabÀÌ ¼³Á¤µÇÁö ¾ÊÀ½");
+            Debug.LogWarning("unitPrefabì´ ì„¤ì •ë˜ì§€ ì•ŠìŒ");
             return;
         }
 
         previewUnit = Instantiate(unitPrefab);
         previewUnit.name = "[Preview] " + unitPrefab.name;
+
+        var unit = previewUnit.GetComponent<UnitController>();
+        if (unit == null)
+        {
+            Debug.LogWarning("í”„ë¦¬ë·° ìœ ë‹›ì— Unit ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìŒ");
+            Destroy(previewUnit);
+            return;
+        }
+        else
+        {
+            Debug.Log("ë°°ì¹˜ìƒíƒœ");
+            unit.GoPlace();
+        }
 
         var col = previewUnit.GetComponentInChildren<Collider2D>();
         if (col != null) col.enabled = false;
@@ -44,7 +55,7 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
 
     /// <summary>
-    /// µå·¡±× Áß ¸¶¿ì½º À§Ä¡¿¡ µû¶ó ÇÁ¸®ºä À¯´ÖÀÇ À§Ä¡¸¦ ¾÷µ¥ÀÌÆ®.
+    /// ë“œë˜ê·¸ ì¤‘ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ì— ë”°ë¼ í”„ë¦¬ë·° ìœ ë‹›ì˜ ìœ„ì¹˜ë¥¼ ì—…ë°ì´íŠ¸.
     /// </summary>
     public void OnDrag(PointerEventData eventData)
     {
@@ -56,7 +67,7 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
 
     /// <summary>
-    /// µå·¡±× Á¾·á ½Ã À¯´ÖÀ» ¹èÄ¡ °¡´ÉÇÑ À§Ä¡¿¡ »ı¼ºÇÏ°í, ÇÁ¸®ºä À¯´ÖÀ» Á¦°Å
+    /// ë“œë˜ê·¸ ì¢…ë£Œ ì‹œ ìœ ë‹›ì„ ë°°ì¹˜ ê°€ëŠ¥í•œ ìœ„ì¹˜ì— ìƒì„±í•˜ê³ , í”„ë¦¬ë·° ìœ ë‹›ì„ ì œê±°
     /// </summary>
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -70,6 +81,10 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         if (grid.CanPlace(gridPos))
         {
             grid.PlaceUnit(previewUnit.GetComponent<Unit>(), gridPos);
+        }
+        else
+        {
+            Destroy(previewUnit);
         }
 
         var col = previewUnit.GetComponentInChildren<Collider2D>();

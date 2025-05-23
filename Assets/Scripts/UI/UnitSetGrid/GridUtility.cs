@@ -5,10 +5,10 @@ using UnityEngine;
 public static class GridUtility
 {
     /// <summary>
-    /// ¿ùµå ÁÂÇ¥¸¦ ±×¸®µå ¼¿ ÁÂÇ¥(Vector2Int)·Î º¯È¯ÇÕ´Ï´Ù.
+    /// ì›”ë“œ ì¢Œí‘œë¥¼ ê·¸ë¦¬ë“œ ì…€ ì¢Œí‘œ(Vector2Int)ë¡œ ë³€í™˜í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="worldPos">º¯È¯ÇÒ ¿ùµå ÁÂÇ¥</param>
-    /// <returns>ÇØ´ç À§Ä¡ÀÇ ±×¸®µå ÁÂÇ¥</returns>
+    /// <param name="worldPos">ë³€í™˜í•  ì›”ë“œ ì¢Œí‘œ</param>
+    /// <returns>í•´ë‹¹ ìœ„ì¹˜ì˜ ê·¸ë¦¬ë“œ ì¢Œí‘œ</returns>
     public static Vector2Int WorldToGrid(Vector3 worldPos, Vector3 origin, float cellSize)
     {
         int x = Mathf.FloorToInt((worldPos.x - origin.x) / cellSize);
@@ -17,10 +17,10 @@ public static class GridUtility
     }
 
     /// <summary>
-    /// ±×¸®µå ¼¿ ÁÂÇ¥¸¦ ÇØ´ç ¼¿ÀÇ Áß½É ¿ùµå ÁÂÇ¥(Vector3)·Î º¯È¯.
+    /// ê·¸ë¦¬ë“œ ì…€ ì¢Œí‘œë¥¼ í•´ë‹¹ ì…€ì˜ ì¤‘ì‹¬ ì›”ë“œ ì¢Œí‘œ(Vector3)ë¡œ ë³€í™˜.
     /// </summary>
-    /// <param name="gridPos">º¯È¯ÇÒ ±×¸®µå ÁÂÇ¥</param>
-    /// <returns>±×¸®µå ¼¿ÀÇ Áß½É¿¡ ÇØ´çÇÏ´Â ¿ùµå ÁÂÇ¥</returns>
+    /// <param name="gridPos">ë³€í™˜í•  ê·¸ë¦¬ë“œ ì¢Œí‘œ</param>
+    /// <returns>ê·¸ë¦¬ë“œ ì…€ì˜ ì¤‘ì‹¬ì— í•´ë‹¹í•˜ëŠ” ì›”ë“œ ì¢Œí‘œ</returns>
     public static Vector3 GridToWorld(Vector2Int gridPos, Vector3 origin, float cellSize)
     {
         return new Vector3(gridPos.x * cellSize + cellSize * 0.5f,

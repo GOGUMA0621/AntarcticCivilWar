@@ -139,7 +139,19 @@ MonoBehaviour:
     m_ActionId: c10d95da-a3ed-4a97-a5f4-985c590d9f78
     m_ActionName: UI/Click[/Mouse/leftButton]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4278709205146968988}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: eb97e169-2be5-4aad-a3c3-42ea2e4e9087
     m_ActionName: UI/Point[/Mouse/position]
   - m_PersistentCalls:
@@ -158,6 +170,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 00aff8f8-c078-43fc-ba2e-5e31796767d9
     m_ActionName: Game/Revive[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4278709205146968988}
+        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+        m_MethodName: OnPoint
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ff2e3f7f-f915-4463-a211-e6d7f09994d2
+    m_ActionName: Game/Point[/Mouse/position]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Game
@@ -175,3 +203,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858c73ce5be8673498dda771b1696ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInput: {fileID: 7932203676746655747}
+  callTriggerd: 0

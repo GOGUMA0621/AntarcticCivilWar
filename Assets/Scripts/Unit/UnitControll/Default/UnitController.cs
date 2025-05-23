@@ -125,6 +125,8 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     public float unitSpeed;
     public float unitAttackDistance;
 
+    public bool isAllay = true;
+
     public int unitLevel = 1;
 
     private float unitAttackSpeed = 1.0f;
@@ -167,9 +169,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         statusEffectManager = GetComponent<StatusEffectManager>();
         _lastPosition = transform.position;
 
-        GoIdle();
         manaSkillState = GetManaSkillState();
-        currentState.Enter(this);
     }
 
     private void Update()
@@ -182,17 +182,21 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     private void FixedUpdate()
     {
         //Debug.Log($"{name} - FixedUpdate velocity: {_unit.rb.velocity}");
-
-        FlipAnimation();
+        if (currentState != placeState)
+        {
+            FlipAnimation();
+        }
     }
 
     #region FSM
+    private readonly IUnitState placeState = new UnitPlaceState(); 
     private readonly IUnitState idleState = new UnitIdleState();
     private readonly IUnitState attackState = new UnitAttackState();
     private readonly IUnitState followState = new UnitFollowState();
     private readonly IUnitState dieState = new UnitDieState();
     private readonly IUnitState callState = new UnitCallState();
 
+    public virtual void GoPlace() => ChangeState(placeState);
     public virtual void GoIdle() => ChangeState(idleState);
     public virtual void GoAttack() => ChangeState(attackState);
     public virtual void GoFollow() => ChangeState(followState);
