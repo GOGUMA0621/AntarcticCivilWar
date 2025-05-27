@@ -26,6 +26,11 @@ public class AstarPathfinder : MonoBehaviour, IGridScanner
     [HideInInspector]
     public Vector2 boundsSize;
 
+    private void OnEnable()
+    {
+        Scan();     
+    }
+
     public void Scan()
     {
         grid = new Node[width, height];
@@ -39,7 +44,7 @@ public class AstarPathfinder : MonoBehaviour, IGridScanner
                 Vector3 worldPoint = bottomLeft + new Vector3((x + 0.5f) * nodeSize, (y + 0.5f) * nodeSize, 0);
                 bool walkable = !CheckCollision(worldPoint);
                 grid[x, y] = new Node(new Vector2Int(x, y), worldPoint, walkable);
-                if(!walkable)
+                if (!walkable)
                     Debug.Log($"Node ({x}, {y}) - Walkable: {walkable}"); // 디버그용 로그
             }
         }

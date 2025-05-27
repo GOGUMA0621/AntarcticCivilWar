@@ -150,37 +150,37 @@ public class AstarPathFinding
     /// </summary>
     /// <param name="node">주변 노드를 반환하기 위한 시작 노드 입니다.</param>
     /// <returns>들어온 노드 주변 노드들을 반환합니다.</returns>
-    private List<Node> GetNeighbors(Node node)
-    {
-        List<Node> neighbors = new();
-        Vector2Int[] dirs = {
-            Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
-            new(1,1), new(-1,1), new(1,-1), new(-1,-1)
-        };
+    // private List<Node> GetNeighbors(Node node)
+    // {
+    //     List<Node> neighbors = new();
+    //     Vector2Int[] dirs = {
+    //         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
+    //         new(1,1), new(-1,1), new(1,-1), new(-1,-1)
+    //     };
 
-        foreach (var dir in dirs)
-        {
-            Vector2Int check = node.gridPosition + dir;
-            if (!gridScanner.HasNode(check))
-                continue;
+    //     foreach (var dir in dirs)
+    //     {
+    //         Vector2Int check = node.gridPosition + dir;
+    //         if (!gridScanner.HasNode(check))
+    //             continue;
 
-            // 대각선 이동 체크
-            if (Mathf.Abs(dir.x) == 1 && Mathf.Abs(dir.y) == 1)
-            {
-                Vector2Int check1 = node.gridPosition + new Vector2Int(dir.x, 0);
-                Vector2Int check2 = node.gridPosition + new Vector2Int(0, dir.y);
+    //         // 대각선 이동 체크
+    //         if (Mathf.Abs(dir.x) == 1 && Mathf.Abs(dir.y) == 1)
+    //         {
+    //             Vector2Int check1 = node.gridPosition + new Vector2Int(dir.x, 0);
+    //             Vector2Int check2 = node.gridPosition + new Vector2Int(0, dir.y);
 
-                // 둘 중 하나라도 막혀 있으면 대각선 이동 불가
-                if (!gridScanner.HasNode(check1) || !gridScanner.HasNode(check2))
-                    continue;
-                if (!gridScanner.GetNode(check1).isWalkable || !gridScanner.GetNode(check2).isWalkable)
-                    continue;
-            }
+    //             // 둘 중 하나라도 막혀 있으면 대각선 이동 불가
+    //             if (!gridScanner.HasNode(check1) || !gridScanner.HasNode(check2))
+    //                 continue;
+    //             if (!gridScanner.GetNode(check1).isWalkable || !gridScanner.GetNode(check2).isWalkable)
+    //                 continue;
+    //         }
 
-            neighbors.Add(gridScanner.GetNode(check));
-        }
-        return neighbors;
-    }
+    //         neighbors.Add(gridScanner.GetNode(check));
+    //     }
+    //     return neighbors;
+    // }
     /// <summary>
     /// 휴리스틱 함수를 사용하여 두 점 사이의 거리를 계산합니다.
     /// A* 알고리즘에서 사용됩니다.

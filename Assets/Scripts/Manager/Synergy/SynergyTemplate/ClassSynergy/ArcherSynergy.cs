@@ -58,11 +58,11 @@ public class ArcherSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 
         float attackSpeedPercent = attackSpeed / 100f;
         unit.AddModifierStat(new StatModifier(Tag, StatType.AttackSpeed, attackSpeedPercent, ModifierMethod.Additive));
-        
+
     }
 
     public void ApplyToGlobal(int count)
     {
-
+        
     }
 }

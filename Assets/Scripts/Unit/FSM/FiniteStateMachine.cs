@@ -11,13 +11,13 @@ public interface IUnitState
 public class UnitPlaceState : IUnitState
 {
     private UnitController unitController;
-    private UnitDragController dragController;
+    private UnitGridDragController dragController;
 
     public void Enter(UnitController unitController)
     {
         this.unitController = unitController;
-        dragController = unitController.GetComponent<UnitDragController>();
-        dragController.enabled = true;
+        dragController = unitController.GetComponent<UnitGridDragController>();
+        dragController.canDrag = true;
         unitController.SetAnimation("IdleState");
         unitController.StopMovement();
     }
@@ -28,14 +28,14 @@ public class UnitPlaceState : IUnitState
     }
     public void Exit()
     {
-        dragController.enabled = false;
+        dragController.canDrag = false;
+        unitController.ReUnit();
     }
 }
 
 public class UnitIdleState : IUnitState
 {
     private UnitController unitController;
-    private UnitDragController dragController;
 
     public void Enter(UnitController unitController)
     {
@@ -46,15 +46,18 @@ public class UnitIdleState : IUnitState
 
     public void Update()
     {
-        //if (unitController.unit.detectTarget.targets.Any())
-        //{
-        //    unitController.unit.detectTarget.SortClosetTarget();
-        //    var newTarget = unitController.unit.detectTarget.targetToAttack;
-        //    if (newTarget != null)
-        //    {
-        //        unitController.GoFollow();  
-        //    }
-        //}
+        if (unitController.unit.detectTarget.targets.Any())
+        {
+           unitController.unit.detectTarget.SortClosetTarget();
+           var newTarget = unitController.unit.detectTarget.targetToAttack;
+           if (newTarget != null)
+           {
+               unitController.GoFollow();  
+           }
+        }else
+        {
+            unitController.StopMovement();
+        }
     }
     public void Exit()
     {
@@ -144,7 +147,6 @@ public class UnitAttackState : IUnitState
                 return;
             }
         }
-        unitController.StopMovement();
     }
 
     public void Exit()

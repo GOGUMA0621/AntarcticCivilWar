@@ -66,7 +66,7 @@ public class UnitDetectTarget : MonoBehaviour //유닛 적 탐지
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent(out IDamageAble i) && i is UnitController target && target.isAllay != unit.controller.isAllay) //적군과 아군을 구분하기 위한 조건
+        if(collision.TryGetComponent(out IDamageAble i) && i is UnitController target && target.tag != unit.tag) //적군과 아군을 구분하기 위한 조건
         {
             if (!target.IsDestroyed())
             {

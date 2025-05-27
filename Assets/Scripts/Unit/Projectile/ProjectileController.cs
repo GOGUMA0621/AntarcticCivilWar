@@ -42,12 +42,13 @@ public class ProjectileController : MonoBehaviour
 
     private void Start()
     {
-        trajectoryStartPoint = transform.position;
+        
         previousPos = transform.localPosition;
     }
 
     private void Update()
     {
+        if (target == null) { Destroy(gameObject); return; }
         
         UpdateProjectilePosition();
 
@@ -56,20 +57,20 @@ public class ProjectileController : MonoBehaviour
         Vector3 currentPos = transform.position;
         currentVelocity = (currentPos - previousPos) / Time.deltaTime;
 
-        // ÃÖ¼Ò 1ÇÁ·¹ÀÓÀÌ¶óµµ ¿òÁ÷ÀÎ µÚ °Ë»çÇÏµµ·Ï
+        // ìµœì†Œ 1í”„ë ˆìž„ì´ë¼ë„ ì›€ì§ì¸ ë’¤ ê²€ì‚¬í•˜ë„ë¡
         if (!hasMoved && currentVelocity.magnitude > 0.01f)
             hasMoved = true;
 
         previousPos = currentPos;
 
-        // ½ÇÁ¦ °Å¸® ±â¹Ý ÆÄ±« Á¶°Ç
+        // ì‹¤ì œ ê±°ë¦¬ ê¸°ë°˜ íŒŒê´´ ì¡°ê±´
         if (hasMoved && Vector3.Distance(currentPos, target.position) < distanceToTargetDestroyProjectile)
         {
             TryHitAndDestroy("Destroy Distance");
             return;
         }
 
-        // ¿òÁ÷ÀÓÀÌ ¸ØÃá °æ¿ì
+        // ì›€ì§ìž„ì´ ë©ˆì¶˜ ê²½ìš°
         if (hasMoved && currentVelocity.magnitude < 0.01f)
         {
             TryHitAndDestroy("Destroy Velocity 0");
@@ -94,7 +95,7 @@ public class ProjectileController : MonoBehaviour
                     i.ReceiveDamage(projectileDamageData);
                     OnHitAction();
                 }
-                //Debug.Log(reason + " + Animator ¿Ï·á ÈÄ ÆÄ±«");
+                //Debug.Log(reason + " + Animator ì™„ë£Œ í›„ íŒŒê´´");
                 Destroy(this.gameObject);
             }
         }
@@ -105,7 +106,7 @@ public class ProjectileController : MonoBehaviour
                 i.ReceiveDamage(projectileDamageData);
                 OnHitAction();
             }
-            //Debug.Log(reason + " + ¹Ù·Î ÆÄ±«");
+            //Debug.Log(reason + " + ë°”ë¡œ íŒŒê´´");
             Destroy(this.gameObject);
         }
     }
@@ -134,7 +135,7 @@ public class ProjectileController : MonoBehaviour
         {
             if (trajectoryRange.y < 0)
             {
-                moveSpeed -= moveSpeed;
+                moveSpeed = -moveSpeed;
             }
             
             UpdatePositionWithXCurve();
@@ -143,7 +144,7 @@ public class ProjectileController : MonoBehaviour
         {
             if (trajectoryRange.x < 0)
             {
-                moveSpeed -= moveSpeed;
+                moveSpeed = -moveSpeed;
             }
             
             UpdatePositionWithYCurve();
@@ -221,6 +222,7 @@ public class ProjectileController : MonoBehaviour
 
         float xDistanceToTarget = target.position.x - trajectoryStartPoint.x;
         this.trajectoryMaxRelativeHeight = Mathf.Abs(xDistanceToTarget) * trajectoryMaxHeight;
+        trajectoryStartPoint = transform.position;
 
         visual.SetTarget(target);
     }

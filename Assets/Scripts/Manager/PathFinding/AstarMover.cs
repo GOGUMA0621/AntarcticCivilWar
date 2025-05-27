@@ -13,12 +13,34 @@ public class AstarMover : MonoBehaviour
     public float acceleration = 10f;
     public float slowdownDistance = 0.5f;
     public float waypointTolerance = 0.1f;
+    public float stopDistance = 1.0f; // 유닛 사거리(또는 공격 사거리) 값
+
+    private AstarPathFinding pathFinding; // A* 경로 탐색기 인스턴스
 
     private List<Vector3> worldPath = new();
     private int currentIndex = 0;
     private Vector3 velocity = Vector3.zero;
     private bool isMoving = false;
     private Action onPathComplete;
+
+    private IGridScanner gridScanner;
+    private Rigidbody2D rb;
+
+    private Transform targetTransform;
+    private Vector2Int lastTargetGridPos;
+    private float repathInterval = 0.2f;
+    private float repathTimer = 0f;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+
+        var pathfinder = FindObjectOfType<AstarPathfinder>();
+        gridScanner = pathfinder is IGridScanner ? pathfinder : null;
+        Debug.Log($"GridScanner found: {gridScanner}");
+
+        pathFinding = new AstarPathFinding(gridScanner);
+    }
 
     /// <summary>
     /// 목적지(월드 좌표)만 받아 이동 시작
@@ -29,11 +51,13 @@ public class AstarMover : MonoBehaviour
         worldPath.Clear();
         currentIndex = 0;
         velocity = Vector3.zero;
-        onPathComplete = onComplete;
+        onPathComplete += onComplete;
 
-        // 자동으로 GridManager의 변환 함수 사용
-
-        // AstarPathFinding.instance.RequestPath(startGrid, endGrid, OnPathFound);
+        pathFinding.RequestPath(
+            gridScanner.WorldToGrid(transform.position),
+            gridScanner.WorldToGrid(worldDestination),
+            OnPathFound
+        );
     }
 
     private void OnPathFound(List<Vector2Int> path)
@@ -47,15 +71,72 @@ public class AstarMover : MonoBehaviour
 
         worldPath.Clear();
         foreach (var gridPos in path)
-
+        {
+            // 그리드 좌표를 월드 좌표로 변환하여 경로에 추가
+            worldPath.Add(gridScanner.GridToWorld(gridPos));
+        }
+        // Debug.Log($"Path found with {worldPath.Count} waypoints.");
         currentIndex = 0;
         isMoving = true;
     }
 
+    // 타겟을 transform으로 지정
+    public void FollowTarget(Transform target, Action onComplete = null)
+    {
+        targetTransform = target;
+        lastTargetGridPos = gridScanner.WorldToGrid(target.position);
+        MoveTo(target.position, onComplete);
+    }
+
+    public void ClearTarget()
+    {
+        targetTransform = null;
+        lastTargetGridPos = Vector2Int.zero;
+        repathTimer = 0f;
+        isMoving = false;
+        worldPath.Clear();
+        currentIndex = 0;
+        velocity = Vector3.zero;
+        if (rb != null) rb.velocity = Vector2.zero;
+    }
+
     void Update()
     {
+        // 타겟 추적 모드일 때
+        if (targetTransform != null)
+        {
+            // --- 칸 단위 거리 계산 ---
+            Vector2Int myGrid = gridScanner.WorldToGrid(transform.position);
+            Vector2Int targetGrid = gridScanner.WorldToGrid(targetTransform.position);
+            int gridDistance = Mathf.Abs(myGrid.x - targetGrid.x) + Mathf.Abs(myGrid.y - targetGrid.y); // 맨해튼 거리
+
+            if (gridDistance <= stopDistance)
+            {
+                // 사거리(칸) 안에 들어오면 이동 중지 및 경로 재계산 중단
+                isMoving = false;
+                if (rb != null) rb.velocity = Vector2.zero;
+                return;
+            }
+
+            repathTimer += Time.deltaTime;
+            if (repathTimer >= repathInterval)
+            {
+                repathTimer = 0f;
+                Vector2Int currentTargetGrid = gridScanner.WorldToGrid(targetTransform.position);
+                if (currentTargetGrid != lastTargetGridPos)
+                {
+                    lastTargetGridPos = currentTargetGrid;
+                    MoveTo(targetTransform.position); // 경로 재요청
+                }
+            }
+        }
+
+        // 이하 기존 이동 코드
         if (!isMoving || worldPath == null || currentIndex >= worldPath.Count)
+        {
+            if (rb != null) rb.velocity = Vector2.zero;
             return;
+        }
 
         Vector3 target = worldPath[currentIndex];
         Vector3 toTarget = target - transform.position;
@@ -70,8 +151,9 @@ public class AstarMover : MonoBehaviour
         Vector3 desiredVelocity = toTarget.normalized * speed;
         velocity = Vector3.MoveTowards(velocity, desiredVelocity, acceleration * Time.deltaTime);
 
-        // 실제 이동
-        transform.position += velocity * Time.deltaTime;
+        // Rigidbody2D에 velocity 적용 (z축 무시)
+        if (rb != null)
+            rb.velocity = new Vector2(velocity.x, velocity.y);
 
         // 웨이포인트 도달 판정
         if (distance < waypointTolerance)
@@ -81,6 +163,7 @@ public class AstarMover : MonoBehaviour
             {
                 isMoving = false;
                 velocity = Vector3.zero;
+                if (rb != null) rb.velocity = Vector2.zero;
                 onPathComplete?.Invoke();
             }
         }
@@ -107,6 +190,34 @@ public class AstarMover : MonoBehaviour
     {
         if (!isMoving || worldPath == null || currentIndex >= worldPath.Count) return new List<Vector3>();
         return worldPath.GetRange(currentIndex, worldPath.Count - currentIndex);
+    }
+
+    /// <summary>
+    /// 남은 경로의 칸 수 반환
+    /// </summary>
+    public int GetRemainingGridDistance()
+    {
+        if (!isMoving || worldPath == null || currentIndex >= worldPath.Count)
+            return 0;
+        return worldPath.Count - currentIndex;
+    }
+
+    /// <summary>
+    /// 남은 경로의 월드 거리 반환
+    /// </summary>
+    public float GetRemainingWorldDistance()
+    {
+        if (!isMoving || worldPath == null || currentIndex >= worldPath.Count)
+            return 0f;
+
+        float dist = 0f;
+        Vector3 prev = transform.position;
+        for (int i = currentIndex; i < worldPath.Count; i++)
+        {
+            dist += Vector3.Distance(prev, worldPath[i]);
+            prev = worldPath[i];
+        }
+        return dist;
     }
 
     // --- 내부 변환 함수 ---

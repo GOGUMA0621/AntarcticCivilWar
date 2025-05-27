@@ -1,0 +1,44 @@
+{
+    "enemies": [
+        {
+            "unitId": "CookingPenguin",
+            "gridPos": {
+                "x": 0,
+                "y": 4
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Resistance/CookingPenguin.prefab"
+        },
+        {
+            "unitId": "CookingPenguin",
+            "gridPos": {
+                "x": 0,
+                "y": 2
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Resistance/CookingPenguin.prefab"
+        },
+        {
+            "unitId": "BardPenguin",
+            "gridPos": {
+                "x": 8,
+                "y": 4
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Neutral/BardPenguin.prefab"
+        },
+        {
+            "unitId": "BardPenguin",
+            "gridPos": {
+                "x": 8,
+                "y": 1
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Neutral/BardPenguin.prefab"
+        },
+        {
+            "unitId": "BardPenguin",
+            "gridPos": {
+                "x": 8,
+                "y": 6
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Neutral/BardPenguin.prefab"
+        }
+    ]
+}

@@ -8,8 +8,14 @@ using UnityEngine.UI;
 [Serializable]
 class ItemSetUI
 {
-    public string name;
-    public List<ItemPrefab> itemList;
+    public string itemSetName = "New Item Set";
+    public List<ItemPrefab> items = new List<ItemPrefab>();
+
+    public ItemSetUI(string name, List<ItemPrefab> itemList)
+    {
+        this.itemSetName = name;
+        this.items = itemList;
+    }
 }
 
 public class StartItemUI : MonoBehaviour
@@ -56,8 +62,8 @@ public class StartItemUI : MonoBehaviour
     void PreviewItemSet(int index)
     {
 
-        itemSetNameText.text = itemList[index].name;
-        foreach (var itemSet in itemList[index].itemList)
+        itemSetNameText.text = itemList[index].itemSetName;
+        foreach (var itemSet in itemList[index].items)
         {
             GameObject previewItem = Instantiate(objectPrefab, content);
             previewItem.GetComponent<Image>().sprite = itemSet.item.GetComponent<Item>().icon;
@@ -67,7 +73,7 @@ public class StartItemUI : MonoBehaviour
 
     public void AddItemToInventory()
     {
-        foreach (var itemSet in itemList[currentListIndex].itemList)
+        foreach (var itemSet in itemList[currentListIndex].items)
         {
             for (int i = 0; i < itemSet.stack; i++)
             {

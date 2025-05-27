@@ -49,9 +49,9 @@ public class UnitAttackController : MonoBehaviour
                 //Debug.Log(projectileObject);
                 projectileObject.SetActive(true);
                 ProjectileController projectile = projectileObject.GetComponent<ProjectileController>();
-                projectile.SetOnHitCallback(() => { unit.controller.TriggerOnHit(target); });
                 projectile.InitialzeProjectile(unit.detectTarget.targetToAttack, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight,unit);
                 projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
+                projectile.SetOnHitCallback(() => { unit.controller.TriggerOnHit(target); });
             }
         }
     }
@@ -64,7 +64,7 @@ public class UnitAttackController : MonoBehaviour
             if (targetCollider.transform == unit.detectTarget.targetToAttack)
             {
                 IDamageAble target = targetCollider.GetComponent<IDamageAble>();
-                target.ReceiveDamage(new DamageData(unit.data.UnitDamage,StatusEffectType.None,0));
+                target.ReceiveDamage(new DamageData(unit.controller.unitDamage,StatusEffectType.None,0));
                 unit.controller.TriggerOnHit(target);
             }
         } 

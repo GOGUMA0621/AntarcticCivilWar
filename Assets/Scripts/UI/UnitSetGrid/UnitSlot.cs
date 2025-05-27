@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,9 +6,10 @@ using UnityEngine.UI;
 
 public class UnitSlot : MonoBehaviour
 {
-    [SerializeField] private Image icon;
+    [SerializeField] public Image icon;
     [SerializeField] private GameObject unitPrefab;
-    private UnitDragFromUI dragHandler;
+    [NonSerialized]
+    public UnitDragFromUI dragHandler;
 
     [Header("테스트용")]
     [SerializeField] private Sprite testSprite;
@@ -15,6 +17,10 @@ public class UnitSlot : MonoBehaviour
 
     void Awake()
     {
+        if (unitPrefab == null)
+        {
+            icon.enabled = false;
+        }
         dragHandler = GetComponentInChildren<UnitDragFromUI>();
         if (dragHandler == null)
             Debug.LogWarning("UnitSlot의 자식에서 UnitDragFromUI를 찾을 수 없습니다.");
@@ -23,6 +29,11 @@ public class UnitSlot : MonoBehaviour
     void Start()
     {
         // 테스트용 유닛 설정
+        if( testSprite == null || testUnitPrefab == null)
+        {
+            Debug.LogWarning("테스트용 스프라이트나 유닛 프리팹이 설정되지 않았습니다.");
+            return;
+        }
         SetUnit(testSprite, testUnitPrefab);
     }
 

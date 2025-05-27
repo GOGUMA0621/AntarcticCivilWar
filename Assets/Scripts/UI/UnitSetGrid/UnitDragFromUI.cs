@@ -1,17 +1,29 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public GameObject unitPrefab { get; set; }
+    [SerializeField] UnitSlot unitSlot;
     private GameObject previewUnit;
     private Canvas canvas;
     private PlacementGridManager grid;
+    private UnitWaitingContainer unitWaitingContainer;
 
     void Awake()
     {
         canvas = GetComponentInParent<Canvas>();
-        grid = FindObjectOfType<PlacementGridManager>();
+        unitWaitingContainer = GetComponentInParent<UnitWaitingContainer>();
+         var grids = FindObjectsByType<PlacementGridManager>(FindObjectsSortMode.None);
+        foreach (var g in grids)
+        {
+            if (g != null && g.tag == "Allay")
+            {
+                this.grid = g;
+                return;
+            }
+        }
     }
 
     /// <summary>
@@ -26,7 +38,6 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             Debug.LogWarning("unitPrefab이 설정되지 않음");
             return;
         }
-
         previewUnit = Instantiate(unitPrefab);
         previewUnit.name = "[Preview] " + unitPrefab.name;
 
@@ -52,6 +63,7 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             rb.simulated = false;
             rb.isKinematic = true;
         }
+        unitWaitingContainer.DownContainer();
     }
 
     /// <summary>
@@ -85,6 +97,7 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         else
         {
             Destroy(previewUnit);
+            // unitSlot.SetUnit(previewUnit.GetComponent<UnitController>().unit.data.unitIcon, previewUnit);
         }
 
         var col = previewUnit.GetComponentInChildren<Collider2D>();
@@ -96,5 +109,7 @@ public class UnitDragFromUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             rb.simulated = true;
             rb.isKinematic = false;
         }
+
+        unitWaitingContainer.UpContainer();
     }
 }

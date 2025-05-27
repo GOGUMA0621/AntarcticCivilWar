@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7559487629462524690}
   - component: {fileID: 1853337578376689890}
   m_Layer: 5
-  m_Name: SynergyUI
+  m_Name: AllaySynergyUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

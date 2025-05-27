@@ -93,8 +93,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <summary>
     /// 유닛의 이동 목표까지 남은 거리
     /// </summary>
-    public float RemainedDistance => 
-        followTarget == null ? Mathf.Infinity : Vector2.Distance(transform.position, followTarget.position);
+    public int RemainedDistance => unit.mover.GetRemainingGridDistance();
 
 
     //private bool inCombat = false; //유닛이 전투중인지 확인하기 위한 변수
@@ -118,7 +117,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public bool isStunned = false;
     public float maxHP;
-    public float currentHP { get; private set; }
+    [SerializeField] public float currentHP;
     public float maxMP;
     public float currentMP { get; private set; }
     public float unitDamage;
@@ -251,10 +250,21 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
             RecalculateStats();
 
+            unit.mover.stopDistance = unit.data.UnitAttackDistance; //이동 목표와의 거리
+
             currentHP = maxHP;
             currentMP = 0;
             unitSenseDistance = unit.data.UnitSenseRadius;
         }
+    }
+
+    public void ReUnit()
+    {
+        currentHP = maxHP;
+        currentMP = 0;
+        isUnitDie = false;
+        unit.rb.velocity = Vector2.zero;
+        unit.capsuleCollider.enabled = true;
     }
 
 
@@ -265,83 +275,10 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// 유닛의 이동 목표를 설정하는 메서드
     /// </summary>
     /// <param name="target"></param>
-    public void SetTargetToMove(Transform target) 
+    public void SetTargetToMove(Transform target)
     {
-        if(this.followTarget == target && followCoroutine != null)
-        {
-            return;
-        }
-
-        this.followTarget = target;
-        lastTargetPosition = this.followTarget?.position ?? Vector3.positiveInfinity;
-
-        if(followCoroutine != null)
-        {
-            StopCoroutine(followCoroutine);
-            followCoroutine = null;
-        }
-        if (followCoroutine != null)
-        {
-            followCoroutine = StartCoroutine(FollowTargetCoroutine());
-        }
-    }
-    /// <summary>
-    /// 유닛이 이동 목표를 따라가는 코루틴
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator FollowTargetCoroutine()
-    {
-        while (followTarget != null && !IsDestroyed())
-        {
-            // 1. 타겟 위치 변경 감지
-            if (RemainedDistance > 0.1f)
-            {
-                lastTargetPosition = followTarget.position;
-                MoveToTarget(followTarget.position);
-            }
-
-            // 2. fullPath가 있을 경우 한 칸씩 이동
-            while (fullPath != null && fullPath.Count > 0)
-            {
-                Vector2 currentPos = transform.position;
-                Vector2 targetPos = fullPath[0];
-
-                while (Vector2.Distance(currentPos, targetPos) > 0.05f)
-                {
-                    float speed = unitSpeed * Time.deltaTime;
-                    transform.position = Vector2.MoveTowards(currentPos, targetPos, speed);
-                    currentPos = transform.position;
-                    yield return null;
-                }
-
-                fullPath.RemoveAt(0);
-                yield return null;
-            }
-
-            yield return new WaitForSeconds(0.1f); // 너무 자주 계산하지 않도록
-        }
-
-        StopMovement();
-        followCoroutine = null;
-    }
-    /// <summary>
-    /// 유닛이 이동 목표에 대한 경로를 설정하는 메서드
-    /// </summary>
-    /// <param name="targetWorldPos"></param>
-    public void MoveToTarget(Vector3 targetWorldPos)
-    {
-        // Vector2Int startGridPos = GridManager.instance.WorldToGrid(transform.position);
-        // Vector2Int targetGridPos = GridManager.instance.WorldToGrid(targetWorldPos);
-
-        // // List<Vector2Int> path = AstarPathFinding.instance.FindPath(startGridPos, targetGridPos);
-        // if(path != null && path.Count > 0)
-        // {
-        //     fullPath = path.Select(v=> (Vector2)v).ToList();
-        // }
-        // else
-        // {
-        //     fullPath.Clear();
-        // }
+        unit.mover.FollowTarget(target);
+        // Debug.Log($"[유닛 이동 목표 설정] {name} -> {target.name}");
     }
 
     /// <summary>
@@ -349,11 +286,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// </summary>
     public void StopMovement()
     {
-        if (followCoroutine != null)
-        {
-            StopCoroutine(followCoroutine);
-            followCoroutine = null;
-        }
+        unit.mover.ClearTarget();
     }
 
     /// <summary>
@@ -381,13 +314,13 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             {
                 float targetDirection = unit.detectTarget.targetToAttack.transform.position.x - currentPosition.x;
 
-                if (targetDirection > 0 && !_isFacingRight)
+                if (targetDirection > 0)
                 {
-                    Flip();
+                    unit.spriteRenderer.flipX = false;
                 }
-                else if (targetDirection < 0 && _isFacingRight)
+                else if (targetDirection < 0)
                 {
-                    Flip();
+                    unit.spriteRenderer.flipX = true;
                 }
             }
         }
@@ -395,13 +328,13 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         {
             float moveDirection = currentPosition.x - _lastPosition.x;
 
-            if (moveDirection > 0 && !_isFacingRight)
+            if (moveDirection > 0 )
             {
-                Flip();
+                unit.spriteRenderer.flipX = false;
             }
-            else if (moveDirection < 0 && _isFacingRight)
+            else if (moveDirection < 0)
             {
-                Flip();
+                unit.spriteRenderer.flipX = true;
             }
 
             _lastPosition = currentPosition;
@@ -521,14 +454,13 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <param name="damage"></param>
     public virtual void ReceiveDamage(DamageData damage)
     {
-        
-        float damageRecution = Mathf.Clamp(finalStats[StatType.Endurance],0f,0.75f);
+        float endurance = finalStats[StatType.Endurance] / 100f;
+        float damageRecution = Mathf.Clamp(endurance,0f,0.75f);
         float reducedDamage = damage.damage * (1 - damageRecution);
         
         currentHP -= reducedDamage;
         ApplyEffect(damage);
         CollectMana();
-        currentHP = Mathf.Max(currentHP, 0);
         DoSkill();
 
         if (currentHP <= 0 && !isUnitDie) Die();
@@ -544,7 +476,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         OnDestroyed?.Invoke(this.gameObject);
 
         GoDie();
-        StartCoroutine(KnockBack(2.0f));
+        // StartCoroutine(KnockBack(2.0f));
         unit.detectTarget.ClearTarget();
         unit.capsuleCollider.enabled = false;
 
@@ -676,12 +608,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             unit.rb.AddForce(amount, forcemod);
             yield return new WaitForSeconds(0.5f);
             unit.rb.velocity = Vector2.zero;
-
-            if(followTarget != null && !IsDestroyed())
-            {
-                //유닛이 이동 목표를 따라가는 코루틴
-                followCoroutine = StartCoroutine(FollowTargetCoroutine());
-            }
         }
     }
 

@@ -30,18 +30,20 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
         return tierIcons[tier];
     }
 
-    public List<SynergyUIData> GetAllaySynergyData()
+    public List<SynergyUIData> GetSynergyData(bool isAllay = true)
     {
         var result = new List<SynergyUIData>();
+        var dict = isAllay ? allaySynergyDict : enemySynergyDict;
+        var countDict = isAllay ? allaySynergyCountDict : enemySynergyCountDict;
 
-        foreach (var kvp in allaySynergyCountDict)
+        foreach (var kvp in countDict)
         {
             if (SynergyInstaller.synergyTagTypeMap.TryGetValue(kvp.Key, out var synergyType) && synergyType == SynergyType.Faction)
             {
                 continue;
             }
 
-            var unitList = allaySynergyDict.GetValueOrDefault(kvp.Key, new List<UnitController>());
+            var unitList = dict.GetValueOrDefault(kvp.Key, new List<UnitController>());
             var firstUnit = unitList.FirstOrDefault();
 
             if (firstUnit != null)
@@ -129,6 +131,15 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
         if (unit.unit.data.unitSynergyTags.Any(tag => SynergyInstaller.synergyTagTypeMap.ContainsKey(tag) && SynergyInstaller.synergyTagTypeMap[tag] == SynergyType.Faction))
         {
             UpdateFactionSynergies(dict, isAllay);
+        }
+
+        if (isAllay)
+        {
+            UnitManager.instance.AddAllayList(unit);
+        }
+        else
+        {
+            UnitManager.instance.AddEnemyList(unit);
         }
     }
 

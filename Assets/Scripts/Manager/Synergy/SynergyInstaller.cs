@@ -1,8 +1,10 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 
 public static class SynergyInstaller
@@ -39,6 +41,7 @@ public static class SynergyInstaller
         .ToDictionary(a => a.Key,
                       a => a.Value.GetCustomAttribute<SynergyTagAttribute>()?.Type ?? SynergyType.Trait);
     }
+    #if UNITY_EDITOR
     /// <summary>
     /// <see cref="unit"/>에 Synergy를 부착합니다.
     /// </summary>
@@ -58,3 +61,4 @@ public static class SynergyInstaller
         }
     }
 }
+#endif

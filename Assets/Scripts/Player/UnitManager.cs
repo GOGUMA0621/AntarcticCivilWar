@@ -15,7 +15,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
     [SerializeField] public List<UnitController> allayList = new List<UnitController>();
     [SerializeField] public List<UnitController> enemyList = new List<UnitController>();
 
-
+    
 
     private List<PassiveItem> itemUpdateEffects = new();
 
@@ -44,7 +44,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
         }
     }
 
-    #region ¹«¸®·Â
+    #region ë¬´ë¦¬ë ¥
     public void CalculatePlayerGroupPower()
     {
         int playerGroupPower = 0;
@@ -73,7 +73,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
 
     #endregion
 
-    #region  ¾Æ±º °ü¸®
+    #region  ì•„êµ° ê´€ë¦¬
     public void AddAllayList(UnitController allay)
     {
         if (!allayList.Contains(allay))
@@ -127,7 +127,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
     }
     #endregion
 
-    #region Àû±º °ü¸®
+    #region ì êµ° ê´€ë¦¬
     public void AddEnemyList(UnitController enemy)
     {
         if (!enemyList.Contains(enemy))
@@ -145,7 +145,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
     }
     #endregion
 
-    #region ÇÁ¸®ÆÕ °ü¸®
+    #region í”„ë¦¬íŒ¹ ê´€ë¦¬
     public void SpawnPlayerUnits(Vector3 spawnPos)
     {
         List<UnitPrefabEntry> copy = new List<UnitPrefabEntry>(allayPrefabList);
@@ -198,7 +198,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
         {
             if (unit.pfUnit == null)
             {
-                Debug.LogError("pfUnitÀÌ nullÀÓ");
+                Debug.LogError("pfUnitì´ nullì„");
                 continue;
             }
             UnitPrefabEntry entry = allayPrefabList.Find(x => x.prefab == unit.pfUnit);
@@ -221,7 +221,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
         {
             if (unit.pfUnit == null)
             {
-                Debug.LogError("pfUnitÀÌ nullÀÓ");
+                Debug.LogError("pfUnitì´ nullì„");
                 continue;
             }
             for (int i = 0; i < unit.count; i++)
@@ -239,7 +239,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
 
     #endregion
 
-    #region ¾ÆÀÌÅÛ È¿°ú
+    #region ì•„ì´í…œ íš¨ê³¼
     public void ApplyItemsToAllUnit()
     {
         foreach (var item in InventoryManager.instance.inventoryItems)

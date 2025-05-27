@@ -6,20 +6,27 @@ public class SynergyUIController : MonoBehaviour
     [SerializeField] private Transform SynergyListParent;
     [SerializeField] private GameObject SynergyUIPrefab;
 
+    [SerializeField] private bool isAllaySynergy;
+
     private void OnEnable()
     {
         SynergyManager.instance.OnSynergyUpdated += RenderSynergyUI;
         RenderSynergyUI();
     }
 
-    private void Destroy()
+    // private void OnDisable()
+    // {
+    //     if (!Application.isPlaying) return;
+    //     foreach (Transform child in SynergyListParent)
+    //     {
+    //         Destroy(child.gameObject);
+    //     }
+    //     SynergyManager.instance.OnSynergyUpdated -= RenderSynergyUI;
+    // }
+
+    private void Awake()
     {
-        if (!Application.isPlaying) return;
-        foreach (Transform child in SynergyListParent)
-        {
-            Destroy(child.gameObject);
-        }
-        SynergyManager.instance.OnSynergyUpdated -= RenderSynergyUI;
+        RenderSynergyUI();
     }
 
 
@@ -36,7 +43,7 @@ public class SynergyUIController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        var synergies = SynergyManager.instance.GetAllaySynergyData();
+        var synergies = SynergyManager.instance.GetSynergyData(isAllaySynergy);
         synergies = synergies.OrderByDescending(s => s.tier)
             .ThenByDescending(s => s.count)
             .ThenBy(s => s.name).ToList();

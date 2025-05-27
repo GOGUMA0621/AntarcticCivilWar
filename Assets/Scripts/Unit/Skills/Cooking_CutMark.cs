@@ -38,9 +38,10 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
         Collider2D[] colliders = Physics2D.OverlapCircleAll(unit.detectTarget.targetToAttack.position,skillRadius);
         foreach (Collider2D collider in colliders)
         {
-            if (collider.TryGetComponent(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(this.tag) && i is Unit unit)
+            if (collider.TryGetComponent<IDamageAble>(out IDamageAble i) && !i.IsDestroyed() && !collider.CompareTag(unit.tag))
             {
-                unit.controller.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None, 0));
+                 i.ReceiveDamage(new DamageData(skillDamage, StatusEffectType.None, 0));
+                Debug.Log($"{unit.name}의 {this.GetType().Name} 스킬로 {i}에게 {skillDamage} 피해를 입혔습니다.");
             }
         }
 
@@ -52,7 +53,7 @@ public class Cooking_CutMark : MonoBehaviour, ISkill, IPasseiveSkillAttack
         {
             if (unit.detectTarget.targetToAttack.TryGetComponent<Unit>(out Unit target))
             {
-                return target.controller.currentHP <= target.controller.maxHP / 10;
+                return target.controller.GetNormalizedHealth() < 0.1f; 
             }
         }
         return false;

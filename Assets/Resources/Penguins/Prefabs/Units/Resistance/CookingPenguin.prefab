@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cutMarkPrefab: {fileID: 4384779918155346231, guid: 81b4be70a8cc08544a3ecf4bec83c2f4, type: 3}
-  skillDamage: 15
+  skillDamage: 65
   skillRadius: 1.5
 --- !u!114 &-897895906070952952
 MonoBehaviour:

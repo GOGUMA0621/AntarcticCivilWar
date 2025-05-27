@@ -10,10 +10,12 @@ public class PlacementGridManager : MonoBehaviour
     public Vector3 origin = Vector3.zero;
 
     private Unit[,] grid;       // 유닛 배치 상태 저장
+    private Node[,] nodes; // 그리드 노드 상태 저장
 
     void Awake()
     {
         grid = new Unit[width, height];
+        nodes = new Node[width, height];
     }
 
     /// <summary>
@@ -37,7 +39,15 @@ public class PlacementGridManager : MonoBehaviour
 
         grid[pos.x, pos.y] = unit;
         unit.transform.position = GridUtility.GridToWorld(pos, origin, cellSize);
+        unit.tag = "Allay"; // 유닛 태그를 "Allay"로 설정
         SynergyManager.instance.RegisterUnit(unit.controller, true);
+        foreach( var enemy in UnitManager.instance.enemyList)
+        {
+            if (enemy != null)
+            {
+                unit.detectTarget.AddTarget(enemy.gameObject);
+            }
+        }
     }
 
     /// <summary>

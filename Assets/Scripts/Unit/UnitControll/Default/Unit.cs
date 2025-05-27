@@ -5,13 +5,14 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Unit : MonoBehaviour //À¯´Ö¿¡ ´ëÇÑ ºÎ¸ð ÆÄÀÏ
+public class Unit : MonoBehaviour //ï¿½ï¿½ï¿½Ö¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 {
 
     public GameObject originPrefab;
     public UnitData data;
     //public NavMeshAgent agent { get; private set; }
     public UnitController controller { get; private set; }
+    public AstarMover mover { get; private set; }
     public UnitDistinction distinction { get; private set; }
     public UnitDetectTarget detectTarget { get; private set; }
     public UnitAttackController attackController { get; private set; }
@@ -32,6 +33,7 @@ public class Unit : MonoBehaviour //À¯´Ö¿¡ ´ëÇÑ ºÎ¸ð ÆÄÀÏ
         distinction = GetComponentInChildren<UnitDistinction>();
         detectTarget = GetComponentInChildren<UnitDetectTarget>();
         attackController = GetComponent<UnitAttackController>();
+        mover = GetComponent<AstarMover>();
         //agent = GetComponent<NavMeshAgent>();
     }
     public Unit GetUnit() { return this; }
@@ -46,7 +48,7 @@ public class Unit : MonoBehaviour //À¯´Ö¿¡ ´ëÇÑ ºÎ¸ð ÆÄÀÏ
             if (prefab != null)
             {
                 originPrefab = prefab;
-                EditorUtility.SetDirty(this); // º¯°æ»çÇ× ÀúÀå
+                EditorUtility.SetDirty(this); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             }
         }
     }

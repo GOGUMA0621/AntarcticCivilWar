@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System.IO;
 using System.Linq;
 using System;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [System.Serializable]
 public class EnemyUnitData
@@ -19,7 +22,7 @@ public class EnemyPlacementData
 {
     public List<EnemyUnitData> enemies = new();
 }
-
+#if UNITY_EDITOR
 public class EnemyPlacementEditor : EditorWindow
 {
     private GameObject selectedPrefab;
@@ -35,18 +38,26 @@ public class EnemyPlacementEditor : EditorWindow
 
     private Dictionary<Vector2Int, Sprite> spriteCache = new();
 
-    [MenuItem("Tools/Àû À¯´Ö ¹èÄ¡ Åø")]
+    [MenuItem("Tools/ì  ìœ ë‹› ë°°ì¹˜ íˆ´")]
     public static void OpenWindow()
     {
-        var window = GetWindow<EnemyPlacementEditor>("Àû À¯´Ö ¹èÄ¡ Åø");
-        window.minSize = new Vector2(425, 600); // ÃÖ¼Ò Ã¢ Å©±â
+        var window = GetWindow<EnemyPlacementEditor>("ì  ìœ ë‹› ë°°ì¹˜ íˆ´");
+        window.minSize = new Vector2(425, 600); // ìµœì†Œ ì°½ í¬ê¸°
         window.maxSize = new Vector2(425, 1000);
     }
 
     private void OnEnable()
     {
         SceneView.duringSceneGui += OnSceneGUI;
-        grid = GameObject.FindObjectOfType<PlacementGridManager>();
+        var grid = FindObjectsByType<PlacementGridManager>(FindObjectsSortMode.None);
+        foreach (var g in grid)
+        {
+            if (g != null && g.tag == "Enemy")
+            {
+                this.grid = g;
+                break;
+            }
+        }
 
         string path = "Assets/Resources/Penguins";
         bard = LoadPrefabByName("BardPenguin", path);
@@ -55,7 +66,6 @@ public class EnemyPlacementEditor : EditorWindow
         cooking = LoadPrefabByName("CookingPenguin", path);
         resistance = LoadPrefabByName("Resistance_Normal_Penguin", path);
 
-        RebuildSceneFromData();
     }
 
     private GameObject LoadPrefabByName(string penguinName, string folder)
@@ -81,11 +91,11 @@ public class EnemyPlacementEditor : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Àû À¯´Ö ¹èÄ¡ Åø", EditorStyles.boldLabel);
+        GUILayout.Label("ì  ìœ ë‹› ë°°ì¹˜ íˆ´", EditorStyles.boldLabel);
 
         EditorGUILayout.Space(20);
 
-        GUILayout.Label("À¯´Ö ¼±ÅÃ", EditorStyles.boldLabel);
+        GUILayout.Label("ìœ ë‹› ì„ íƒ", EditorStyles.boldLabel);
 
         EditorGUILayout.BeginVertical();
 
@@ -101,34 +111,34 @@ public class EnemyPlacementEditor : EditorWindow
 
         if (selectedPrefab != null)
         {
-            GUILayout.Label("¼±ÅÃÇÑ ¹èÄ¡À¯´Ö", EditorStyles.boldLabel);
+            GUILayout.Label("ì„ íƒí•œ ë°°ì¹˜ìœ ë‹›", EditorStyles.boldLabel);
 
             SpriteRenderer sr = selectedPrefab.GetComponent<SpriteRenderer>();
             if (sr != null && sr.sprite != null)
             {
-                Rect spriteRect = GUILayoutUtility.GetRect(50,50, GUILayout.Width(80), GUILayout.Height(80));
+                Rect spriteRect = GUILayoutUtility.GetRect(50, 50, GUILayout.Width(80), GUILayout.Height(80));
                 DrawUnit(sr.sprite, spriteRect);
             }
         }
 
         EditorGUILayout.Space(20);
-        GUILayout.Label("¹èÄ¡ ¹Ì¸®º¸±â", EditorStyles.boldLabel);
+        GUILayout.Label("ë°°ì¹˜ ë¯¸ë¦¬ë³´ê¸°", EditorStyles.boldLabel);
         DrawGridPreview();
 
         if (selectedPrefab != null)
         {
-            EditorGUILayout.HelpBox($"¼±ÅÃµÈ À¯´Ö: {selectedPrefab.name}", MessageType.Info);
+            EditorGUILayout.HelpBox($"ì„ íƒëœ ìœ ë‹›: {selectedPrefab.name}", MessageType.Info);
         }
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("ÇöÀç ¹èÄ¡ ¸ñ·Ï", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("í˜„ì¬ ë°°ì¹˜ ëª©ë¡", EditorStyles.boldLabel);
 
         scroll = EditorGUILayout.BeginScrollView(scroll);
         foreach (var enemy in data.enemies.ToList())
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField($"{enemy.unitId} ({enemy.gridPos.x}, {enemy.gridPos.y})");
-            if (GUILayout.Button("»èÁ¦", GUILayout.Width(50)))
+            if (GUILayout.Button("ì‚­ì œ", GUILayout.Width(50)))
             {
                 RemoveUnitAt(enemy.gridPos);
                 break;
@@ -139,15 +149,15 @@ public class EnemyPlacementEditor : EditorWindow
 
         EditorGUILayout.Space();
 
-        if (GUILayout.Button("ÀúÀå"))
+        if (GUILayout.Button("ì €ì¥"))
         {
             string json = JsonUtility.ToJson(data, true);
             File.WriteAllText(savePath, json);
             AssetDatabase.Refresh();
-            Debug.Log("Àû ¹èÄ¡ Á¤º¸ ÀúÀåµÊ: " + savePath);
+            Debug.Log("ì  ë°°ì¹˜ ì •ë³´ ì €ì¥ë¨: " + savePath);
         }
 
-        if (GUILayout.Button("ºÒ·¯¿À±â"))
+        if (GUILayout.Button("ë¶ˆëŸ¬ì˜¤ê¸°"))
         {
             if (File.Exists(savePath))
             {
@@ -157,11 +167,11 @@ public class EnemyPlacementEditor : EditorWindow
             }
             else
             {
-                Debug.LogWarning("ÀúÀåµÈ jsonÆÄÀÏÀÌ ¾øÀ½");
+                Debug.LogWarning("ì €ì¥ëœ jsoníŒŒì¼ì´ ì—†ìŒ");
             }
         }
 
-        if (GUILayout.Button("ÀüÃ¼»èÁ¦"))
+        if (GUILayout.Button("ì „ì²´ì‚­ì œ"))
         {
             foreach (var enemy in data.enemies.ToList())
             {
@@ -194,6 +204,12 @@ public class EnemyPlacementEditor : EditorWindow
                     enemy.gridPos = newGridPos;
                     GameObject go = FindUnitObject(enemy);
                     if (go != null) go.transform.position = GridUtility.GridToWorld(newGridPos, grid.origin, grid.cellSize);
+                    var goUnit = go.TryGetComponent<UnitController>(out var goUnitComp) ? goUnitComp : null;
+                    if (goUnit != null)
+                    {
+                        goUnit.GoPlace();
+                        SynergyManager.instance.RegisterUnit(goUnit, false);
+                    }
                 }
             }
         }
@@ -265,7 +281,7 @@ public class EnemyPlacementEditor : EditorWindow
             }
             else
             {
-                Debug.LogWarning($"ÇÁ¸®ÆÕ ·Îµå ½ÇÆĞ: {enemy.unitId}, path: {enemy.assetPath}");
+                Debug.LogWarning($"í”„ë¦¬íŒ¹ ë¡œë“œ ì‹¤íŒ¨: {enemy.unitId}, path: {enemy.assetPath}");
             }
         }
     }
@@ -278,7 +294,7 @@ public class EnemyPlacementEditor : EditorWindow
 
     private void DrawGridPreview()
     {
-        float cellSize = 40f; // ¿¡µğÅÍ Ã¢¿¡ ±×¸± ¼¿ÀÇ Å©±â
+        float cellSize = 40f; // ì—ë””í„° ì°½ì— ê·¸ë¦´ ì…€ì˜ í¬ê¸°
         int gridWidth = grid.width;
         int gridHeight = grid.height;
 
@@ -289,7 +305,7 @@ public class EnemyPlacementEditor : EditorWindow
         DrawGridLines(boxRect, cellSize, gridWidth, gridHeight);
         DrawUnitAtGrid(boxRect, cellSize, gridWidth, gridHeight);
 
-        Debug.Log($"spriteCache¿¡ µî·ÏµÈ ½ºÇÁ¶óÀÌÆ® ¼ö: {spriteCache.Count}");
+        Debug.Log($"spriteCacheì— ë“±ë¡ëœ ìŠ¤í”„ë¼ì´íŠ¸ ìˆ˜: {spriteCache.Count}");
     }
 
     private void HandleGridClick(Rect boxRect, float cellSize, int gridWidth, int gridHeight)
@@ -404,3 +420,4 @@ public class EnemyPlacementEditor : EditorWindow
         GUI.Label(unitRect, $"{gridPos}", style);
     }
 }
+#endif
