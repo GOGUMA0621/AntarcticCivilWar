@@ -2,20 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 목적지 Vector3(월드 좌표)만 받아서, 자동으로 그리드 변환 및 경로 요청 후 이동.
-/// 변환 함수 할당 필요 없음.
-/// </summary>
+
 public class AstarMover : MonoBehaviour
 {
+    public static HashSet<Vector2Int> AllUnitGridPositions = new HashSet<Vector2Int>();
+
     [Header("이동 설정")]
     public float maxSpeed = 3f;
     public float acceleration = 10f;
     public float slowdownDistance = 0.5f;
     public float waypointTolerance = 0.1f;
-    public float stopDistance = 1.0f; // 유닛 사거리(또는 공격 사거리) 값
-
-    private AstarPathFinding pathFinding; // A* 경로 탐색기 인스턴스
+    public float stopDistance = 1.0f;
 
     private List<Vector3> worldPath = new();
     private int currentIndex = 0;
@@ -26,20 +23,70 @@ public class AstarMover : MonoBehaviour
     private IGridScanner gridScanner;
     private Rigidbody2D rb;
 
-    private Transform targetTransform;
-    private Vector2Int lastTargetGridPos;
+    // 포메이션 관련
+    private Transform formationTarget; // 목표 Transform(타겟)
+    private Vector2Int lastFormationTargetGridPos;
+    private Vector3 assignedFormationPosition; // 포메이션 매니저가 할당한 위치
+    private bool useFormation = false;
+
     private float repathInterval = 0.2f;
     private float repathTimer = 0f;
+    private bool isWaitingForPath = false;
+    private float retryTimer = 0f;
+    private float retryInterval = 1f;
+    private Transform targetTransform;
+    private Vector2Int lastTargetGridPos;
+
+    private Vector2Int lastGridPos;
+
+    private int UnitLayerMask => LayerMask.GetMask("Unit");
+
+    private FormationManger formationManager => FormationManger.instance;
+
+    private void OnDisable()
+    {
+        AllUnitGridPositions.Remove(lastGridPos);
+    }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        if (gridScanner == null)
+        {
+            var scanner = FindObjectOfType<AstarPathfinder>();
+            gridScanner = scanner is IGridScanner ? scanner : null;
+            if (gridScanner == null)
+            {
+                Debug.LogError("AstarPathFinding requires a GridScanner to function. Please assign one in the inspector or ensure it is present in the scene.");
+            }
+        }
+    }
 
-        var pathfinder = FindObjectOfType<AstarPathfinder>();
-        gridScanner = pathfinder is IGridScanner ? pathfinder : null;
-        Debug.Log($"GridScanner found: {gridScanner}");
+    /// <summary>
+    /// 포메이션 매니저가 할당한 위치로 이동
+    /// </summary>
+    public void FollowTarget(Transform target, Action onCompleted = null)
+    {
+        formationTarget = target;
+        useFormation = true;
 
-        pathFinding = new AstarPathFinding(gridScanner);
+        // 포메이션 매니저에 등록
+        FormationManger.instance.RegisterUnit(target, this);
+
+        // 내 좌표 받아오기
+        assignedFormationPosition = FormationManger.instance.GetAssignedPosition(target, this);
+
+        // 이동 시작
+        MoveTo(assignedFormationPosition, onCompleted);
+    }
+
+    /// <summary>
+    /// 포메이션 해제(개별 행동 등)
+    /// </summary>
+    public void ClearFormation()
+    {
+        useFormation = false;
+        formationTarget = null;
     }
 
     /// <summary>
@@ -50,21 +97,25 @@ public class AstarMover : MonoBehaviour
         isMoving = false;
         worldPath.Clear();
         currentIndex = 0;
-        velocity = Vector3.zero;
-        onPathComplete += onComplete;
+        // velocity = Vector3.zero;
+        onPathComplete = onComplete;
 
-        pathFinding.RequestPath(
-            gridScanner.WorldToGrid(transform.position),
+        AstarPathFinding.instance.RequestPath(
+            gridScanner.WorldToGrid(this.transform.position),
             gridScanner.WorldToGrid(worldDestination),
+            this.gameObject,
             OnPathFound
         );
     }
 
     private void OnPathFound(List<Vector2Int> path)
     {
+        // Debug.Log($"경로가 호출 되었습니다. 경로 수: {(path ==null ? 0 : path.Count)}");
         if (path == null || path.Count == 0)
         {
             isMoving = false;
+            isWaitingForPath = true;
+            retryTimer = 0f;
             onPathComplete?.Invoke();
             return;
         }
@@ -75,16 +126,18 @@ public class AstarMover : MonoBehaviour
             // 그리드 좌표를 월드 좌표로 변환하여 경로에 추가
             worldPath.Add(gridScanner.GridToWorld(gridPos));
         }
-        // Debug.Log($"Path found with {worldPath.Count} waypoints.");
+        // Debug.Log($"목표까지 경로 : {worldPath.Count}개");
         currentIndex = 0;
         isMoving = true;
+
     }
 
     // 타겟을 transform으로 지정
-    public void FollowTarget(Transform target, Action onComplete = null)
+    public void FollowTargetSingle(Transform target, Action onComplete = null)
     {
         targetTransform = target;
         lastTargetGridPos = gridScanner.WorldToGrid(target.position);
+        ClearFormation(); // 포메이션 해제
         MoveTo(target.position, onComplete);
     }
 
@@ -102,32 +155,23 @@ public class AstarMover : MonoBehaviour
 
     void Update()
     {
-        // 타겟 추적 모드일 때
-        if (targetTransform != null)
+        Vector2Int currentGridPos = gridScanner.WorldToGrid(transform.position);
+        if( lastGridPos != currentGridPos)
         {
-            // --- 칸 단위 거리 계산 ---
-            Vector2Int myGrid = gridScanner.WorldToGrid(transform.position);
-            Vector2Int targetGrid = gridScanner.WorldToGrid(targetTransform.position);
-            int gridDistance = Mathf.Abs(myGrid.x - targetGrid.x) + Mathf.Abs(myGrid.y - targetGrid.y); // 맨해튼 거리
+            AllUnitGridPositions.Remove(lastGridPos);
+            AllUnitGridPositions.Add(currentGridPos);
+            lastGridPos = currentGridPos;
+        }
 
-            if (gridDistance <= stopDistance)
+        // 경로 요청 실패 시 재시도
+        if (isWaitingForPath)
+        {
+            retryTimer += Time.deltaTime;
+            if (retryTimer >= retryInterval)
             {
-                // 사거리(칸) 안에 들어오면 이동 중지 및 경로 재계산 중단
-                isMoving = false;
-                if (rb != null) rb.velocity = Vector2.zero;
+                retryTimer = 0f;
+                isWaitingForPath = false;
                 return;
-            }
-
-            repathTimer += Time.deltaTime;
-            if (repathTimer >= repathInterval)
-            {
-                repathTimer = 0f;
-                Vector2Int currentTargetGrid = gridScanner.WorldToGrid(targetTransform.position);
-                if (currentTargetGrid != lastTargetGridPos)
-                {
-                    lastTargetGridPos = currentTargetGrid;
-                    MoveTo(targetTransform.position); // 경로 재요청
-                }
             }
         }
 
@@ -135,6 +179,7 @@ public class AstarMover : MonoBehaviour
         if (!isMoving || worldPath == null || currentIndex >= worldPath.Count)
         {
             if (rb != null) rb.velocity = Vector2.zero;
+            // Debug.Log("이동 중이 아닙니다.");
             return;
         }
 
@@ -154,6 +199,17 @@ public class AstarMover : MonoBehaviour
         // Rigidbody2D에 velocity 적용 (z축 무시)
         if (rb != null)
             rb.velocity = new Vector2(velocity.x, velocity.y);
+
+        // 이동 중 앞에 유닛이 있으면 속도 줄이기/멈추기
+        var hits = Physics2D.OverlapCircleAll(transform.position + velocity.normalized * 0.2f, 0.2f, UnitLayerMask);
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject != this.gameObject)
+            {
+                velocity = Vector3.zero;
+                break;
+            }
+        }
 
         // 웨이포인트 도달 판정
         if (distance < waypointTolerance)
@@ -220,20 +276,49 @@ public class AstarMover : MonoBehaviour
         return dist;
     }
 
-    // --- 내부 변환 함수 ---
-    // private Vector2Int WorldToGrid(Vector3 worldPos)
-    // {
-    //     // GridManager 또는 TilemapManager의 변환 함수 사용
-    //     // 필요에 따라 아래 한 줄만 수정하세요.
-    //     return ;
-    //     // 또는: return TilemapManager.instance.WorldToGrid(worldPos);
-    // }
+    public int GetRemainingTileDistanceToTarget()
+    {
+        if (gridScanner == null) return 0;
+        Vector2Int currentGridPos = gridScanner.WorldToGrid(transform.position);
+        Vector2Int targetGridPos;
 
-    // private Vector3 GridToWorld(Vector2Int gridPos)
-    // {
-    //     // GridManager 또는 TilemapManager의 변환 함수 사용
-    //     // 필요에 따라 아래 한 줄만 수정하세요.
-    //     return ;
-    //     // 또는: return TilemapManager.instance.GridToWorld(gridPos);
-    // }
+        if (useFormation && formationTarget != null)
+        {
+            targetGridPos = gridScanner.WorldToGrid(formationTarget.position);
+        }
+        else if (targetTransform != null)
+        {
+            targetGridPos = gridScanner.WorldToGrid(targetTransform.position);
+        }
+        else
+        {
+            return 0;
+        }
+
+        int dx = Mathf.Abs(currentGridPos.x - targetGridPos.x);
+        int dy = Mathf.Abs(currentGridPos.y - targetGridPos.y);
+        return Mathf.Max(dx, dy); // 대각선 포함 최소 칸 수
+    }
+
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (worldPath == null || worldPath.Count == 0) return;
+
+        Gizmos.color = Color.green;
+        for (int i = 0; i < worldPath.Count - 1; i++)
+        {
+            Gizmos.DrawLine(worldPath[i], worldPath[i + 1]);
+            Gizmos.DrawSphere(worldPath[i], 0.05f);
+        }
+
+        // 현재 위치와 다음 웨이포인트 표시
+        if (currentIndex < worldPath.Count)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(worldPath[currentIndex], 0.1f);
+        }
+    }
+#endif
 }

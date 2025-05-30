@@ -36,7 +36,6 @@ public class WarriorSynergy : MonoBehaviour, ISynergy
             if (count >= tierThresholds[i])
             {
                 tier = i + 1;
-                Debug.Log($"Warrior Synergy Tier: {tier}");
             }
         }
 

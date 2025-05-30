@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class AstarPathfinder : MonoBehaviour, IGridScanner
 {
 
@@ -28,7 +29,7 @@ public class AstarPathfinder : MonoBehaviour, IGridScanner
 
     private void OnEnable()
     {
-        Scan();     
+        Scan();
     }
 
     public void Scan()
@@ -65,7 +66,7 @@ public class AstarPathfinder : MonoBehaviour, IGridScanner
 
     public Node GetNode(Vector2Int pos)
     {
-        if(grid == null) return null;
+        if (grid == null) return null;
         if (!HasNode(pos)) return null;
         return grid[pos.x, pos.y];
     }
@@ -80,7 +81,7 @@ public class AstarPathfinder : MonoBehaviour, IGridScanner
     {
         List<Node> neighbors = new();
         Vector2Int[] dirs = useEightDirections
-            ? new Vector2Int[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right, new(1,1), new(-1,1), new(1,-1), new(-1,-1) }
+            ? new Vector2Int[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right, new(1, 1), new(-1, 1), new(1, -1), new(-1, -1) }
             : new Vector2Int[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
 
         foreach (var dir in dirs)
@@ -108,16 +109,16 @@ public class AstarPathfinder : MonoBehaviour, IGridScanner
 
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {
-        Vector3 bottomLeft = center - new Vector3(width * nodeSize, 0, height * nodeSize) * 0.5f;
+        Vector3 bottomLeft = center - new Vector3(width * nodeSize, height * nodeSize, 0) * 0.5f;
         Vector3 offset = worldPos - bottomLeft;
         int x = Mathf.Clamp(Mathf.FloorToInt(offset.x / nodeSize), 0, width - 1);
-        int y = Mathf.Clamp(Mathf.FloorToInt(offset.z / nodeSize), 0, height - 1);
+        int y = Mathf.Clamp(Mathf.FloorToInt(offset.y / nodeSize), 0, height - 1);
         return new Vector2Int(x, y);
     }
 
     public Vector3 GridToWorld(Vector2Int gridPos)
     {
-        Vector3 bottomLeft = center - new Vector3(width * nodeSize, 0, height * nodeSize) * 0.5f;
-        return bottomLeft + new Vector3((gridPos.x + 0.5f) * nodeSize, 0, (gridPos.y + 0.5f) * nodeSize);
+        Vector3 bottomLeft = center - new Vector3(width * nodeSize, height * nodeSize, 0) * 0.5f;
+        return bottomLeft + new Vector3((gridPos.x + 0.5f) * nodeSize, (gridPos.y + 0.5f) * nodeSize, 0);
     }
 }

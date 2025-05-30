@@ -41,7 +41,7 @@ public static class SynergyInstaller
         .ToDictionary(a => a.Key,
                       a => a.Value.GetCustomAttribute<SynergyTagAttribute>()?.Type ?? SynergyType.Trait);
     }
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     /// <summary>
     /// <see cref="unit"/>에 Synergy를 부착합니다.
     /// </summary>
@@ -60,5 +60,24 @@ public static class SynergyInstaller
             }
         }
     }
-}
+#else
+    /// <summary>
+    /// <see cref="unit"/>에 Synergy를 부착합니다.
+    /// </summary>
+    /// <param name="unit">이 <see cref="unit"/>에 등록된 시너지를 부착합니다. </param>
+    public static void AttachSynergy(UnitController unit)
+    {
+        foreach (string tag in unit.unit.data.unitSynergyTags)
+        {
+            if (synergyTypeMap.TryGetValue(tag, out var type))
+            {
+                var synergyType = unit.gameObject.AddComponent(type) as ISynergy;
+            }
+            else
+            {
+                Debug.LogWarning($"SynergyInstaller: {tag} 가 synergyTypeMap에 없습니다.");
+            }
+        }
+    }
 #endif
+}

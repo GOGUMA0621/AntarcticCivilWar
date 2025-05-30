@@ -1,5 +1,4 @@
 
-using Pathfinding;
 using SciptableObjects;
 using UnityEditor;
 using UnityEngine;

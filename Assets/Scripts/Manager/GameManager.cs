@@ -3,12 +3,12 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("보스 타이머 UI")]
+    [Header("蹂댁뒪")]
     [SerializeField] private GameObject bossTimerUI;
     [SerializeField] private Image bossTimerGauge;
 
     [Space]
-    [Header("보스 HP UI")]
+    [Header("蹂댁뒪 UI")]
     [SerializeField] private GameObject bossHPBar;
     [SerializeField] private Image bossHPGauge;
     [SerializeField] private GameObject bossPrefab;
@@ -16,20 +16,20 @@ public class GameManager : MonoBehaviour
     public float bossSpawnTime = 30f;
 
     [Space]
-    [Header("행상인 타이머")]
-    [SerializeField] private PeddlerSpawnGenerator peddlerSpawnGenerator;
+    [Header("")]
+    // [SerializeField] private PeddlerSpawnGenerator peddlerSpawnGenerator;
     public float peddlerSpawnTime = 30f;
     public float peddlerSpawnTimer = 0f;
     public int minOffset = 2;
     public int maxOffset = 5;
 
     [Space]
-    [Header("이글루 생성")]
+    [Header("Igloo")]
     [SerializeField] private IglooSpawnGenerator iglooSpawnGenerator;
     [SerializeField] private GameObject iglooPrefab;
     //[SerializeField] private float iglooSpawnTime = 30f;
     //private float iglooSpawnTimer = 0f;
-    private Peddler peddler;
+    // private Peddler peddler;
 
     private bool isGeneratedBoss = false;
 

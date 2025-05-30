@@ -66,18 +66,17 @@ public class UnitDetectTarget : MonoBehaviour //유닛 적 탐지
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent(out IDamageAble i) && i is UnitController target && target.tag != unit.tag) //적군과 아군을 구분하기 위한 조건
+        if(collision.TryGetComponent(out IDamageAble i) && i is MonoBehaviour target && target.tag != unit.tag) //적군과 아군을 구분하기 위한 조건
         {
-            if (!target.IsDestroyed())
+            if (!targets.Contains(target.gameObject))
             {
-                AddTarget(target.gameObject);
+                if (!target.IsDestroyed())
+                {
+                    AddTarget(target.gameObject);
+                }
             }
-        }
-    }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        RemoveTarget(collision.gameObject);
+        }
     }
 
     public void ClearTarget() //타깃 리스트 초기화

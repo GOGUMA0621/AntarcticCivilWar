@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,12 +30,12 @@ public class UnitSlot : MonoBehaviour
     void Start()
     {
         // 테스트용 유닛 설정
-        if( testSprite == null || testUnitPrefab == null)
+        if( testUnitPrefab == null)
         {
             Debug.LogWarning("테스트용 스프라이트나 유닛 프리팹이 설정되지 않았습니다.");
             return;
         }
-        SetUnit(testSprite, testUnitPrefab);
+        SetUnit( testUnitPrefab);
     }
 
     /// <summary>
@@ -42,11 +43,13 @@ public class UnitSlot : MonoBehaviour
     /// </summary>
     /// <param name="unitIcon">유닛 아이콘으로 사용할 스프라이트</param>
     /// <param name="unitPrefab">드래그 시 인게임에 배치될 유닛 프리팹</param>
-    public void SetUnit(Sprite unitIcon, GameObject unitPrefab)
+    public void SetUnit(GameObject unitPrefab)
     {
         Debug.Log($"SetUnit 호출됨 - {unitPrefab.name}");
-        icon.sprite = unitIcon;
         this.unitPrefab = unitPrefab;
+        var unit = unitPrefab.GetComponent<Unit>();
+        icon.sprite = unit.data.unitIcon; // 유닛의 아이콘을 슬롯 아이콘으로 설정 
+
 
         dragHandler.unitPrefab = unitPrefab;
         icon.enabled = true;

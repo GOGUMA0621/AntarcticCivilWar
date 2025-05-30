@@ -73,6 +73,8 @@ public class UnitFollowState : IUnitState
         this.unitController = unitController;
         var target = unitController.unit.detectTarget.targetToAttack;
 
+        unitController.unit.mover.stopDistance = unitController.unitAttackDistance;
+
         if (target != null)
         {
             unitController.SetTargetToMove(target);
@@ -83,7 +85,6 @@ public class UnitFollowState : IUnitState
     public void Update()
     {
         var targets = unitController.unit.detectTarget.targets;
-        var target = unitController.unit.detectTarget.targetToAttack;
 
         if (!targets.Any())
         {
@@ -91,7 +92,23 @@ public class UnitFollowState : IUnitState
             return;
         }
 
-        if (unitController.RemainedDistance <= unitController.unitAttackDistance)
+        if (unitController.unit.detectTarget.targetToAttack == null)
+        {
+            unitController.unit.detectTarget.SortClosetTarget();
+            var newTarget = unitController.unit.detectTarget.targetToAttack;
+
+            if (newTarget != null)
+            {
+                unitController.SetTargetToMove(newTarget);
+            }
+            else
+            {
+                unitController.GoIdle();
+                return;
+            }
+        }
+        
+        if(unitController.unit.mover.GetRemainingTileDistanceToTarget() <= unitController.unitAttackDistance)
         {
             unitController.GoAttack();
             return;
@@ -161,18 +178,26 @@ public class UnitAttackState : IUnitState
 public class UnitDieState : IUnitState
 {
     private UnitController unit;
+    private Animator animator;
     public void Enter(UnitController unit)
     {
         this.unit = unit;
+        animator = unit.unit.animator;
+        unit.unit.rb.simulated = false; // Rigidbody2D 비활성화
         unit.StopMovement();
         unit.SetAnimation("DieState");
     }
     public void Update()
     {
+        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        {
+            unit.gameObject.SetActive(false); // 애니메이션이 끝나면 오브젝트 비활성화
+        }
     }
     public void Exit()
     {
-
+        unit.unit.rb.simulated = true; // Rigidbody2D 활성화
+        unit.unit.detectTarget.ClearTarget(); // 타겟 초기화
     }
 }
 
@@ -221,6 +246,7 @@ public class UnitCallState : IUnitState
     {
         if (unit.unit.detectTarget.targetToAttack == null)
         {
+
         }
     }
 }

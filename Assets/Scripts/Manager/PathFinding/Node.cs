@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 /// <summary>
 /// 경로를 저장하기 위한 노드 클래스입니다.
@@ -11,7 +10,7 @@ using UnityEngine;
 /// 노드는 부모 노드를 가지고 있으며, 부모 노드는 현재 노드의 경로를 추적하는 데 사용됩니다.
 /// 노드는 그리드 상의 위치와 이동 가능 여부를 저장합니다.
 /// </summary>  
-public class Node
+public class Node : IComparable<Node>
 {
     /// <summary>
     /// 그리드 상의 위치를 저장합니다.
@@ -57,5 +56,10 @@ public class Node
         this.gridPosition = gridPosition;
         this.isWalkable = isWalkable;
         this.worldPosition = worldPosition;
+    }
+
+    public int CompareTo(Node other)
+    {
+        return fCost.CompareTo(other.fCost);
     }
 }

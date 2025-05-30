@@ -33,13 +33,13 @@ public class UnitWaitingContainer : MonoBehaviour
     /// </summary>
     /// <param name="unitIcon">유닛 아이콘 스프라이트</param>
     /// <param name="unitPrefab">유닛 프리팹</param>
-    public void SetUnitToSlot(Sprite unitIcon, GameObject unitPrefab)
+    public void SetUnitToSlot(GameObject unitPrefab)
     {
         foreach (var slot in unitSlots)
         {
             if (slot != null && slot.icon.sprite == null) // 빈 슬롯 찾기
             {
-                slot.SetUnit(unitIcon, unitPrefab);
+                slot.SetUnit(unitPrefab);
                 return;
             }
         }

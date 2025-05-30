@@ -12,7 +12,6 @@ public class WorldDragController
 
         if (currentTarget is IBeginWorldDragHandler beginHandler)
         {
-            Debug.Log("드래그 인터페이스 호출");
             beginHandler.OnBeginDrag(CreateDragEventData(worldPos));
             isDragging = true;
         }
@@ -65,7 +64,6 @@ public class WorldDragController
             }
         }
 
-        Debug.Log("null");
         return null;
     }
 

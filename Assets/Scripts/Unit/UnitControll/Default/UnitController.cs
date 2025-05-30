@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 /// <summary>
@@ -86,10 +87,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// </summary>
     private Vector2 _lastPosition;
  
-    [SerializeField] private List<Vector2> fullPath = new(); //유닛의 경로를 저장하기 위한 변수
     private Coroutine followCoroutine; //유닛의 이동을 위한 코루틴
-    private Transform followTarget; //유닛의 이동 목표를 저장하기 위한 변수
-    private Vector3 lastTargetPosition; // 유닛의 이동 목표의 마지막 위치를 저장하기 위한 변수
     /// <summary>
     /// 유닛의 이동 목표까지 남은 거리
     /// </summary>
@@ -278,7 +276,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     public void SetTargetToMove(Transform target)
     {
         unit.mover.FollowTarget(target);
-        // Debug.Log($"[유닛 이동 목표 설정] {name} -> {target.name}");
     }
 
     /// <summary>
@@ -715,9 +712,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         if (unit != null)
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(this.transform.position, unitSenseDistance);
-
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
         }
