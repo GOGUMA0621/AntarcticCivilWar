@@ -12,7 +12,6 @@ TagManager:
   - Resistance
   - Mercenary
   - Royal
-  - U_Enemy
   layers:
   - Default
   - TransparentFX

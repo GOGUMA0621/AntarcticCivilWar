@@ -23,9 +23,19 @@ public class EnemyPlacementData
     public List<EnemyUnitData> enemies = new();
 }
 
-
-
 #if UNITY_EDITOR
+[ExecuteInEditMode]
+public class EditorSpawnMarker : MonoBehaviour 
+{
+    private void Awake()
+    {
+        if(Application.isPlaying)
+        {
+            Destroy(this);
+        }
+    }
+}
+
 public class EnemyPlacementEditor : EditorWindow
 {
     private GameObject selectedPrefab;
@@ -142,27 +152,10 @@ public class EnemyPlacementEditor : EditorWindow
 
         EditorGUILayout.BeginVertical();
 
-        string label = showFileList ? "목록 닫기" : "저장된 파일 목록 보기";
-        if (GUILayout.Button($"{label}"))
-        {
-            showFileList = !showFileList;
-        }
-        GUILayout.Space(10);
-        if (showFileList)
-        {
-            string[] files = Directory.GetFiles(saveFolder, "*.json");
-            foreach (var file in files)
-            {
-                string fileName = Path.GetFileNameWithoutExtension(file);
-                if (GUILayout.Button(fileName))
-                    fileNameToLoad = fileName;
-            }
-        }
-
-        GUILayout.Space(10);
         GUILayout.Label("저장할 파일 이름", EditorStyles.boldLabel);
         fileNameToSave = EditorGUILayout.TextField(fileNameToSave);
-
+        EditorGUILayout.HelpBox("영문, 숫자만 사용하는 것을 권장합니다.", MessageType.Warning);
+        
         if (GUILayout.Button("저장"))
         {
            if(!Directory.Exists(saveFolder))
@@ -196,6 +189,25 @@ public class EnemyPlacementEditor : EditorWindow
         }
         GUILayout.Space(10);
 
+        string label = showFileList ? "목록 닫기" : "저장된 파일 목록 보기";
+        if (GUILayout.Button($"{label}"))
+        {
+            showFileList = !showFileList;
+        }
+        GUILayout.Space(10);
+        if (showFileList)
+        {
+            string[] files = Directory.GetFiles(saveFolder, "*.json");
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                if (GUILayout.Button(fileName))
+                    fileNameToLoad = fileName;
+            }
+        }
+
+        GUILayout.Space(10);
+
         EditorGUILayout.LabelField("현재 배치 목록", EditorStyles.boldLabel);
 
         scroll = EditorGUILayout.BeginScrollView(scroll);
@@ -217,10 +229,8 @@ public class EnemyPlacementEditor : EditorWindow
         {
             ClearAllEnemyObjectInScene();
 
-            foreach (var enemy in data.enemies.ToList())
-            {
-                RemoveUnitAt(enemy.gridPos);
-            }
+            spriteCache.Clear();
+
             data.enemies.Clear();
         }
 
@@ -328,7 +338,10 @@ public class EnemyPlacementEditor : EditorWindow
                 go.transform.position = GridUtility.GridToWorld(enemy.gridPos, grid.origin, grid.cellSize);
                 go.name = prefab.name + $"({enemy.gridPos.x},{enemy.gridPos.y})";
 
-                go.tag = "U_Enemy";
+                go.tag = "Enemy";
+
+                if(go.GetComponent<EditorSpawnMarker>() == null)
+                    go.AddComponent<EditorSpawnMarker>();
 
                 SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
                 if (sr != null && sr.sprite != null)
@@ -400,7 +413,8 @@ public class EnemyPlacementEditor : EditorWindow
         go.transform.position = GridUtility.GridToWorld(gridPos, grid.origin, grid.cellSize);
         go.name = prefab.name + $"({gridPos.x},{gridPos.y})";
 
-        go.tag = "U_Enemy";
+        go.tag = "Enemy";
+        go.AddComponent<EditorSpawnMarker>();
 
         SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
         if (sr != null && sr.sprite != null)
@@ -413,10 +427,20 @@ public class EnemyPlacementEditor : EditorWindow
 
     private void ClearAllEnemyObjectInScene()
     {
-        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach(var enemy in enemies)
+        foreach (var enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            DestroyImmediate(enemy);
+            bool hasMarker = enemy.GetComponent<EditorSpawnMarker>() != null;
+            bool isToolCreated = enemy.name.Contains("(") && enemy.name.Contains(")");
+               
+
+            if(hasMarker || isToolCreated)
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(enemy);
+#else
+            Destroy(enemy);
+#endif
+            }
         }
     }
 
