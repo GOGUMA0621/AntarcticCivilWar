@@ -328,7 +328,7 @@ public class EnemyPlacementEditor : EditorWindow
                 go.transform.position = GridUtility.GridToWorld(enemy.gridPos, grid.origin, grid.cellSize);
                 go.name = prefab.name + $"({enemy.gridPos.x},{enemy.gridPos.y})";
 
-                go.tag = "Enemy";
+                go.tag = "U_Enemy";
 
                 SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
                 if (sr != null && sr.sprite != null)
@@ -400,7 +400,7 @@ public class EnemyPlacementEditor : EditorWindow
         go.transform.position = GridUtility.GridToWorld(gridPos, grid.origin, grid.cellSize);
         go.name = prefab.name + $"({gridPos.x},{gridPos.y})";
 
-        go.tag = "Enemy";
+        go.tag = "U_Enemy";
 
         SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
         if (sr != null && sr.sprite != null)
