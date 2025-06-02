@@ -22,28 +22,39 @@ public class EnemyPlacementData
 {
     public List<EnemyUnitData> enemies = new();
 }
+
+
+
 #if UNITY_EDITOR
 public class EnemyPlacementEditor : EditorWindow
 {
     private GameObject selectedPrefab;
-    private GameObject bard;
-    private GameObject blast;
-    private GameObject circus;
-    private GameObject cooking;
-    private GameObject resistance;
     private EnemyPlacementData data = new();
+    private Dictionary<Vector2Int, Sprite> spriteCache = new();
     private Vector2 scroll;
-    private const string savePath = "Assets/EnemyJson/enemy_placement.json";
+    private bool showFileList = false;
+
+    private string fileNameToSave = "enemy_placement";
+    private string fileNameToLoad = "enemy_placement";
+    private const string saveFolder = "Assets/EnemyJson/";
+
     private PlacementGridManager grid;
 
-    private Dictionary<Vector2Int, Sprite> spriteCache = new();
+    private class PrefabInfo
+    {
+        public string displayName;
+        public GameObject prefab;
+    }
+
+    private List<PrefabInfo> prefabList = new();
+
 
     [MenuItem("Tools/적 유닛 배치 툴")]
     public static void OpenWindow()
     {
         var window = GetWindow<EnemyPlacementEditor>("적 유닛 배치 툴");
-        window.minSize = new Vector2(425, 600); // 최소 창 크기
-        window.maxSize = new Vector2(425, 1000);
+        window.minSize = new Vector2(425, 800); // 최소 창 크기
+        window.maxSize = new Vector2(850, 800);
     }
 
     private void OnEnable()
@@ -59,29 +70,31 @@ public class EnemyPlacementEditor : EditorWindow
             }
         }
 
-        string path = "Assets/Resources/Penguins";
-        bard = LoadPrefabByName("BardPenguin", path);
-        blast = LoadPrefabByName("BlastPenguin", path);
-        circus = LoadPrefabByName("CircusDagger", path);
-        cooking = LoadPrefabByName("CookingPenguin", path);
-        resistance = LoadPrefabByName("Resistance_Normal_Penguin", path);
-
-    }
-
-    private GameObject LoadPrefabByName(string penguinName, string folder)
-    {
-        string[] guids = AssetDatabase.FindAssets($"{penguinName} t:Prefab", new[] { folder });
-
-        foreach (var guid in guids)
+        if (grid == null)
         {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-
-            if (prefab != null && prefab.name == penguinName)
-                return prefab;
+            Debug.LogWarning("PlacementGridManager with tag 'Enemy'를 찾지 못했습니다.");
         }
 
-        return null;
+        LoadAllPrefabs();
+    }
+
+    private void LoadAllPrefabs()
+    {
+        prefabList.Clear();
+        string path = "Penguins";
+        GameObject[] loaded = Resources.LoadAll<GameObject>(path);
+
+        foreach(var prefab in loaded)
+        {
+            if(prefab != null)
+            {
+                prefabList.Add(new PrefabInfo
+                {
+                    displayName = prefab.name,
+                    prefab = prefab
+                });
+            }
+        }
     }
 
     private void OnDisable()
@@ -89,25 +102,24 @@ public class EnemyPlacementEditor : EditorWindow
         SceneView.duringSceneGui -= OnSceneGUI;
     }
 
+
     private void OnGUI()
     {
-        GUILayout.Label("적 유닛 배치 툴", EditorStyles.boldLabel);
+        EditorGUILayout.Space(10);
 
-        EditorGUILayout.Space(20);
+        EditorGUILayout.BeginHorizontal();
+
+        EditorGUILayout.BeginVertical(GUILayout.Width(425));
 
         GUILayout.Label("유닛 선택", EditorStyles.boldLabel);
 
-        EditorGUILayout.BeginVertical();
-
-        if (GUILayout.Button("Bard")) selectedPrefab = bard;
-        if (GUILayout.Button("Blast")) selectedPrefab = blast;
-        if (GUILayout.Button("Circus")) selectedPrefab = circus;
-        if (GUILayout.Button("Cooking")) selectedPrefab = cooking;
-        if (GUILayout.Button("Resistance")) selectedPrefab = resistance;
-
-        EditorGUILayout.EndVertical();
-
-        EditorGUILayout.Space(20);
+        foreach (var info in prefabList)
+        {
+            if(GUILayout.Button(info.displayName))
+            {
+                selectedPrefab = info.prefab;
+            }
+        }
 
         if (selectedPrefab != null)
         {
@@ -119,18 +131,71 @@ public class EnemyPlacementEditor : EditorWindow
                 Rect spriteRect = GUILayoutUtility.GetRect(50, 50, GUILayout.Width(80), GUILayout.Height(80));
                 DrawUnit(sr.sprite, spriteRect);
             }
+
+            EditorGUILayout.HelpBox($"선택된 유닛: {selectedPrefab.name}", MessageType.Info);
         }
 
         EditorGUILayout.Space(20);
         GUILayout.Label("배치 미리보기", EditorStyles.boldLabel);
         DrawGridPreview();
+        EditorGUILayout.EndVertical();
 
-        if (selectedPrefab != null)
+        EditorGUILayout.BeginVertical();
+
+        string label = showFileList ? "목록 닫기" : "저장된 파일 목록 보기";
+        if (GUILayout.Button($"{label}"))
         {
-            EditorGUILayout.HelpBox($"선택된 유닛: {selectedPrefab.name}", MessageType.Info);
+            showFileList = !showFileList;
+        }
+        GUILayout.Space(10);
+        if (showFileList)
+        {
+            string[] files = Directory.GetFiles(saveFolder, "*.json");
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                if (GUILayout.Button(fileName))
+                    fileNameToLoad = fileName;
+            }
         }
 
-        EditorGUILayout.Space();
+        GUILayout.Space(10);
+        GUILayout.Label("저장할 파일 이름", EditorStyles.boldLabel);
+        fileNameToSave = EditorGUILayout.TextField(fileNameToSave);
+
+        if (GUILayout.Button("저장"))
+        {
+           if(!Directory.Exists(saveFolder))
+                Directory.CreateDirectory(saveFolder);
+
+            string path = saveFolder + fileNameToSave + ".json";
+            string json = JsonUtility.ToJson(data, true);
+            File.WriteAllText(path, json);
+            AssetDatabase.Refresh();
+            Debug.Log($"{path} 저장됨");
+        }
+
+        GUILayout.Space(10);
+        GUILayout.Label("불러올 파일 이름", EditorStyles.boldLabel);
+        fileNameToLoad = EditorGUILayout.TextField(fileNameToLoad);
+
+        if (GUILayout.Button("불러오기"))
+        {
+            string path = saveFolder + fileNameToLoad + ".json";
+            if (File.Exists(path))
+            {
+                string json = File.ReadAllText(path);
+                data = JsonUtility.FromJson<EnemyPlacementData>(json);
+                RebuildSceneFromData();
+                Debug.Log($"{path} 불러옴");
+            }
+            else
+            {
+                Debug.LogWarning($"{path} 파일 없음");
+            }
+        }
+        GUILayout.Space(10);
+
         EditorGUILayout.LabelField("현재 배치 목록", EditorStyles.boldLabel);
 
         scroll = EditorGUILayout.BeginScrollView(scroll);
@@ -147,32 +212,11 @@ public class EnemyPlacementEditor : EditorWindow
         }
         EditorGUILayout.EndScrollView();
 
-        EditorGUILayout.Space();
-
-        if (GUILayout.Button("저장"))
+        EditorGUILayout.Space(10);
+        if (GUILayout.Button("배치된 유닛 전체삭제"))
         {
-            string json = JsonUtility.ToJson(data, true);
-            File.WriteAllText(savePath, json);
-            AssetDatabase.Refresh();
-            Debug.Log("적 배치 정보 저장됨: " + savePath);
-        }
+            ClearAllEnemyObjectInScene();
 
-        if (GUILayout.Button("불러오기"))
-        {
-            if (File.Exists(savePath))
-            {
-                string json = File.ReadAllText(savePath);
-                data = JsonUtility.FromJson<EnemyPlacementData>(json);
-                RebuildSceneFromData();
-            }
-            else
-            {
-                Debug.LogWarning("저장된 json파일이 없음");
-            }
-        }
-
-        if (GUILayout.Button("전체삭제"))
-        {
             foreach (var enemy in data.enemies.ToList())
             {
                 RemoveUnitAt(enemy.gridPos);
@@ -180,7 +224,8 @@ public class EnemyPlacementEditor : EditorWindow
             data.enemies.Clear();
         }
 
-
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.EndHorizontal();
     }
 
 
@@ -229,6 +274,14 @@ public class EnemyPlacementEditor : EditorWindow
 
             GameObject go = PlaceUnitPrefabAt(gridPos, selectedPrefab);
 
+
+            data.enemies.Add(new EnemyUnitData
+            {
+                unitId = selectedPrefab.name,
+                gridPos = gridPos,
+                assetPath = AssetDatabase.GetAssetPath(selectedPrefab)
+            });
+
             e.Use();
         }
 
@@ -248,6 +301,8 @@ public class EnemyPlacementEditor : EditorWindow
 
     private void RebuildSceneFromData()
     {
+        ClearAllEnemyObjectInScene();
+
         spriteCache.Clear();
 
         foreach (var enemy in data.enemies)
@@ -272,6 +327,8 @@ public class EnemyPlacementEditor : EditorWindow
                 GameObject go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
                 go.transform.position = GridUtility.GridToWorld(enemy.gridPos, grid.origin, grid.cellSize);
                 go.name = prefab.name + $"({enemy.gridPos.x},{enemy.gridPos.y})";
+
+                go.tag = "Enemy";
 
                 SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
                 if (sr != null && sr.sprite != null)
@@ -305,7 +362,7 @@ public class EnemyPlacementEditor : EditorWindow
         DrawGridLines(boxRect, cellSize, gridWidth, gridHeight);
         DrawUnitAtGrid(boxRect, cellSize, gridWidth, gridHeight);
 
-        Debug.Log($"spriteCache에 등록된 스프라이트 수: {spriteCache.Count}");
+        //Debug.Log($"spriteCache에 등록된 스프라이트 수: {spriteCache.Count}");
     }
 
     private void HandleGridClick(Rect boxRect, float cellSize, int gridWidth, int gridHeight)
@@ -343,6 +400,8 @@ public class EnemyPlacementEditor : EditorWindow
         go.transform.position = GridUtility.GridToWorld(gridPos, grid.origin, grid.cellSize);
         go.name = prefab.name + $"({gridPos.x},{gridPos.y})";
 
+        go.tag = "Enemy";
+
         SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
         if (sr != null && sr.sprite != null)
         {
@@ -350,6 +409,15 @@ public class EnemyPlacementEditor : EditorWindow
         }
 
         return go;
+    }
+
+    private void ClearAllEnemyObjectInScene()
+    {
+        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach(var enemy in enemies)
+        {
+            DestroyImmediate(enemy);
+        }
     }
 
     private void DrawGridLines(Rect boxRect, float cellSize, int gridWidth, int gridHeight)
