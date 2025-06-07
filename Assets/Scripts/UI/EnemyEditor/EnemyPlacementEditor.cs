@@ -4,6 +4,8 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using System;
+using static UnityEngine.EventSystems.EventTrigger;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -47,6 +49,7 @@ public class EnemyPlacementEditor : EditorWindow
     private string fileNameToSave = "enemy_placement";
     private string fileNameToLoad = "enemy_placement";
     private const string saveFolder = "Assets/EnemyJson/";
+    private const string penguins_Path = "Penguins";
 
     private PlacementGridManager grid;
 
@@ -73,7 +76,7 @@ public class EnemyPlacementEditor : EditorWindow
         var grid = FindObjectsByType<PlacementGridManager>(FindObjectsSortMode.None);
         foreach (var g in grid)
         {
-            if (g != null && g.tag == "Enemy")
+            if (g != null && g.CompareTag("Enemy"))
             {
                 this.grid = g;
                 break;
@@ -90,9 +93,9 @@ public class EnemyPlacementEditor : EditorWindow
 
     private void LoadAllPrefabs()
     {
-        prefabList.Clear();
-        string path = "Penguins";
-        GameObject[] loaded = Resources.LoadAll<GameObject>(path);
+        prefabList?.Clear();
+        
+        GameObject[] loaded = Resources.LoadAll<GameObject>(penguins_Path);
 
         foreach(var prefab in loaded)
         {
@@ -313,7 +316,7 @@ public class EnemyPlacementEditor : EditorWindow
     {
         ClearAllEnemyObjectInScene();
 
-        spriteCache.Clear();
+        spriteCache?.Clear();
 
         foreach (var enemy in data.enemies)
         {
@@ -429,11 +432,10 @@ public class EnemyPlacementEditor : EditorWindow
     {
         foreach (var enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            bool hasMarker = enemy.GetComponent<EditorSpawnMarker>() != null;
             bool isToolCreated = enemy.name.Contains("(") && enemy.name.Contains(")");
                
 
-            if(hasMarker || isToolCreated)
+            if(isToolCreated)
             {
 #if UNITY_EDITOR
                 DestroyImmediate(enemy);
