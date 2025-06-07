@@ -24,23 +24,20 @@ public class ItemDB
 
 // 유닛 정보를 가진 클래스임
 public class UnitDB
-{
-    public int hp;
-    public int attack;
+{   
+    public int tier;
     public int mana;
     public int range;
-    public int force;
-    public int drop_Coin;
     public int spawn_Stage;
-    public int attack_Range;
     public float attack_Speed;
     public float speed;
     public string name_kr;
     public string name;
     public string type;
-    public string group;
-    public string team;
     public string attack_Type;
+    public List<string> synergy = new();
+    public List<int> hp = new();
+    public List<int> attack = new();
 }
 
 // !!!!!!!!!!사용할 클래스에서 await FirebaseManager.ItemLoadData(); 또는 UnitLoadData();해주기!!!!!!!
@@ -139,10 +136,8 @@ public static class FirebaseManager
                     }
                 };
 
-                items[itemId] = item;
-
-                //Debug.Log(itemId);
-
+                items[itemId] = item;     
+                
             }
         }
         catch(Exception ex) 
@@ -169,28 +164,42 @@ public static class FirebaseManager
 
                 UnitDB unit = new UnitDB
                 {
-                    hp = Convert.ToInt32(data["hp"]),
-                    attack = Convert.ToInt32(data["attack"]),
-                    range = Convert.ToInt32(data["range"]),
-                    spawn_Stage = Convert.ToInt32(data["spawn_Stage"]),
-                    attack_Range = Convert.ToInt32(data["attack_Range"]),
-                    attack_Speed = Convert.ToSingle(data["attack_Speed"]),
-                    speed = Convert.ToSingle(data["speed"]),
                     name_kr = data["name_kr"].ToString(),
                     name = data["name"].ToString(),
                     type = data["type"].ToString(),
-                    group = data["group"].ToString(),
+                    tier = Convert.ToInt32(data["tier"]),
+                    mana = Convert.ToInt32(data["mana"]),
                     attack_Type = data["attack_Type"].ToString(),
+                    attack_Speed = Convert.ToSingle(data["attack_Speed"]),
+                    range = Convert.ToInt32(data["range"]),
+                    speed = Convert.ToSingle(data["speed"]),
+                    spawn_Stage = Convert.ToInt32(data["spawn_Stage"]),
+
+                    synergy = data.ContainsKey("synergy") && data["synergy"] is List<object> rawSynergy
+                    ? rawSynergy.ConvertAll(obj => obj.ToString())
+                    : new List<string>(),
+
+                    hp = data.ContainsKey("hp") && data["hp"] is List<object> rawHp
+                    ? rawHp.ConvertAll(obj => Convert.ToInt32(obj))
+                    : new List<int>(),
+
+                    attack = data.ContainsKey("attack") && data["attack"] is List<object> rawAtk
+                    ? rawAtk.ConvertAll(obj => Convert.ToInt32(obj))
+                    : new List<int>()
 
                     // 존재 여부에 따라 처리함
-                    mana = data.ContainsKey("mana") ? Convert.ToInt32(data["mana"]) : 0,
-                    force = data.ContainsKey("force") ? Convert.ToInt32(data["force"]) : 0,
-                    drop_Coin = data.ContainsKey("drop_Coin") ? Convert.ToInt32(data["drop_Coin"]) : 0,
-                    team = data.ContainsKey("team") ? data["team"].ToString() : ""
                 };
 
 
                 units[unitId] = unit;
+
+                //string log = $"[Unit] {unit.name_kr} ({unit.name})\n" +
+                //    $"- Type: {unit.type}, Tier: {unit.tier}, Synergy: [{string.Join(", ", unit.synergy)}]\n" +
+                //    $"- HP: [{string.Join("/", unit.hp)}], ATK: [{string.Join("/", unit.attack)}], Mana: {unit.mana}\n" +
+                //    $"- AtkType: {unit.attack_Type}, AtkSpeed: {unit.attack_Speed}, Range: {unit.range}, Speed: {unit.speed}\n" +
+                //    $"- Spawn Stage: {unit.spawn_Stage}";
+
+                //Debug.Log(log);
             }
 
         }

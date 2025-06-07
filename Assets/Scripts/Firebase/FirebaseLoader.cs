@@ -13,5 +13,8 @@ public class FirebaseLoader : MonoBehaviour
 
         IsLoaded = true;
         Debug.Log("Firebase 데이터 로딩 완료");
+
+        UnitPrefabsLoader.Initialize();
     }
+
 }
