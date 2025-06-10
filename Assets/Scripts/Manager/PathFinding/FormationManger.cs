@@ -16,6 +16,10 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
     }
 
     private Dictionary<Transform, FormationGroup> formationGroups = new();
+    private Dictionary<Transform, Vector2Int> lastTargetGrid = new();
+    private Dictionary<Transform, float> stopTimer = new();
+    private float stopThreshold = 0.05f; // 멈췄다고 판단할 최소 이동 거리
+    private float stopTime = 0.5f;       // 멈춘 상태로 간주할 시간(초)
 
     protected override void Awake()
     {
@@ -27,17 +31,27 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
     {
         foreach (var group in formationGroups.Values)
         {
-            Vector2Int currentGrid = gridScanner.WorldToGrid(group.targetTransform.position);
-            if (currentGrid != group.lastTargetGrid)
-            {
-                group.lastTargetGrid = currentGrid;
-                RequestFormationUpdate(group.targetTransform, group.leader);
+            Transform target = group.targetTransform;
+            Vector2Int currentGrid = gridScanner.WorldToGrid(target.position);
 
-                // 모든 유닛에게 새 위치 할당 및 MoveTo 호출
-                foreach (var unit in group.units)
+            // 이전 위치와 거리 계산
+            if (!lastTargetGrid.TryGetValue(target, out var prevGrid))
+                prevGrid = currentGrid;
+
+            float dist = Vector3.Distance(target.position, gridScanner.GridToWorld(currentGrid));
+            if (dist < stopThreshold)
+                stopTimer[target] = stopTimer.TryGetValue(target, out var t) ? t + Time.deltaTime : Time.deltaTime;
+            else
+                stopTimer[target] = 0f;
+
+            // "충분히 멈췄다"고 판단되면 타일 위치 비교
+            if (stopTimer[target] >= stopTime)
+            {
+                if (currentGrid != prevGrid)
                 {
-                    var assignedPos = GetAssignedPosition(group.targetTransform, unit);
-                    unit.MoveTo(assignedPos);
+                    lastTargetGrid[target] = currentGrid;
+                    stopTimer[target] = 0f;
+                    RequestFormationUpdate(target, group.leader);
                 }
             }
         }

@@ -73,8 +73,6 @@ public class UnitFollowState : IUnitState
         this.unitController = unitController;
         var target = unitController.unit.detectTarget.targetToAttack;
 
-        unitController.unit.mover.stopDistance = unitController.unitAttackDistance;
-
         if (target != null)
         {
             unitController.SetTargetToMove(target);
@@ -91,25 +89,10 @@ public class UnitFollowState : IUnitState
             unitController.GoIdle();
             return;
         }
-
-        if (unitController.unit.detectTarget.targetToAttack == null)
-        {
-            unitController.unit.detectTarget.SortClosetTarget();
-            var newTarget = unitController.unit.detectTarget.targetToAttack;
-
-            if (newTarget != null)
-            {
-                unitController.SetTargetToMove(newTarget);
-            }
-            else
-            {
-                unitController.GoIdle();
-                return;
-            }
-        }
         
-        if(unitController.unit.mover.GetRemainingTileDistanceToTarget() <= unitController.unitAttackDistance)
+        if(unitController.RemainedDistance <= unitController.unitAttackDistance)
         {
+            
             unitController.GoAttack();
             return;
         }
@@ -123,22 +106,22 @@ public class UnitFollowState : IUnitState
 public class UnitAttackState : IUnitState
 {
     private UnitController unitController;
+    private Animator animator;
+    private float attackCooldown = 0f;
+
+    private bool isAttacking = false;
     public void Enter(UnitController unit)
     {
-        //Debug.Log("AttackState");
         this.unitController = unit;
-        unit.SetAnimation("AttackState");
+        animator = unit.unit.animator;
+        unitController.StopMovement();
+        Debug.Log(unitController.RemainedDistance);
     }
     public void Update()
     {
         var target = unitController.unit.detectTarget.targetToAttack;
-        var animator = unitController.unit.animator;
 
-        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
-        {
-            unitController.GoIdle();
-            return;
-        }
+        attackCooldown -= Time.deltaTime;
 
         if (target == null || IsTargetDead(target))
         {
@@ -148,7 +131,7 @@ public class UnitAttackState : IUnitState
             if (newTarget != null)
             {
                 unitController.SetTargetToMove(newTarget);
-                unitController.GoFollow();
+                unitController.GoIdle();
             }
             else
             {
@@ -160,18 +143,39 @@ public class UnitAttackState : IUnitState
         {
             if (unitController.RemainedDistance > unitController.unitAttackDistance)
             {
-                unitController.GoFollow();
+                unitController.GoIdle();
                 return;
             }
         }
+        if (attackCooldown <= 0f)
+        {
+            if (target != null && !IsTargetDead(target))
+            {
+                animator.ResetTrigger("attack");
+                animator.SetTrigger("attack");
+                attackCooldown = 1f / unitController.unitAttackSpeed;
+                isAttacking = true;
+            }
+        }
+        else if (isAttacking && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f && animator.GetCurrentAnimatorStateInfo(0).IsName("AttackState"))
+        {
+            animator.Play("IdleState");
+            isAttacking = false;
+        }
+
     }
 
     public void Exit()
     {
+        unitController.unit.mover.SetCanMove(true);
     }
     private bool IsTargetDead(Transform target)
     {
         return target.TryGetComponent<IDamageAble>(out var dmg) && dmg.IsDestroyed();
+    }
+    private void SetMultiflyAnimation(string animationName, int multiflyThreshold)
+    {
+        
     }
 }
 

@@ -18,6 +18,7 @@ public class AstarMover : MonoBehaviour
     private int currentIndex = 0;
     private Vector3 velocity = Vector3.zero;
     private bool isMoving = false;
+    private bool canMove = true; // 이동 가능 여부
     private Action onPathComplete;
 
     private IGridScanner gridScanner;
@@ -61,100 +62,14 @@ public class AstarMover : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// 포메이션 매니저가 할당한 위치로 이동
-    /// </summary>
-    public void FollowTarget(Transform target, Action onCompleted = null)
+    void Update()
     {
-        formationTarget = target;
-        useFormation = true;
-
-        // 포메이션 매니저에 등록
-        FormationManger.instance.RegisterUnit(target, this);
-
-        // 내 좌표 받아오기
-        assignedFormationPosition = FormationManger.instance.GetAssignedPosition(target, this);
-
-        // 이동 시작
-        MoveTo(assignedFormationPosition, onCompleted);
-    }
-
-    /// <summary>
-    /// 포메이션 해제(개별 행동 등)
-    /// </summary>
-    public void ClearFormation()
-    {
-        useFormation = false;
-        formationTarget = null;
-    }
-
-    /// <summary>
-    /// 목적지(월드 좌표)만 받아 이동 시작
-    /// </summary>
-    public void MoveTo(Vector3 worldDestination, Action onComplete = null)
-    {
-        isMoving = false;
-        worldPath.Clear();
-        currentIndex = 0;
-        // velocity = Vector3.zero;
-        onPathComplete = onComplete;
-
-        AstarPathFinding.instance.RequestPath(
-            gridScanner.WorldToGrid(this.transform.position),
-            gridScanner.WorldToGrid(worldDestination),
-            this.gameObject,
-            OnPathFound
-        );
-    }
-
-    private void OnPathFound(List<Vector2Int> path)
-    {
-        // Debug.Log($"경로가 호출 되었습니다. 경로 수: {(path ==null ? 0 : path.Count)}");
-        if (path == null || path.Count == 0)
+        if (!canMove)
         {
-            isMoving = false;
-            isWaitingForPath = true;
-            retryTimer = 0f;
-            onPathComplete?.Invoke();
+            if (rb != null) rb.velocity = Vector2.zero;
             return;
         }
 
-        worldPath.Clear();
-        foreach (var gridPos in path)
-        {
-            // 그리드 좌표를 월드 좌표로 변환하여 경로에 추가
-            worldPath.Add(gridScanner.GridToWorld(gridPos));
-        }
-        // Debug.Log($"목표까지 경로 : {worldPath.Count}개");
-        currentIndex = 0;
-        isMoving = true;
-
-    }
-
-    // 타겟을 transform으로 지정
-    public void FollowTargetSingle(Transform target, Action onComplete = null)
-    {
-        targetTransform = target;
-        lastTargetGridPos = gridScanner.WorldToGrid(target.position);
-        ClearFormation(); // 포메이션 해제
-        MoveTo(target.position, onComplete);
-    }
-
-    public void ClearTarget()
-    {
-        targetTransform = null;
-        lastTargetGridPos = Vector2Int.zero;
-        repathTimer = 0f;
-        isMoving = false;
-        worldPath.Clear();
-        currentIndex = 0;
-        velocity = Vector3.zero;
-        if (rb != null) rb.velocity = Vector2.zero;
-    }
-
-    void Update()
-    {
         Vector2Int currentGridPos = gridScanner.WorldToGrid(transform.position);
         if( lastGridPos != currentGridPos)
         {
@@ -226,16 +141,119 @@ public class AstarMover : MonoBehaviour
     }
 
     /// <summary>
+    /// 포메이션 매니저가 할당한 위치로 이동
+    /// </summary>
+    public void FollowTarget(Transform target, Action onCompleted = null)
+    {
+        formationTarget = target;
+        useFormation = true;
+
+        // 포메이션 매니저에 등록
+        FormationManger.instance.RegisterUnit(target, this);
+
+        // 내 좌표 받아오기
+        assignedFormationPosition = FormationManger.instance.GetAssignedPosition(target, this);
+
+        // 이동 시작
+        MoveTo(assignedFormationPosition, onCompleted);
+    }
+
+    /// <summary>
+    /// 포메이션 해제(개별 행동 등)
+    /// </summary>
+    public void ClearFormation()
+    {
+        useFormation = false;
+        formationTarget = null;
+    }
+
+    /// <summary>
+    /// 목적지(월드 좌표)만 받아 이동 시작
+    /// </summary>
+    public void MoveTo(Vector3 worldDestination, Action onComplete = null)
+    {
+        isMoving = false;
+        worldPath.Clear();
+        currentIndex = 0;
+        // velocity = Vector3.zero;
+        onPathComplete = onComplete;
+
+        AstarPathFinding.instance.RequestPath(
+            gridScanner.WorldToGrid(this.transform.position),
+            gridScanner.WorldToGrid(worldDestination),
+            this.gameObject,
+            OnPathFound
+        );
+    }
+
+    private void OnPathFound(List<Vector2Int> path)
+    {
+        if (path == null || path.Count == 0)
+        {
+            isMoving = false;
+            isWaitingForPath = true;
+            retryTimer = 0f;
+            onPathComplete?.Invoke();
+            return;
+        }
+
+        worldPath.Clear();
+        foreach (var gridPos in path)
+        {
+            // 그리드 좌표를 월드 좌표로 변환하여 경로에 추가
+            worldPath.Add(gridScanner.GridToWorld(gridPos));
+        }
+        // Debug.Log($"목표까지 경로 : {worldPath.Count}개");
+        currentIndex = 0;
+        isMoving = true;
+
+    }
+
+    // 타겟을 transform으로 지정
+    public void FollowTargetSingle(Transform target, Action onComplete = null)
+    {
+        targetTransform = target;
+        lastTargetGridPos = gridScanner.WorldToGrid(target.position);
+        ClearFormation(); // 포메이션 해제
+        MoveTo(target.position, onComplete);
+    }
+
+    public void ClearTarget()
+    {
+        targetTransform = null;
+        lastTargetGridPos = Vector2Int.zero;
+        repathTimer = 0f;
+        isMoving = false;
+        worldPath.Clear();
+        currentIndex = 0;
+        velocity = Vector3.zero;
+        if (rb != null) rb.velocity = Vector2.zero;
+    }
+
+
+    /// <summary>
     /// 즉시 위치 이동(텔레포트)
     /// </summary>
     public void Teleport(Vector3 position, bool clearPath = true)
     {
-        transform.position = position;
+        Vector2Int gridPos = gridScanner?.WorldToGrid(position) ?? Vector2Int.zero;
+        Vector3 worldPos = gridScanner?.GridToWorld(gridPos) ?? position;
+
+        transform.position = worldPos;
         velocity = Vector3.zero;
         if (clearPath)
         {
             isMoving = false;
             worldPath.Clear();
+        }
+    }
+
+    public void SetCanMove(bool value)
+    {
+        canMove = value;
+        if( !canMove && rb != null)
+        {
+            rb.velocity = Vector2.zero; // 이동 불가 시 속도 초기화
         }
     }
 
@@ -253,7 +271,7 @@ public class AstarMover : MonoBehaviour
     /// </summary>
     public int GetRemainingGridDistance()
     {
-        if (!isMoving || worldPath == null || currentIndex >= worldPath.Count)
+        if (worldPath == null || currentIndex >= worldPath.Count)
             return 0;
         return worldPath.Count - currentIndex;
     }
@@ -278,22 +296,16 @@ public class AstarMover : MonoBehaviour
 
     public int GetRemainingTileDistanceToTarget()
     {
-        if (gridScanner == null) return 0;
-        Vector2Int currentGridPos = gridScanner.WorldToGrid(transform.position);
-        Vector2Int targetGridPos;
-
-        if (useFormation && formationTarget != null)
+        if (formationTarget == null)
         {
-            targetGridPos = gridScanner.WorldToGrid(formationTarget.position);
-        }
-        else if (targetTransform != null)
-        {
-            targetGridPos = gridScanner.WorldToGrid(targetTransform.position);
-        }
-        else
-        {
+            Debug.LogWarning("타겟이 설정되지 않았습니다. 이동할 타겟을 설정해주세요.");
             return 0;
         }
+        Vector2Int currentGridPos = gridScanner.WorldToGrid(transform.position);
+        Vector2Int targetGridPos = gridScanner.WorldToGrid(formationTarget.position);
+        // Debug.Log($"현재 위치: {currentGridPos}, 타겟 위치: {targetGridPos}");
+        if (currentGridPos == targetGridPos)
+            return 0;
 
         int dx = Mathf.Abs(currentGridPos.x - targetGridPos.x);
         int dy = Mathf.Abs(currentGridPos.y - targetGridPos.y);

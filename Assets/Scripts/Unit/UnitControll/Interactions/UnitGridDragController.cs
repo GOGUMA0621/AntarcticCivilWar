@@ -69,8 +69,9 @@ public class UnitGridDragController : MonoBehaviour, IBeginWorldDragHandler, IWo
             else
             {
                 Vector2Int startPosition = GridUtility.WorldToGrid(this.startPosition, origin, cellSize);
+                transform.position = GridUtility.GridToWorld(startPosition, origin, cellSize);
             }
+            SynergyManager.instance.RegisterUnit(unit, true);
         }
-        SynergyManager.instance.RegisterUnit(unit, true);
     }
 }

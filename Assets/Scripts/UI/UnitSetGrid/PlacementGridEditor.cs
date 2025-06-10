@@ -49,7 +49,7 @@ public class PlacementGridEditor : Editor
             if (newCenter != center)
             {
                 // 마지막에만 스냅 적용
-                Vector3 snappedCenter = SnapPosition(newCenter, cellSize);
+                Vector3 snappedCenter = SnapPosition(newCenter, cellSize * 0.5f);
                 pf.origin = snappedCenter - new Vector3(width * cellSize / 2f, height * cellSize / 2f, 0);
             }
             else

@@ -91,7 +91,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <summary>
     /// 유닛의 이동 목표까지 남은 거리
     /// </summary>
-    public int RemainedDistance => unit.mover.GetRemainingGridDistance();
+    public int RemainedDistance => unit.mover.GetRemainingTileDistanceToTarget();
 
 
     //private bool inCombat = false; //유닛이 전투중인지 확인하기 위한 변수
@@ -126,7 +126,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public int unitLevel = 1;
 
-    private float unitAttackSpeed = 1.0f;
+    public float unitAttackSpeed = 1.0f;
     private float unitSenseDistance = 1.0f;
     private bool canMove = true;
 
@@ -239,7 +239,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             baseStats.Add(StatType.MaxMana, unit.data.UnitMP);
             baseStats.Add(StatType.ManaRegen, 5);
             baseStats.Add(StatType.AttackDamage, unit.data.UnitDamage);
-            baseStats.Add(StatType.AttackSpeed, unit.data.UnitSpeed);
+            baseStats.Add(StatType.AttackSpeed, unit.data.UnitAttackSpeed);
             baseStats.Add(StatType.AttackRange, unit.data.UnitAttackDistance);
             baseStats.Add(StatType.MoveSpeed, unit.data.UnitSpeed);
             baseStats.Add(StatType.CritChance, 0);
@@ -273,17 +273,14 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// 유닛의 이동 목표를 설정하는 메서드
     /// </summary>
     /// <param name="target"></param>
-    public void SetTargetToMove(Transform target)
-    {
-        unit.mover.FollowTarget(target);
-    }
+    public void SetTargetToMove(Transform target) => unit.mover.FollowTarget(target);
 
     /// <summary>
     /// 유닛의 이동을 멈추는 메서드
     /// </summary>
     public void StopMovement()
     {
-        unit.mover.ClearTarget();
+        unit.mover.SetCanMove(false);
     }
 
     /// <summary>
@@ -291,7 +288,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// </summary>
     public void StartMovement()
     {
-        canMove = true;
+        unit.mover.SetCanMove(true);
     }
     #endregion
 
