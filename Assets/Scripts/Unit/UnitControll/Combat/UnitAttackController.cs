@@ -58,7 +58,7 @@ public class UnitAttackController : MonoBehaviour
 
     void MeleeAttack()
     {
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.data.UnitSenseRadius);
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.controller.unitAttackDistance);
         foreach (Collider2D targetCollider in collider)
         {
             if (targetCollider.transform == unit.detectTarget.targetToAttack)

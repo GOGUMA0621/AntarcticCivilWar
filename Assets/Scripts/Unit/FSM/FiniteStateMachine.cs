@@ -1,4 +1,5 @@
 using System.Linq;
+using AYellowpaper.SerializedCollections.Editor.Data;
 using UnityEngine;
 
 public interface IUnitState
@@ -139,15 +140,12 @@ public class UnitAttackState : IUnitState
             }
             return;
         }
-        else
+        else if (unitController.RemainedDistance > unitController.unitAttackDistance)
         {
-            if (unitController.RemainedDistance > unitController.unitAttackDistance)
-            {
-                unitController.GoIdle();
-                return;
-            }
+            unitController.GoIdle();
+            return;
         }
-        if (attackCooldown <= 0f)
+        else if (attackCooldown <= 0f)
         {
             if (target != null && !IsTargetDead(target))
             {
