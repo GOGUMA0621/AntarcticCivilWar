@@ -1,5 +1,4 @@
 using System.Linq;
-using AYellowpaper.SerializedCollections.Editor.Data;
 using UnityEngine;
 
 public interface IUnitState
@@ -170,10 +169,6 @@ public class UnitAttackState : IUnitState
     private bool IsTargetDead(Transform target)
     {
         return target.TryGetComponent<IDamageAble>(out var dmg) && dmg.IsDestroyed();
-    }
-    private void SetMultiflyAnimation(string animationName, int multiflyThreshold)
-    {
-        
     }
 }
 

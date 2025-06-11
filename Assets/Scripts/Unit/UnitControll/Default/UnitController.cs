@@ -204,10 +204,8 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         if (currentState?.GetType() == newState.GetType()) 
         {
-            //Debug.Log($"[FSM] Skip: Already in {newState.GetType().Name}");
             return;
         }
-        //Debug.Log($"[FSM] Change State: {currentState?.GetType().Name} -> {newState.GetType().Name}");
         currentState?.Exit();
         currentState = newState;
         currentState.Enter(this);
