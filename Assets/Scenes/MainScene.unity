@@ -8085,7 +8085,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47b870c152c9eae429250b2119e85b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyDataFile: {fileID: 4900000, guid: d2b1dc34adb6a6c49a7e1c528020fa21, type: 3}
+  enemyDataFile: {fileID: 4900000, guid: f2e28b38c6669d146b9107bfa2b3957e, type: 3}
   grid: {fileID: 1159989902}
 --- !u!1 &1238087393
 GameObject:
