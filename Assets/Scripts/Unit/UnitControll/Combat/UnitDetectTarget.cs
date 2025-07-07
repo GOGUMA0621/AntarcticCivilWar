@@ -21,7 +21,7 @@ public class UnitDetectTarget : MonoBehaviour //유닛 적 탐지
         detectCollider.radius = unit.data.UnitSenseRadius;
     }
 
-    internal void SortClosetTarget() //타겟 리스트를 가까운 순으로 정렬하여 공격할 상대값에 값 부여
+    internal void SortClosestTarget() //타겟 리스트를 가까운 순으로 정렬하여 공격할 상대값에 값 부여
     {                                   //특정 인터페이스를 후순위로 정렬
         targets = targets
             .OrderBy(t => t.TryGetComponent(out IStructure _) ? 1 : 0) // 특정 레이어를 가진 객체를 후순위로 배치
@@ -40,7 +40,7 @@ public class UnitDetectTarget : MonoBehaviour //유닛 적 탐지
         {
             i.OnDestroyed += RemoveTarget;  //타깃 리스트에 들어가면서 파괴확인 이벤트에 등록
             targets.Add(target);
-            SortClosetTarget();
+            SortClosestTarget();
         }
     }
 
@@ -60,7 +60,7 @@ public class UnitDetectTarget : MonoBehaviour //유닛 적 탐지
             {
                 targetToAttack = null;
             }
-            SortClosetTarget();
+            SortClosestTarget();
         }
     }
 

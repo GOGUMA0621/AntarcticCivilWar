@@ -22,27 +22,22 @@ public class StatusEffectInstance : MonoBehaviour
         tickTimer = 0f;
     }
 
-    public void UpdateCall(float deltaTime)
+    public void OnManagerUpdate(float deltaTime)
     {
         if (!isActive) return;
 
-        remainingDuration -= deltaTime;
         tickTimer += deltaTime;
-    }
+        if (tickTimer >= source.tickInterval)
+        {
+            tickTimer = 0f;
+            logic.UpdateEffect();
+        }
 
-    public bool ShouldTick()
-    {
-        return tickTimer >= source.tickInterval;
-    }
-
-    public void Tick()
-    {
-        tickTimer = 0f;
-        logic.UpdateEffect();
-    }
-
-    public bool IsExpired()
-    {
-        return remainingDuration <= 0f;
+        remainingDuration -= deltaTime;
+        if (remainingDuration <= 0f)
+        {
+            isActive = false;
+            logic.RemoveEffect();
+        }
     }
 }

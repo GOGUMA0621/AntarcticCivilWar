@@ -48,7 +48,7 @@ public class UnitIdleState : IUnitState
     {
         if (unitController.unit.detectTarget.targets.Any())
         {
-           unitController.unit.detectTarget.SortClosetTarget();
+           unitController.unit.detectTarget.SortClosestTarget();
            var newTarget = unitController.unit.detectTarget.targetToAttack;
            if (newTarget != null)
            {
@@ -75,7 +75,7 @@ public class UnitFollowState : IUnitState
 
         if (target != null)
         {
-            unitController.SetTargetToMove(target);
+            unitController.SetTargetToMove(target, unitController.OnPathCompleteToAttack);
             unitController.StartMovement();
         }
     }
@@ -89,18 +89,13 @@ public class UnitFollowState : IUnitState
             unitController.GoIdle();
             return;
         }
-        
-        if(unitController.RemainedDistance <= unitController.unitAttackDistance)
-        {
-            
-            unitController.GoAttack();
-            return;
-        }
+
     }
 
     public void Exit()
     {
     }
+
 }
 
 public class UnitAttackState : IUnitState
@@ -108,29 +103,31 @@ public class UnitAttackState : IUnitState
     private UnitController unitController;
     private Animator animator;
     private float attackCooldown = 0f;
-
     private bool isAttacking = false;
+    private Transform target;
+
     public void Enter(UnitController unit)
     {
         this.unitController = unit;
+        target = unit.unit.detectTarget.targetToAttack;
         animator = unit.unit.animator;
         unitController.StopMovement();
-        Debug.Log(unitController.RemainedDistance);
+        attackCooldown = 0f;
     }
+
     public void Update()
     {
-        var target = unitController.unit.detectTarget.targetToAttack;
-
         attackCooldown -= Time.deltaTime;
 
+        // 목표가 없거나 죽었으면 추적 상태로
         if (target == null || IsTargetDead(target))
         {
-            unitController.unit.detectTarget.SortClosetTarget();
-            var newTarget = unitController.unit.detectTarget.targetToAttack;
+            unitController.unit.detectTarget.SortClosestTarget();
+            target = unitController.unit.detectTarget.targetToAttack;
 
-            if (newTarget != null)
+            if (target != null)
             {
-                unitController.SetTargetToMove(newTarget);
+                unitController.SetTargetToMove(target, unitController.OnPathCompleteToAttack);
                 unitController.GoIdle();
             }
             else
@@ -139,11 +136,14 @@ public class UnitAttackState : IUnitState
             }
             return;
         }
+        // 목표가 사거리 밖으로 벗어나면 추적 상태로
         else if (unitController.RemainedDistance > unitController.unitAttackDistance)
         {
-            unitController.GoIdle();
+            unitController.SetTargetToMove(target, unitController.OnPathCompleteToAttack);
+            unitController.GoFollow();
             return;
         }
+        // 공격 쿨타임이 끝나면 공격
         else if (attackCooldown <= 0f)
         {
             if (target != null && !IsTargetDead(target))
@@ -154,18 +154,20 @@ public class UnitAttackState : IUnitState
                 isAttacking = true;
             }
         }
-        else if (isAttacking && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f && animator.GetCurrentAnimatorStateInfo(0).IsName("AttackState"))
+        // 공격 애니메이션 끝나면 Idle로
+        else if (isAttacking && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f
+                && animator.GetCurrentAnimatorStateInfo(0).IsName("AttackState"))
         {
             animator.Play("IdleState");
             isAttacking = false;
         }
-
     }
 
     public void Exit()
     {
         unitController.unit.mover.SetCanMove(true);
     }
+
     private bool IsTargetDead(Transform target)
     {
         return target.TryGetComponent<IDamageAble>(out var dmg) && dmg.IsDestroyed();
@@ -207,7 +209,6 @@ public class UnitManaSkillState : IUnitState
         unit.canMana = false;
         unit.StopMovement();
         unit.SetAnimation("ManaSkillState");
-        unit.unitSkill.DoActiveSkill();
     }
     public void Update()
     {

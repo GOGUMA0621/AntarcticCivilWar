@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 /// <summary>
 /// 공격 형식을 저장하는 클래스입니다.
 /// 공격 시 데미지와 상태이상을 저장합니다.
@@ -121,6 +122,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     public float unitDamage;
     public float unitSpeed;
     public float unitAttackDistance;
+    public float unitCritChance = 0.0f;
 
     public bool isAllay = true;
 
@@ -128,7 +130,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public float unitAttackSpeed = 1.0f;
     private float unitSenseDistance = 1.0f;
-    private bool canMove = true;
 
     protected IUnitState currentState;
     private IUnitState manaSkillState;
@@ -246,8 +247,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
             RecalculateStats();
 
-            unit.mover.stopDistance = unit.data.UnitAttackDistance; //이동 목표와의 거리
-
             currentHP = maxHP;
             currentMP = 0;
             unitSenseDistance = unit.data.UnitSenseRadius;
@@ -271,7 +270,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// 유닛의 이동 목표를 설정하는 메서드
     /// </summary>
     /// <param name="target"></param>
-    public void SetTargetToMove(Transform target) => unit.mover.FollowTarget(target);
+    public void SetTargetToMove(Transform target, Action onComplete = null) => unit.mover.FollowTarget(target, onComplete);
 
     /// <summary>
     /// 유닛의 이동을 멈추는 메서드
@@ -279,6 +278,14 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     public void StopMovement()
     {
         unit.mover.SetCanMove(false);
+    }
+
+    public void OnPathCompleteToAttack()
+    {
+        if(currentState is UnitFollowState)
+        {
+          GoAttack();
+        }
     }
 
     /// <summary>
@@ -679,17 +686,23 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         {
             float add = 0f;
             float multiple = 1f;
+            float percent = 0f;
+            float percentMultiple = 1f;
 
-            foreach(var mod in statModifierList.Where(m => m.statType == stat.Key))
+            foreach (var mod in statModifierList.Where(m => m.statType == stat.Key))
             {
                 if (mod.modifierMethod == ModifierMethod.Additive)
                 {
                     add += mod.value;
-                } 
-                else if(mod.modifierMethod == ModifierMethod.Multiplicative)
-                    multiple *= mod.value;
+                }
+                else if (mod.modifierMethod == ModifierMethod.Multiplicative)
+                    multiple *= 1 + mod.value;
+                else if (mod.modifierMethod == ModifierMethod.AdditivePercent)
+                    percent += mod.value;
+                else if (mod.modifierMethod == ModifierMethod.MultiplicativePercent)
+                    percentMultiple *= 1 + mod.value;
             }
-            finalStats[stat.Key] = (stat.Value + add) * multiple;
+            finalStats[stat.Key] = (stat.Value + add) * multiple * (1 + percent) * percentMultiple;
         }
 
         maxHP = finalStats[StatType.MaxHealth];
@@ -698,6 +711,22 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         unitAttackDistance = finalStats[StatType.AttackRange];
         unitAttackSpeed = finalStats[StatType.AttackSpeed];
         unitSpeed = finalStats[StatType.MoveSpeed];
+        unitCritChance = finalStats[StatType.CritChance];
+
+        ReBuildStats();
+    }
+
+    private void ReBuildStats()
+    {
+        if (baseStats.Count == 0)
+        {
+            SetUnit();
+        }
+        else
+        {
+            unit.mover.maxSpeed = unitSpeed;
+
+        }
     }
 
     #endregion

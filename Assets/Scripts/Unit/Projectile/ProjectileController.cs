@@ -84,7 +84,7 @@ public class ProjectileController : MonoBehaviour
         }
     }
 
-    void TryHitAndDestroy(string reason)
+    void TryHitAndDestroy(string reason = "")
     {
         if (this.TryGetComponent<Animator>(out Animator animator))
         {
@@ -95,7 +95,7 @@ public class ProjectileController : MonoBehaviour
                     i.ReceiveDamage(projectileDamageData);
                     OnHitAction();
                 }
-                //Debug.Log(reason + " + Animator 완료 후 파괴");
+                Debug.Log(reason + " + Animator 완료 후 파괴");
                 Destroy(this.gameObject);
             }
         }

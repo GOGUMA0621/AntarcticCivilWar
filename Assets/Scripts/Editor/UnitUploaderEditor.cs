@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 public class UnitUploaderEditor : EditorWindow
 {
     private string unitId = "2109999";
-    private string name_kr = "Å×½ºÆ® À¯´Ö";
+    private string name_kr = "í…ŒìŠ¤íŠ¸ ìœ ë‹›";
     private string name = "TestUnit";
     private string type = "normal";
     private int tier = 1;
@@ -23,7 +23,7 @@ public class UnitUploaderEditor : EditorWindow
     private string hpRaw = "550,950,1800";
     private string atkRaw = "40,65,110";
 
-    [MenuItem("Tools/ÆÄÀÌ¾îº£ÀÌ½º À¯´Ö ¾÷·Î´õ")]
+    [MenuItem("Tools/íŒŒì´ì–´ë² ì´ìŠ¤ ìœ ë‹› ì—…ë¡œë”")]
     public static void ShowWindow()
     {
         GetWindow<UnitUploaderEditor>("Unit Uploader");
@@ -31,25 +31,25 @@ public class UnitUploaderEditor : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Firestore À¯´Ö µ¥ÀÌÅÍ ÀÛ¼º", EditorStyles.boldLabel);
+        GUILayout.Label("Firestore ìœ ë‹› ë°ì´í„° ì‘ì„±", EditorStyles.boldLabel);
 
         unitId = EditorGUILayout.TextField("Unit ID", unitId);
-        name_kr = EditorGUILayout.TextField("ÀÌ¸§ (ÇÑ±Û)", name_kr);
-        name = EditorGUILayout.TextField("ÀÌ¸§ (¿µ¹®)", name);
-        type = EditorGUILayout.TextField("Å¸ÀÔ", type);
-        tier = EditorGUILayout.IntField("Æ¼¾î", tier);
-        synergyRaw = EditorGUILayout.TextField("½Ã³ÊÁö (½°Ç¥·Î ±¸ºĞ)", synergyRaw);
-        hpRaw = EditorGUILayout.TextField("HP (½°Ç¥·Î ±¸ºĞ)", hpRaw);
-        atkRaw = EditorGUILayout.TextField("ATK (½°Ç¥·Î ±¸ºĞ)", atkRaw);
-        mana = EditorGUILayout.IntField("¸¶³ª", mana);
-        attack_Type = EditorGUILayout.TextField("°ø°İ Å¸ÀÔ", attack_Type);
-        attack_Speed = EditorGUILayout.FloatField("°ø°İ ¼Óµµ", attack_Speed);
-        range = EditorGUILayout.IntField("»ç°Å¸®", range);
-        speed = EditorGUILayout.FloatField("ÀÌµ¿ ¼Óµµ", speed);
-        spawn_Stage = EditorGUILayout.IntField("½ºÆù ½ºÅ×ÀÌÁö", spawn_Stage);
+        name_kr = EditorGUILayout.TextField("ì´ë¦„ (í•œê¸€)", name_kr);
+        name = EditorGUILayout.TextField("ì´ë¦„ (ì˜ë¬¸)", name);
+        type = EditorGUILayout.TextField("íƒ€ì…", type);
+        tier = EditorGUILayout.IntField("í‹°ì–´", tier);
+        synergyRaw = EditorGUILayout.TextField("ì‹œë„ˆì§€ (ì‰¼í‘œë¡œ êµ¬ë¶„)", synergyRaw);
+        hpRaw = EditorGUILayout.TextField("HP (ì‰¼í‘œë¡œ êµ¬ë¶„)", hpRaw);
+        atkRaw = EditorGUILayout.TextField("ATK (ì‰¼í‘œë¡œ êµ¬ë¶„)", atkRaw);
+        mana = EditorGUILayout.IntField("ë§ˆë‚˜", mana);
+        attack_Type = EditorGUILayout.TextField("ê³µê²© íƒ€ì…", attack_Type);
+        attack_Speed = EditorGUILayout.FloatField("ê³µê²© ì†ë„", attack_Speed);
+        range = EditorGUILayout.IntField("ì‚¬ê±°ë¦¬", range);
+        speed = EditorGUILayout.FloatField("ì´ë™ ì†ë„", speed);
+        spawn_Stage = EditorGUILayout.IntField("ìŠ¤í° ìŠ¤í…Œì´ì§€", spawn_Stage);
 
 
-        if (GUILayout.Button("ÆÄÀÌ¾î½ºÅä¾î¿¡ ¾÷·Îµå"))
+        if (GUILayout.Button("íŒŒì´ì–´ìŠ¤í† ì–´ì— ì—…ë¡œë“œ"))
         {
             UploadUnit();
         }
@@ -80,7 +80,7 @@ public class UnitUploaderEditor : EditorWindow
 
         FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
         await db.Collection("units").Document(unitId).SetAsync(unitData);
-        Debug.Log($"Firestore¿¡ À¯´Ö {name_kr} ¾÷·Îµå ¿Ï·á (ID: {unitId})");
+        Debug.Log($"Firestoreì— ìœ ë‹› {name_kr} ì—…ë¡œë“œ ì™„ë£Œ (ID: {unitId})");
     }
 
     private List<int> ParseIntList(string csv)

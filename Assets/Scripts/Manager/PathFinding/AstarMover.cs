@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(UnitController))]
 public class AstarMover : MonoBehaviour
 {
     public static HashSet<Vector2Int> AllUnitGridPositions = new HashSet<Vector2Int>();
@@ -26,12 +27,8 @@ public class AstarMover : MonoBehaviour
 
     // 포메이션 관련
     private Transform formationTarget; // 목표 Transform(타겟)
-    private Vector2Int lastFormationTargetGridPos;
     private Vector3 assignedFormationPosition; // 포메이션 매니저가 할당한 위치
-    private bool useFormation = false;
 
-    private float repathInterval = 0.2f;
-    private float repathTimer = 0f;
     private bool isWaitingForPath = false;
     private float retryTimer = 0f;
     private float retryInterval = 1f;
@@ -44,6 +41,8 @@ public class AstarMover : MonoBehaviour
 
     private FormationManger formationManager => FormationManger.instance;
 
+    public UnitController unitController;
+
     private void OnDisable()
     {
         AllUnitGridPositions.Remove(lastGridPos);
@@ -51,6 +50,7 @@ public class AstarMover : MonoBehaviour
 
     private void Awake()
     {
+        unitController = GetComponent<UnitController>();
         rb = GetComponent<Rigidbody2D>();
         if (gridScanner == null)
         {
@@ -119,9 +119,15 @@ public class AstarMover : MonoBehaviour
         var hits = Physics2D.OverlapCircleAll(transform.position + velocity.normalized * 0.2f, 0.2f, UnitLayerMask);
         foreach (var hit in hits)
         {
+            if (hit.transform == targetTransform)
+            {
+                OnPathEnd();
+                Debug.Log($"타겟과 충돌: {hit.transform.name}");
+                break;
+            }
             if (hit.gameObject != this.gameObject)
             {
-                velocity = Vector3.zero;
+                MoveTo(targetTransform.position);
                 break;
             }
         }
@@ -136,6 +142,7 @@ public class AstarMover : MonoBehaviour
                 velocity = Vector3.zero;
                 if (rb != null) rb.velocity = Vector2.zero;
                 onPathComplete?.Invoke();
+                Debug.Log($"목표 지점에 도달했습니다. {this.gameObject.name + " " + transform.position}");
             }
         }
     }
@@ -146,8 +153,7 @@ public class AstarMover : MonoBehaviour
     public void FollowTarget(Transform target, Action onCompleted = null)
     {
         formationTarget = target;
-        useFormation = true;
-
+        targetTransform = target;
         // 포메이션 매니저에 등록
         FormationManger.instance.RegisterUnit(target, this);
 
@@ -163,20 +169,29 @@ public class AstarMover : MonoBehaviour
     /// </summary>
     public void ClearFormation()
     {
-        useFormation = false;
         formationTarget = null;
     }
 
     /// <summary>
     /// 목적지(월드 좌표)만 받아 이동 시작
     /// </summary>
-    public void MoveTo(Vector3 worldDestination, Action onComplete = null)
+    public void MoveTo(Vector3 worldDestination, Action onComplete = null, bool clearAction = false)
     {
+        // 목적지가 현재와 거의 같으면 무시
+        if (worldPath.Count > 0 && Vector3.Distance(worldPath[^1], worldDestination) < 0.1f)
+            return;
+
         isMoving = false;
         worldPath.Clear();
         currentIndex = 0;
-        // velocity = Vector3.zero;
-        onPathComplete = onComplete;
+        if( onComplete == null && clearAction)
+        {
+            onPathComplete = null; // 기존 콜백 제거
+        }
+        else if (onComplete != null)
+        {
+           onPathComplete = onComplete; // 새로운 콜백 설정
+        }
 
         AstarPathFinding.instance.RequestPath(
             gridScanner.WorldToGrid(this.transform.position),
@@ -188,6 +203,7 @@ public class AstarMover : MonoBehaviour
 
     private void OnPathFound(List<Vector2Int> path)
     {
+        Debug.Log($"[OnPathFound] {gameObject.name} 경로 개수: {(path == null ? -1 : path.Count)}");
         if (path == null || path.Count == 0)
         {
             isMoving = false;
@@ -200,13 +216,19 @@ public class AstarMover : MonoBehaviour
         worldPath.Clear();
         foreach (var gridPos in path)
         {
-            // 그리드 좌표를 월드 좌표로 변환하여 경로에 추가
             worldPath.Add(gridScanner.GridToWorld(gridPos));
         }
-        // Debug.Log($"목표까지 경로 : {worldPath.Count}개");
         currentIndex = 0;
         isMoving = true;
+    }
 
+    private void OnPathEnd()
+    {
+        isMoving = false;
+        velocity = Vector3.zero;
+        if (rb != null) rb.velocity = Vector2.zero;
+        onPathComplete?.Invoke();
+        onPathComplete = null; // 콜백 초기화
     }
 
     // 타겟을 transform으로 지정
@@ -222,7 +244,6 @@ public class AstarMover : MonoBehaviour
     {
         targetTransform = null;
         lastTargetGridPos = Vector2Int.zero;
-        repathTimer = 0f;
         isMoving = false;
         worldPath.Clear();
         currentIndex = 0;
@@ -310,6 +331,11 @@ public class AstarMover : MonoBehaviour
         int dx = Mathf.Abs(currentGridPos.x - targetGridPos.x);
         int dy = Mathf.Abs(currentGridPos.y - targetGridPos.y);
         return Mathf.Max(dx, dy); // 대각선 포함 최소 칸 수
+    }
+
+    public float GetAttackRange()
+    {
+        return unitController.unitAttackDistance;
     }
 
 

@@ -15,7 +15,7 @@ public class WarriorSynergy : MonoBehaviour, ISynergy
     public Sprite synergyIcon => Resources.Load<Sprite>($"Synergy/{Name}");
     public int currentTier => lastTier;
 
-    public int[] tierThresholds => new int[] { 3, 6, 10, 13, 15 };
+    public int[] tierThresholds => new int[] { 2, 5, 8, 10};
 
     private string synergyTag;
 
@@ -69,14 +69,7 @@ public class WarriorSynergy : MonoBehaviour, ISynergy
                 unit.AddModifierStats(new List<StatModifier>
                 {
                     new StatModifier(synergyTag, StatType.Endurance, 0.1f, ModifierMethod.Additive),
-                    new StatModifier(synergyTag, StatType.MaxHealth, 200f, ModifierMethod.Additive)
-                });
-                break;
-            case 5:
-                unit.AddModifierStats(new List<StatModifier>
-                {
-                    new StatModifier(synergyTag, StatType.Endurance, 0.15f, ModifierMethod.Additive),
-                    new StatModifier(synergyTag, StatType.MaxHealth, 300f, ModifierMethod.Additive)
+                    new StatModifier(synergyTag, StatType.MaxHealth, 250f, ModifierMethod.Additive)
                 });
                 break;
         }

@@ -18,7 +18,9 @@ public enum StatType
 public enum ModifierMethod
 {
     Additive,
-    Multiplicative
+    Multiplicative,
+    AdditivePercent,
+    MultiplicativePercent,
 }
 
 public class StatModifier

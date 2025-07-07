@@ -33,9 +33,7 @@ public class StatusEffectUI : MonoBehaviour
     private void Start()
     {
         statusEffectManagerRef = GetComponentInParent<StatusEffectManager>();
-        statusEffectManagerRef.OnStatusEffectApplied += OnActiveStatus;
-        statusEffectManagerRef.OnStatusEffectUpdated += OnUpdateStatusEffect;
-        statusEffectManagerRef.OnStatusEffectRemoved += OnDeactiveStatusEffect;
+
 
         statusEffectToIconDict = new Dictionary<StatusEffectSO, StatusEffectIconCache>();
     }

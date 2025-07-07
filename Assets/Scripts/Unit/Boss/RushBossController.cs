@@ -31,7 +31,7 @@ public class RushBossController : BossController
         base.Update();
         if (CanSkill() && !isSkillActive)
         {
-            Debug.Log("½ºÅ³ »ç¿ë °¡´É");
+            Debug.Log("ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             isSkillActive = true;
             UseSkill();
         }
@@ -92,7 +92,7 @@ public class RushBossController : BossController
         }
     }
 
-    #region ½ºÅ³
+    #region ï¿½ï¿½Å³
 
     protected override bool CanSkill()
     {
@@ -107,14 +107,14 @@ public class RushBossController : BossController
     public void AdvanceForward()
     {
         //Debug.Log($"AdvanceForward called. isTriggered: {isTriggered}, coroutine: {coroutine != null}");
-        if (isTriggered || coroutine != null) return; // ÀÌ¹Ì ´ë½Ã ÁßÀÌ¸é ´ë½Ã¸¦ ÇÏÁö ¾ÊÀ½
+        if (isTriggered || coroutine != null) return; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         isTriggered = true;
         coroutine = StartCoroutine(DashForward(3f));
     }
 
     private IEnumerator DashForward(float distance)
     {
-        if (isDashRunning) yield break; // ÀÌ¹Ì ½ÇÇà ÁßÀÌ¸é Á¾·á
+        if (isDashRunning) yield break; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
         isDashRunning = true;
 
         try
@@ -132,7 +132,7 @@ public class RushBossController : BossController
                 .SetEase(Ease.Linear)
                 .OnComplete(() =>
                 {
-                    //Debug.Log("´ë½Ã ¿Ï·á");
+                    //Debug.Log("ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
                     ResumeAnimation();
                 });
         }
@@ -140,7 +140,7 @@ public class RushBossController : BossController
         {
             isDashRunning = false;
             isTriggered = false;
-            coroutine = null; // ÄÚ·çÆ¾ Á¾·á ÈÄ null·Î ¼³Á¤
+            coroutine = null; // ï¿½Ú·ï¿½Æ¾ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ nullï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
     }
 
@@ -148,7 +148,7 @@ public class RushBossController : BossController
     {
         PauseAnimation();
         //Debug.Log($"StartJump called. isTriggered: {isTriggered}");
-        if (isTriggered) return; // ÀÌ¹Ì ´ë½Ã ÁßÀÌ¸é ´ë½Ã¸¦ ÇÏÁö ¾ÊÀ½
+        if (isTriggered) return; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         isTriggered = true;
 
         coroutine = StartCoroutine(JumpStart());
@@ -162,7 +162,7 @@ public class RushBossController : BossController
         StopMovement();
 
         float jumpHeight = 3f;
-        float jumpDuration = 0.7f; // »ó½Â ½Ã°£
+        float jumpDuration = 0.7f; // ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
         Vector3 target = transform.position + new Vector3(0, 0, -jumpHeight);
 
         Debug.Log($"Before DOTween: {transform.position.z}");
@@ -171,15 +171,15 @@ public class RushBossController : BossController
             .OnComplete(() =>
             {
                 //Debug.Log(transform.position.z);
-                isTriggered = false; // ¿©±â¼­¸¸ ÃÊ±âÈ­
-                coroutine = null; // ÄÚ·çÆ¾ Á¾·á ÈÄ null·Î ¼³Á¤
+                isTriggered = false; // ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ ï¿½Ê±ï¿½È­
+                coroutine = null; // ï¿½Ú·ï¿½Æ¾ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ nullï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 ResumeAnimation();
             });
         yield return null;
     }
     public void StartFall()
     {
-        if (isTriggered || coroutine != null) return; // ÀÌ¹Ì ´ë½Ã ÁßÀÌ¸é ´ë½Ã¸¦ ÇÏÁö ¾ÊÀ½
+        if (isTriggered || coroutine != null) return; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         isTriggered = true;
 
         coroutine = StartCoroutine(FallStart());
@@ -195,10 +195,10 @@ public class RushBossController : BossController
             float fallDuration = 0.7f;
 
             Vector3 target = new Vector3(transform.position.x, transform.position.y, 0f);
-            transform.DOLocalMoveZ(target.z, fallDuration) // ´Ù½Ã ¿ø·¡ Z·Î
+            transform.DOLocalMoveZ(target.z, fallDuration) // ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ Zï¿½ï¿½
                 .SetEase(Ease.InQuad).OnComplete(() =>
                 { 
-                    //Debug.Log("Á¡ÇÁ ¿Ï·á");
+                    //Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
                     ResumeAnimation();
                 });
 
@@ -207,7 +207,7 @@ public class RushBossController : BossController
         finally
         {
             isTriggered = false;
-            coroutine = null; // ÄÚ·çÆ¾ Á¾·á ÈÄ null·Î ¼³Á¤
+            coroutine = null; // ï¿½Ú·ï¿½Æ¾ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ nullï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
     }
 
@@ -225,14 +225,14 @@ public class RushBossController : BossController
         {
             if (hit.TryGetComponent(out IDamageAble target) && hit.gameObject.tag != gameObject.tag)
             {
-                // ³Ë¹é
+                // ï¿½Ë¹ï¿½
                 if (hit.TryGetComponent(out UnitController targetController))
                 {
                     Vector2 knockDir = ((Vector2)hit.transform.position - center).normalized;
                     targetController.UnitAddForce(knockDir * knockbackForce, ForceMode2D.Impulse);
                 }
 
-                // ÇÇÇØ + ½ºÅÏ È¿°ú
+                // ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½
                 target.ReceiveDamage(new DamageData(damage, StatusEffectType.Stun, stunDuration));
             }
         }
@@ -242,23 +242,23 @@ public class RushBossController : BossController
     {
         StartMovement();
         unit.detectTarget.targetToAttack = null;
-        unit.detectTarget.SortClosetTarget();
+        unit.detectTarget.SortClosestTarget();
         if (unit.detectTarget.targetToAttack != null)
         {
             RushAttack(new DamageData(100f, StatusEffectType.Stun, 100));
         }
-        StartCoroutine(Rush()); // ¼­¹øÆ® ¼ÒÈ¯
+        StartCoroutine(Rush()); // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯
     }
 
     private IEnumerator Rush()
     {
         yield return new WaitForSeconds(0.3f);
-        InstantiateServant(4); // ¼­¹øÆ® ¼ÒÈ¯
+        InstantiateServant(4); // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯
     }
     
     public void DogFightStart()
     {
-        if (isTriggered || coroutine != null) return; // ÀÌ¹Ì ´ë½Ã ÁßÀÌ¸é ´ë½Ã¸¦ ÇÏÁö ¾ÊÀ½
+        if (isTriggered || coroutine != null) return; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         isTriggered = true;
         PauseAnimation();
         coroutine = StartCoroutine(DogFightStartCoroutine(4f));
@@ -281,9 +281,9 @@ public class RushBossController : BossController
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
-                Debug.Log("´ë½Ã ½ÃÀÛ ¿Ï·á");
+                Debug.Log("ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
                 isTriggered = false;
-                coroutine = null; // ÄÚ·çÆ¾ Á¾·á ÈÄ null·Î ¼³Á¤
+                coroutine = null; // ï¿½Ú·ï¿½Æ¾ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ nullï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 //Debug.Log(isTriggered);
                 //SetUntarget();
                 InstantiateServant(5);
@@ -297,7 +297,7 @@ public class RushBossController : BossController
 
     public void DogFightEnd()
     {
-        if (isTriggered || coroutine != null) return; // ÀÌ¹Ì ´ë½Ã ÁßÀÌ¸é ´ë½Ã¸¦ ÇÏÁö ¾ÊÀ½
+        if (isTriggered || coroutine != null) return; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Debug.Log("DogFightEnd");
         isTriggered = true;
 
@@ -322,9 +322,9 @@ public class RushBossController : BossController
             .SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
-                Debug.Log("´ë½Ã ¿Ï·á");
+                Debug.Log("ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
                 isTriggered = false;
-                coroutine = null; // ÄÚ·çÆ¾ Á¾·á ÈÄ null·Î ¼³Á¤
+                coroutine = null; // ï¿½Ú·ï¿½Æ¾ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ nullï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 disableFlip = false;
                 ResumeAnimation();
                 unit.DOFlip();
@@ -356,8 +356,8 @@ public class RushBossController : BossController
             servant.tag = "Royal";
             servant.GetComponent<Unit>().originPrefab = servantPrefab;
             yield return new WaitForFixedUpdate();
-            servant.GetComponent<UnitController>().AddModifierStat(new StatModifier("Æë½ºÅä", StatType.AttackDamage, 1.3f, ModifierMethod.Multiplicative));
-            servant.GetComponent<UnitController>().AddModifierStat(new StatModifier("Æë½ºÅä", StatType.MoveSpeed, 1.5f, ModifierMethod.Multiplicative));
+            servant.GetComponent<UnitController>().AddModifierStat(new StatModifier("ï¿½ë½ºï¿½ï¿½", StatType.AttackDamage, 1.3f, ModifierMethod.Multiplicative));
+            servant.GetComponent<UnitController>().AddModifierStat(new StatModifier("ï¿½ë½ºï¿½ï¿½", StatType.MoveSpeed, 1.5f, ModifierMethod.Multiplicative));
         }
     }
 

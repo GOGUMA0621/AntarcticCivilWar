@@ -17,16 +17,16 @@ public abstract class StatusEffectSO : ScriptableObject
 {
     public StatusEffectType statusEffectType;
 
-    [Header("ºôµå ¾÷ ¼¼ÆÃ")]
+    [Header("ë¹Œë“œ ì—… ì„¸íŒ…")]
     public float activationThreshold;
     public float thresholdReductionMultiplier = 1f;
     public float thresholdReductionEverySecond = 1f;
 
-    [Header("È¿°ú ¼¼ÆÃ")]
+    [Header("íš¨ê³¼ ì„¸íŒ…")]
     public float activeDuration;
     public float tickInterval = .25f;
 
-    [Header("½Ã°¢Àû È¿°ú")]
+    [Header("ì‹œê°ì  íš¨ê³¼")]
     public GameObject visualEffectPrefab;
     public Sprite iconSprite;
 

@@ -27,6 +27,11 @@ public class AstarPathfinder : MonoBehaviour, IGridScanner
     [HideInInspector]
     public Vector2 boundsSize;
 
+    public Vector3 origin => center;
+
+    public float cellSize => nodeSize;
+
+
     private void OnEnable()
     {
         Scan();

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(IGridScanner))]
@@ -17,9 +18,6 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
 
     private Dictionary<Transform, FormationGroup> formationGroups = new();
     private Dictionary<Transform, Vector2Int> lastTargetGrid = new();
-    private Dictionary<Transform, float> stopTimer = new();
-    private float stopThreshold = 0.05f; // 멈췄다고 판단할 최소 이동 거리
-    private float stopTime = 0.5f;       // 멈춘 상태로 간주할 시간(초)
 
     protected override void Awake()
     {
@@ -34,25 +32,10 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
             Transform target = group.targetTransform;
             Vector2Int currentGrid = gridScanner.WorldToGrid(target.position);
 
-            // 이전 위치와 거리 계산
-            if (!lastTargetGrid.TryGetValue(target, out var prevGrid))
-                prevGrid = currentGrid;
-
-            float dist = Vector3.Distance(target.position, gridScanner.GridToWorld(currentGrid));
-            if (dist < stopThreshold)
-                stopTimer[target] = stopTimer.TryGetValue(target, out var t) ? t + Time.deltaTime : Time.deltaTime;
-            else
-                stopTimer[target] = 0f;
-
-            // "충분히 멈췄다"고 판단되면 타일 위치 비교
-            if (stopTimer[target] >= stopTime)
+            if (!lastTargetGrid.TryGetValue(target, out var prevGrid) || currentGrid != prevGrid)
             {
-                if (currentGrid != prevGrid)
-                {
-                    lastTargetGrid[target] = currentGrid;
-                    stopTimer[target] = 0f;
-                    RequestFormationUpdate(target, group.leader);
-                }
+                lastTargetGrid[target] = currentGrid;
+                RequestFormationUpdate(target, group.leader);
             }
         }
     }
@@ -111,6 +94,7 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
 
         Vector2Int centerGrid = gridScanner.WorldToGrid(targetTransform.position);
 
+        // 목표 주변에서 유닛 수만큼의 인접 타일을 BFS로 탐색
         var assignedGridPositions = new List<Vector2Int>();
         var visited = new HashSet<Vector2Int>();
         var queue = new Queue<Vector2Int>();
@@ -122,7 +106,11 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
             var current = queue.Dequeue();
             var currentNode = gridScanner.GetNode(current);
             if (gridScanner.HasNode(current) && currentNode.isWalkable)
-                assignedGridPositions.Add(current);
+            {
+                // 이미 다른 유닛이 목표로 하는 타일은 제외
+                if (!assignedGridPositions.Contains(current))
+                    assignedGridPositions.Add(current);
+            }
 
             foreach (var neighbor in gridScanner.GetNeighbors(currentNode))
             {
@@ -142,13 +130,6 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
         foreach (var gridPos in assignedGridPositions)
             group.assignedPositions.Add(gridScanner.GridToWorld(gridPos));
 
-        for (int i = 0; i < units.Count; i++)
-        {
-            if (i < group.assignedPositions.Count)
-                units[i].MoveTo(group.assignedPositions[i]);
-            else
-                units[i].MoveTo(targetTransform.position);
-        }
     }
 
     /// <summary>
@@ -159,12 +140,53 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
         if (!formationGroups.ContainsKey(targetTransform))
             return targetTransform.position;
 
+        // 목표가 유닛일 경우
+        if (targetTransform.TryGetComponent<UnitController>(out var targetUnit))
+        {
+            float attackRange = unit.GetAttackRange();
+
+            if (attackRange <= 1.01f) // 근접 유닛
+            {
+                // 목표 주변 8방향 좌표 중 이동 가능한 곳 반환
+                Vector2Int center = gridScanner.WorldToGrid(targetTransform.position);
+                foreach (var offset in GetNeighborOffsets())
+                {
+                    Vector2Int neighbor = center + offset;
+                    var node = gridScanner.GetNode(neighbor);
+                    if (node != null && node.isWalkable)
+                    {
+                        Debug.Log($"근접 유닛이 이동 가능한 위치: {gridScanner.GridToWorld(neighbor)}");
+                        return gridScanner.GridToWorld(neighbor);
+                    }
+                }
+                // 못 찾으면 목표 위치 반환
+                Debug.LogWarning("근접 유닛이 이동 가능한 위치를 찾지 못했습니다. 기본 위치 반환.");
+                return targetTransform.position;
+            }
+            else
+            {
+                // 원거리 유닛은 기존 방식
+                Vector3 dir = (targetTransform.position - unit.transform.position).normalized;
+                Vector3 attackPos = targetTransform.position - dir * attackRange;
+                return attackPos;
+            }
+        }
+
+        // 기존 포메이션 방식
         var group = formationGroups[targetTransform];
         int idx = group.units.IndexOf(unit);
         if (idx >= 0 && idx < group.assignedPositions.Count)
             return group.assignedPositions[idx];
 
-        // 할당된 좌표가 없으면 타겟 위치 반환
         return targetTransform.position;
     }
+
+    // 8방향 오프셋
+    private static readonly Vector2Int[] neighborOffsets = new Vector2Int[]
+    {
+        new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1),
+        new Vector2Int(1, 1), new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(-1, -1)
+    };
+
+    private IEnumerable<Vector2Int> GetNeighborOffsets() => neighborOffsets;
 }

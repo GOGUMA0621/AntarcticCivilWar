@@ -73,17 +73,17 @@ public class RushBossAttackState : IUnitState
         var animator = boss.unit.animator;
         var target = boss.unit.detectTarget.targetToAttack;
 
-        // ¾Ö´Ï¸ÞÀÌ¼Ç 1 ·çÇÁ Á¾·áµÇ¸é ´ÙÀ½ »óÅÂ·Î
+        // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ 1 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½
         if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
         {
             boss.GoIdle();
             return;
         }
 
-        // Å¸°ÙÀÌ nullÀÌ°Å³ª Á×¾úÀ¸¸é »óÅÂ ÃÊ±âÈ­
+        // Å¸ï¿½ï¿½ï¿½ï¿½ nullï¿½Ì°Å³ï¿½ ï¿½×¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
         if (target == null || target.TryGetComponent<IDamageAble>(out var damageable) && damageable.IsDestroyed())
         {
-            boss.unit.detectTarget.SortClosetTarget();
+            boss.unit.detectTarget.SortClosestTarget();
             target = boss.unit.detectTarget.targetToAttack;
 
             if (target != null)
@@ -93,17 +93,17 @@ public class RushBossAttackState : IUnitState
             return;
         }
 
-        // Å¸°Ù°úÀÇ °Å¸® Ã¼Å©
+        // Å¸ï¿½Ù°ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ Ã¼Å©
         float distance = Vector3.Distance(boss.transform.position, target.position);
 
-        // °Å¸®°¡ °ø°Ý ¹üÀ§º¸´Ù ¸Ö¸é ÃßÀû »óÅÂ·Î ÀüÈ¯
+        // ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½È¯
         if (boss.RemainedDistance > boss.unitAttackDistance)
         {
             boss.GoFollow();
             return;
         }
 
-        // °¡±î¿ì¸é ÀÌµ¿ ¸ØÃã »óÅÂ À¯Áö
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         boss.StopMovement();
     }
 
@@ -179,7 +179,7 @@ public class RushBossManaSkillState : IUnitState
         //Debug.Log(boss.unit.animator.GetCurrentAnimatorStateInfo(0).normalizedTime.ToString());
         if (boss.unit.animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
         {
-            Debug.Log("º¸½º ½ºÅ³ »ç¿ë");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½");
             boss.GoIdle();
         }
     }
