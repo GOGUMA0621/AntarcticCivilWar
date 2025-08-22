@@ -66,7 +66,7 @@ public class AstarMover : MonoBehaviour
     {
         if (!canMove)
         {
-            if (rb != null) rb.velocity = Vector2.zero;
+            if (rb != null) rb.linearVelocity = Vector2.zero;
             return;
         }
 
@@ -93,7 +93,7 @@ public class AstarMover : MonoBehaviour
         // 이하 기존 이동 코드
         if (!isMoving || worldPath == null || currentIndex >= worldPath.Count)
         {
-            if (rb != null) rb.velocity = Vector2.zero;
+            if (rb != null) rb.linearVelocity = Vector2.zero;
             // Debug.Log("이동 중이 아닙니다.");
             return;
         }
@@ -113,7 +113,7 @@ public class AstarMover : MonoBehaviour
 
         // Rigidbody2D에 velocity 적용 (z축 무시)
         if (rb != null)
-            rb.velocity = new Vector2(velocity.x, velocity.y);
+            rb.linearVelocity = new Vector2(velocity.x, velocity.y);
 
         // 이동 중 앞에 유닛이 있으면 속도 줄이기/멈추기
         var hits = Physics2D.OverlapCircleAll(transform.position + velocity.normalized * 0.2f, 0.2f, UnitLayerMask);
@@ -140,7 +140,7 @@ public class AstarMover : MonoBehaviour
             {
                 isMoving = false;
                 velocity = Vector3.zero;
-                if (rb != null) rb.velocity = Vector2.zero;
+                if (rb != null) rb.linearVelocity = Vector2.zero;
                 onPathComplete?.Invoke();
                 Debug.Log($"목표 지점에 도달했습니다. {this.gameObject.name + " " + transform.position}");
             }
@@ -226,7 +226,7 @@ public class AstarMover : MonoBehaviour
     {
         isMoving = false;
         velocity = Vector3.zero;
-        if (rb != null) rb.velocity = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
         onPathComplete?.Invoke();
         onPathComplete = null; // 콜백 초기화
     }
@@ -248,7 +248,7 @@ public class AstarMover : MonoBehaviour
         worldPath.Clear();
         currentIndex = 0;
         velocity = Vector3.zero;
-        if (rb != null) rb.velocity = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
     }
 
 
@@ -274,7 +274,7 @@ public class AstarMover : MonoBehaviour
         canMove = value;
         if( !canMove && rb != null)
         {
-            rb.velocity = Vector2.zero; // 이동 불가 시 속도 초기화
+            rb.linearVelocity = Vector2.zero; // 이동 불가 시 속도 초기화
         }
     }
 

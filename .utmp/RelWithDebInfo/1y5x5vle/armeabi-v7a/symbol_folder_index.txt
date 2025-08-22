@@ -1,0 +1,1 @@
+E:\Github\AntarcticCivilWar\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\build\intermediates\cxx\RelWithDebInfo\1y5x5vle\obj\armeabi-v7a

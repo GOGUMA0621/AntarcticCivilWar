@@ -16,4 +16,6 @@ EditorBuildSettings:
     guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 0f1c132b94bec3d459a10e4d85c42da2, type: 2}
+    com.unity.dt.app-ui: {fileID: 11400000, guid: 99f9c9493070a9d4c979a8fec7c5a8d3, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: b5da54e9e591140419e7d1ec7b8a2a5f, type: 2}
+  m_UseUCBPForAssetBundles: 0

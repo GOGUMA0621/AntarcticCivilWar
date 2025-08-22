@@ -163,7 +163,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         unitPassiveSkill = GetComponent<IPasseiveSkillAttack>();
         unit.rb.isKinematic = true;
         unit.rb.gravityScale = 0f;
-        unit.rb.velocity = Vector2.zero;
+        unit.rb.linearVelocity = Vector2.zero;
         statusEffectManager = GetComponent<StatusEffectManager>();
         _lastPosition = transform.position;
 
@@ -172,7 +172,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     private void Update()
     {
-        unit.animator.SetFloat("speed", unit.rb.velocity.magnitude);
+        unit.animator.SetFloat("speed", unit.rb.linearVelocity.magnitude);
         currentState?.Update();
 
     }
@@ -258,7 +258,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         currentHP = maxHP;
         currentMP = 0;
         isUnitDie = false;
-        unit.rb.velocity = Vector2.zero;
+        unit.rb.linearVelocity = Vector2.zero;
         unit.capsuleCollider.enabled = true;
     }
 
@@ -497,7 +497,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         this.tag = "Unit";
         unit.capsuleCollider.enabled = true;
-        unit.rb.velocity = Vector2.zero;
+        unit.rb.linearVelocity = Vector2.zero;
         unit.detectTarget.ClearTarget();
         isUnitDie = false;
         currentHP = maxHP;
@@ -580,7 +580,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
                 unit.rb.AddForce(direction * amount, ForceMode2D.Impulse);
             }
             yield return new WaitForSeconds(0.5f);
-            unit.rb.velocity = Vector2.zero;
+            unit.rb.linearVelocity = Vector2.zero;
         }
     }
 
@@ -606,7 +606,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         {
             unit.rb.AddForce(amount, forcemod);
             yield return new WaitForSeconds(0.5f);
-            unit.rb.velocity = Vector2.zero;
+            unit.rb.linearVelocity = Vector2.zero;
         }
     }
 
