@@ -5,9 +5,9 @@ using UnityEngine.InputSystem;
 public class InputManager : SingleTonBehaviour<InputManager>
 {
     private Vector2 moveDirection = Vector2.zero;
-    private WorldDragController dragController = new WorldDragController();
     private Vector2 pointerPosition = Vector2.zero;
     public PlayerInput playerInput;
+    public WorldDragController dragController = new WorldDragController();
 
     [HideInInspector] public bool callTriggerd = false;
 
@@ -15,52 +15,30 @@ public class InputManager : SingleTonBehaviour<InputManager>
     private bool interActionPressed;
     private bool callPressed;
     private bool revivePressed;
-
-    private bool isPressing = false;
-    private bool isDragging = false;
-    private float pressStartTime = 0f;
     [SerializeField] private float holdThreshold = 0.3f;
 
     protected override void Awake()
     {
         base.Awake();
         playerInput = GetComponent<PlayerInput>();
+        dragController.holdThreshold = this.holdThreshold;
     }
 
     private void Update()
     {
-        if (isPressing && !isDragging)
-        {
-            if (Time.time - pressStartTime >= holdThreshold)
-            {
-                isDragging = true;
-            }
-        }
-
-        if (isDragging)
-        {
-            dragController.Drag();
-        }
+        dragController.OnUpdate();
     }
 
     public void OnClick(InputAction.CallbackContext context)
     {
         if (context.started)
         {
-            dragController.BeginDrag();
+           dragController.OnPointerDown();
 
-            isPressing = true;
-            pressStartTime = Time.time;
         }
         else if (context.canceled)
         {
-            if (isDragging)
-            {
-                dragController.EndDrag();
-            }
-
-            isPressing = false;
-            isDragging = false;
+            dragController.OnPointerUp();
         }
     }
 

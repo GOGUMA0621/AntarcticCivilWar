@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitSlot : MonoBehaviour
+public class UnitSlot : MonoBehaviour, IBeginWorldDragHandler, IEndWorldDragHandler
 {
     [SerializeField] public Image icon;
     [SerializeField] private GameObject unitPrefab;
@@ -66,5 +65,15 @@ public class UnitSlot : MonoBehaviour
         icon.enabled = false;
         dragHandler.unitPrefab = null;
         dragHandler.enabled = false;
+    }
+
+    public void OnEndDrag(DragEventData data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnBeginDrag(DragEventData data)
+    {
+        throw new NotImplementedException();
     }
 }

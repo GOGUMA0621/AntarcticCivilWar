@@ -9,8 +9,8 @@ public class PlacementGridManager : MonoBehaviour
     public float cellSize = 1f; // 한 칸 크기 
     public Vector3 origin = Vector3.zero;
 
-    private Unit[,] grid;       // 유닛 배치 상태 저장
-    private Node[,] nodes; // 그리드 노드 상태 저장
+    private Unit[,] grid;   // 유닛 배치 상태 저장
+    private Node[,] nodes;  // 그리드 노드 상태 저장
 
     void Awake()
     {

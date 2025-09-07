@@ -9,7 +9,7 @@ public class UnitUploaderEditor : EditorWindow
 {
     private string unitId = "2109999";
     private string name_kr = "테스트 유닛";
-    private string name = "TestUnit";
+    private string name_en = "TestUnit";
     private string type = "normal";
     private int tier = 1;
     private int mana = 0;

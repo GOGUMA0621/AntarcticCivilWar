@@ -29,24 +29,24 @@ public class PlayerController : MonoBehaviour
     {
 
         moveInput = InputManager.instance.GetMoveDirection() * playerSpeed;
-        rb.linearVelocity = new Vector2 (moveInput.x, moveInput.y);
+        rb.velocity = new Vector2 (moveInput.x, moveInput.y);
 
         playerPos = rb.position;
 
         FlipAniamtion();
-        animator.SetFloat("Speed", rb.linearVelocity.magnitude);
+        animator.SetFloat("Speed", rb.velocity.magnitude);
 
         if(InputManager.instance.GetCallPressed())
         {
             if(InputManager.instance.callTriggerd)
             {
-                Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
+                Debug.Log("Áý°á ÇØÁ¦");
                 InputManager.instance.callTriggerd = false;
                 UnitManager.instance.ChangeStateAllayList("IdleState");
             }
             else if(!InputManager.instance.callTriggerd)
             {
-                Debug.Log("ï¿½ï¿½ï¿½ï¿½");
+                Debug.Log("Áý°á");
                 InputManager.instance.callTriggerd = true;
                 UnitManager.instance.ChangeStateAllayList("CallState");
             }
@@ -64,11 +64,11 @@ public class PlayerController : MonoBehaviour
 
         if (movementDirection > 0)
         {
-            spriteRenderer.flipX = false; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï¸ï¿½ ï¿½âº» ï¿½ï¿½ï¿½ï¿½
+            spriteRenderer.flipX = false; // ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿ÇÏ¸é ±âº» »óÅÂ
         }
         else if (movementDirection < 0)
         {
-            spriteRenderer.flipX = true; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+            spriteRenderer.flipX = true; // ¿ÞÂÊÀ¸·Î ÀÌµ¿ÇÏ¸é ½ºÇÁ¶óÀÌÆ® ¹ÝÀü
         }
 
         lastPosition = currentPosition;

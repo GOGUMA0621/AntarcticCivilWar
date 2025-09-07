@@ -57,11 +57,22 @@ public class UnitGridDragController : MonoBehaviour, IBeginWorldDragHandler, IWo
         unit.unit.rb.simulated = true;
         worldPos.z = 0;
 
+        RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero, 0f);
+        if (hit.collider != null)
+        {
+            var dropHandler = hit.collider.GetComponent<IWorldDropHandler>();
+            if (dropHandler != null)
+            {
+                return; // 드롭이 성공했으므로 더 이상 진행하지 않음
+            }
+        }
+
         if (gridManager != null)
         {
             Vector3 origin = gridManager.origin;
             float cellSize = gridManager.cellSize;
             Vector2Int gridPos = GridUtility.WorldToGrid(worldPos, origin, cellSize);
+
             if (gridManager.CanPlace(gridPos))
             {
                 transform.position = GridUtility.GridToWorld(gridPos, origin, cellSize);

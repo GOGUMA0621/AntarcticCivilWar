@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "AntarcticCivilWar.sln"
+    "dotnet.defaultSolution": "AntarcticCivilWar.sln",
+    "dotnet.preferCSharpExtension": true
 }
