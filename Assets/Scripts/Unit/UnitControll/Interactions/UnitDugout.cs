@@ -9,7 +9,7 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
 
     public void OnDrop(DragEventData data)
     {
-        Debug.Log("OnDrop 호출됨 - 유닛이 참호에 드롭되었습니다.");
+        Debug.Log("OnDrop 호출됨 - 유닛이 참호에 드롭되었습니다." + this.transform.name);
         var unit = data.source.GetComponent<UnitController>();
 
         if (unitInDugout != null)
@@ -19,7 +19,7 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
             unitInDugout.transform.position = unit.transform.position; // 기존 유닛을 드롭한 위치로 이동
 
             // 기존 유닛을 드래그 상태로 전환
-            var dragController = unitInDugout.GetComponent<UnitGridDragController>();
+            var dragController = unitInDugout.GetComponent<UnitDragController>();
             if (dragController != null)
             {
                 DragEventData newDragData = new DragEventData
@@ -41,8 +41,8 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
     public void SetUnitInDugout(UnitController unit)
     {
         unitInDugout = unit;
-        unit.transform.SetParent(this.transform); // 부모를 참호로 지정
-        unit.transform.position = this.transform.position;
+        unit.transform.SetParent(this.transform, false);
+        unit.transform.localPosition = Vector3.zero; // 참호 중앙에 위치
         unit.unit.rb.simulated = false;
     }
 
@@ -56,5 +56,15 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
     void Update()
     {
         
+    }
+
+    public void OnDragSourceRemoved(DragEventData data)
+    {
+         if (unitInDugout != null)
+        {
+            unitInDugout.unit.rb.simulated = true;
+            unitInDugout.transform.SetParent(null);
+            unitInDugout = null;
+        }
     }
 }

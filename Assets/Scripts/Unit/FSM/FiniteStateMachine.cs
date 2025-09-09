@@ -11,12 +11,12 @@ public interface IUnitState
 public class UnitPlaceState : IUnitState
 {
     private UnitController unitController;
-    private UnitGridDragController dragController;
+    private UnitDragController dragController;
 
     public void Enter(UnitController unitController)
     {
         this.unitController = unitController;
-        dragController = unitController.GetComponent<UnitGridDragController>();
+        dragController = unitController.GetComponent<UnitDragController>();
         dragController.canDrag = true;
         unitController.SetAnimation("IdleState");
         unitController.StopMovement();

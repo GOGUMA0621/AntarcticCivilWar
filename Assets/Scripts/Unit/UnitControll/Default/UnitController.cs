@@ -134,8 +134,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     protected IUnitState currentState;
     private IUnitState manaSkillState;
 
-    
-
     #region 이벤트 관리
 
     private void HandleAttackEvent(Transform tr)
@@ -166,6 +164,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         unit.rb.velocity = Vector2.zero;
         statusEffectManager = GetComponent<StatusEffectManager>();
         _lastPosition = transform.position;
+        GoPlace();
 
         manaSkillState = GetManaSkillState();
     }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class UnitGridDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldDragHandler, IEndWorldDragHandler
+public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldDragHandler, IEndWorldDragHandler
 {
     private Vector3 startPosition;
     private PlacementGridManager gridManager;
@@ -34,6 +34,31 @@ public class UnitGridDragController : MonoBehaviour, IBeginWorldDragHandler, IWo
         unit.unit.rb.simulated = false;
         startPosition = this.transform.position;
         if (unit == null) return;
+
+         // === 같은 좌표에 있는 드롭핸들러 접근 및 메소드 실행 ===
+        int droppableLayer = LayerMask.NameToLayer("Droppable");
+        int mask = 1 << droppableLayer;
+        Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.GetPointerScreenPosition());
+        RaycastHit2D hit = Physics2D.GetRayIntersection(ray, 10f, mask);
+        if (hit.collider != null)
+        {
+            var dropHandler = hit.collider.GetComponent<IWorldDropHandler>();
+            if (dropHandler != null)
+            {
+                Debug.Log($"드래그 시작 위치에 {hit.collider.name} 발견");
+                // 원하는 메소드 호출 (예시)
+                dropHandler.OnDragSourceRemoved(new DragEventData
+                (
+                    this.transform.position,
+                    InputManager.instance.GetPointerScreenPosition(),
+                    Vector2.zero,
+                    true,
+                    Time.time,
+                    unit
+                ));
+            }
+        }
+
         var pos = GridUtility.WorldToGrid(startPosition, gridManager.origin, gridManager.cellSize);
         gridManager.RemoveUnit(pos);
         SynergyManager.instance.UnregisterUnit(unit, true);
@@ -63,6 +88,7 @@ public class UnitGridDragController : MonoBehaviour, IBeginWorldDragHandler, IWo
             var dropHandler = hit.collider.GetComponent<IWorldDropHandler>();
             if (dropHandler != null)
             {
+                Debug.Log("드롭 핸들러 발견");
                 return; // 드롭이 성공했으므로 더 이상 진행하지 않음
             }
         }

@@ -92,12 +92,16 @@ public class WorldDragController
         if (!isDragging) return;
 
         // 드래그 종료 위치에서 레이캐스트
+        int droppableLayer = LayerMask.NameToLayer("Droppable");
+        int mask = 1 << droppableLayer;
         Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
-        RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero);
+        Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.GetPointerScreenPosition());
+        RaycastHit2D hit = Physics2D.GetRayIntersection(ray, 10f, mask);
 
         if (hit.collider != null)
         {
             var dropHandler = hit.collider.GetComponent<IWorldDropHandler>();
+            Debug.Log($"드롭 위치에 {dropHandler} 발견");
             if (dropHandler != null)
             {
                 dropHandler.OnDrop(CreateDragEventData(worldPos));
@@ -159,6 +163,7 @@ public interface IEndWorldDragHandler : IWorldDraggable
 public interface IWorldDropHandler : IWorldDraggable
 {
     public void OnDrop(DragEventData data);
+    public void OnDragSourceRemoved(DragEventData data);
 }
 
 /// <summary>
