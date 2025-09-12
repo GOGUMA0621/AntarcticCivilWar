@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
+  m_Name: CircusDagger
+  m_EditorClassIdentifier: 
+  unitName: "\uC11C\uCEE4\uC2A4 \uB2E8\uAC80 \uACE1\uC608 \uD3AD\uADC4"
+  unitDescription: 
+  unitPower: 2
+  unitIcon: {fileID: -1290254670, guid: 3d576a1e9707ec245a493b9f00782323, type: 3}
+  unitFaction: 1
+  unitType: 0
+  unitSynergyTags:
+  - Resistance
+  - Rogue
+  - Circus
+  unitAnimations:
+  - {fileID: 7400000, guid: c456586aba9bd094190dabf487cb3183, type: 2}
+  - {fileID: 7400000, guid: 070e8a26099811e4f87b266cda66da27, type: 2}
+  - {fileID: 7400000, guid: c818592afe0ecca46b9626fcacf820e2, type: 2}
+  - {fileID: 7400000, guid: 6186c431a04a92d4c8e24555400ab27e, type: 2}
+  unitHP: 200
+  unitMP: 160
+  unitSpeed: 3.5
+  unitDamage: 25
+  unitAttackType: 1
+  unitHasKnockback: 0
+  unitUnstoppable: 0
+  unitAttackSpeed: 1
+  unitAttackDistance: 5
+  unitSenseRadius: 8
+  unitProjectile: {fileID: 0}
+  unitProjectileMaxSpeed: 3
+  unitProjectileMaxHeight: 2
+  projectileTrajectoryAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -2
+      outSlope: -2
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileCorrectionAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileSpeedAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

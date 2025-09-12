@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7498790266633837560
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 48891323928187883, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 30bcc4bb39ac082479e60160027b59f9, type: 2}
+    - target: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_Name
+      value: CircusDagger
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_TagString
+      value: Resistance
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744230692257079541, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1290254670, guid: 3d576a1e9707ec245a493b9f00782323, type: 3}
+    - target: {fileID: 6345866539272163795, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: 288a65bafc8b8994aadaa14ca66e78fa, type: 2}
+    - target: {fileID: 6345866539272163795, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: originPrefab
+      value: 
+      objectReference: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7007834231798107044}
+  m_SourcePrefab: {fileID: 100100000, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+--- !u!1 &2857135275580914450 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+  m_PrefabInstance: {fileID: 7498790266633837560}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-7007834231798107044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2857135275580914450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee73e821509ef7a4a80e7473b587cf56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  synergyIconsPreview: []

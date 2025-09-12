@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="staticSplashScreenBackgroundColor">#231F20</color>
+    <item name="unitySurfaceView" type="id"/>
+    <string name="FreeformWindowOrientation_landscape"/>
+    <string name="FreeformWindowOrientation_portrait"/>
+    <string name="FreeformWindowSize_maximize"/>
+    <string name="FreeformWindowSize_phone"/>
+    <string name="FreeformWindowSize_tablet"/>
+    <string name="app_name">AntarticCivilWar</string>
+    <string name="firebase_database_url" translatable="false">https://antarcticcivilwar-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+    <string name="game_view_content_description">Game view</string>
+    <string name="gcm_defaultSenderId" translatable="false">727317263659</string>
+    <string name="google_api_key" translatable="false">AIzaSyAg8lE0Esvck53zvWvRtcD-ac8AIyfwrJY</string>
+    <string name="google_app_id" translatable="false">1:727317263659:android:a2172d85429644766d816e</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAg8lE0Esvck53zvWvRtcD-ac8AIyfwrJY</string>
+    <string name="google_storage_bucket" translatable="false">antarcticcivilwar.firebasestorage.app</string>
+    <string name="project_id" translatable="false">antarcticcivilwar</string>
+    <style name="BaseUnityTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
+</style>
+    <style name="UnityThemeSelector" parent="BaseUnityTheme">
+	<item name="android:windowBackground">@android:color/black</item>
+</style>
+    <style name="UnityThemeSelector.Translucent" parent="@style/UnityThemeSelector">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+</style>
+</resources>
