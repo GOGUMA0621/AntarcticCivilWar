@@ -33,12 +33,12 @@ public class InputManager : SingleTonBehaviour<InputManager>
     {
         if (context.started)
         {
-           dragController.OnPointerDown();
+           dragController?.OnPointerDown();
 
         }
         else if (context.canceled)
         {
-            dragController.OnPointerUp();
+            dragController?.OnPointerUp();
         }
     }
 

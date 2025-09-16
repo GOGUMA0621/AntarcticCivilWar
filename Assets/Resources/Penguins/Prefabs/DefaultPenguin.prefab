@@ -192,6 +192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originPrefab: {fileID: 0}
   data: {fileID: 11400000, guid: 9ad8c6f1c80917e48becd074b3aa898e, type: 2}
+  mover: {fileID: 1204058951169236408}
   spriteRenderer: {fileID: 0}
   playerController: {fileID: 0}
 --- !u!114 &5257417320873170678
@@ -215,8 +216,10 @@ MonoBehaviour:
   unitDamage: 0
   unitSpeed: 0
   unitAttackDistance: 0
+  unitCritChance: 0
   isAllay: 1
   unitLevel: 1
+  unitAttackSpeed: 1
 --- !u!114 &8327769013132321863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,6 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a758854f8b0071040831ddf3596da877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canDrag: 1
 --- !u!114 &2764380314185021207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +275,7 @@ MonoBehaviour:
   slowdownDistance: 0.5
   waypointTolerance: 0.1
   stopDistance: 1
+  unitController: {fileID: 0}
 --- !u!1 &6131613577334374775
 GameObject:
   m_ObjectHideFlags: 0

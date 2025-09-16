@@ -87,13 +87,17 @@ public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldD
         unit.unit.rb.simulated = true;
         worldPos.z = 0;
 
-        RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero, 0f);
-        if (hit.collider != null)
+        int droppableLayer = LayerMask.NameToLayer("Droppable");
+        int mask = 1 << droppableLayer;
+
+        // OverlapPoint는 해당 위치에 있는 모든 콜라이더를 반환
+        Collider2D[] hits = Physics2D.OverlapPointAll(worldPos, mask);
+        foreach (var col in hits)
         {
-            var dropHandler = hit.collider.GetComponent<IWorldDropHandler>();
+            var dropHandler = col.GetComponent<IWorldDropHandler>();
             if (dropHandler != null)
             {
-                Debug.Log("드롭 핸들러 발견");
+                Debug.Log("드롭 핸들러 발견: " + col.name);
                 return; // 드롭이 성공했으므로 더 이상 진행하지 않음
             }
         }

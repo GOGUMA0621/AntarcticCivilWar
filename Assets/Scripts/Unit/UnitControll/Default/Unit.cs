@@ -11,7 +11,7 @@ public class Unit : MonoBehaviour //���ֿ� ���� �θ� ���
     public UnitData data;
     //public NavMeshAgent agent { get; private set; }
     public UnitController controller { get; private set; }
-    public AstarMover mover { get; private set; }
+    [SerializeField] public AstarMover mover;
     public UnitDistinction distinction { get; private set; }
     public UnitDetectTarget detectTarget { get; private set; }
     public UnitAttackController attackController { get; private set; }
