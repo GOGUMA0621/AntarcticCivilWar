@@ -6,13 +6,15 @@ public enum StatType
     MaxMana,
     ManaRegen,
     AttackDamage,
+    AdditionalDamage,
     AttackSpeed,
     AttackRange,
     MoveSpeed,
     AOEDamage,
     CritChance,
     Endurance,
-    DamageAmp
+    DamageAmp,
+    Pengforce
 }
 
 public enum ModifierMethod

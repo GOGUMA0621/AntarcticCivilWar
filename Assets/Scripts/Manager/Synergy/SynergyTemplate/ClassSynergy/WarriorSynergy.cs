@@ -1,79 +1,84 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [SynergyTag("Warrior", SynergyType.ClassType)]
-public class WarriorSynergy : MonoBehaviour, ISynergy
+public class WarriorSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
-    private UnitController unit;
-    
     public string Tag => "Warrior";
     public string Name => "전사";
-    public string synergyDescription => "";
     public bool allowDuplicate => true;
-    [SerializeField] private Sprite[] synergyIconsPreview;
+    public string synergyDescription => "";
     public Sprite synergyIcon => Resources.Load<Sprite>($"Synergy/{Name}");
     public int currentTier => lastTier;
+    public int[] tierThresholds => new int[] { 2, 5, 8, 10 };
 
-    public int[] tierThresholds => new int[] { 2, 5, 8, 10};
+    private UnitController unit;
+    private int lastTier = -1;
 
-    private string synergyTag;
-
-    private int lastTier = 0;
+    // 티어별 효과 정의
+    private static readonly SynergyTierEffect[] WarriorTierEffects = new SynergyTierEffect[]
+    {
+        new SynergyTierEffect { RequiredCount = 2, Description = "받는피해 10% 감소, 전사 캐릭터들의 체력 100증가", StatModifiers = new() { { StatType.Endurance, 0.10f }, { StatType.MaxHealth, 100f } } },
+        new SynergyTierEffect { RequiredCount = 5, Description = "받는피해 10% 감소, 전사 캐릭터들의 체력 200증가", StatModifiers = new() { { StatType.Endurance, 0.10f }, { StatType.MaxHealth, 200f } } },
+        new SynergyTierEffect { RequiredCount = 8, Description = "받는피해 10% 감소, 전사 캐릭터들의 체력 500증가", StatModifiers = new() { { StatType.Endurance, 0.10f }, { StatType.MaxHealth, 500f } } },
+        new SynergyTierEffect { RequiredCount = 10, Description = "받는피해 15% 감소, 전사 캐릭터들의 체력 800증가", StatModifiers = new() { { StatType.Endurance, 0.15f }, { StatType.MaxHealth, 800f } } },
+    };
 
     public void Initialize(UnitController unit)
     {
         this.unit = unit;
-        synergyTag = Tag + "_Synergy";
+    }
+
+    private int GetTier(int count)
+    {
+        int tier = -1;
+        for (int i = 0; i < tierThresholds.Length; i++)
+        {
+            if (count >= tierThresholds[i])
+                tier = i;
+        }
+        return tier;
     }
 
     public void OnCountUpdate(int count)
     {
-        int tier = 0;
-        
-        for (int i = 0; i < tierThresholds.Length; i++)
+        int tier = GetTier(count);
+
+        unit.RemoveModifierStats(Tag);
+
+        if (tier < 0)
         {
-            if (count >= tierThresholds[i])
+            lastTier = -1;
+            return;
+        }
+
+        lastTier = tier;
+
+        // 전사 유닛(자기 자신)에게 체력 증가만 적용
+        var statMods = WarriorTierEffects[tier].StatModifiers;
+        if (statMods.TryGetValue(StatType.MaxHealth, out float maxHealth))
+        {
+            unit.AddModifierStat(new StatModifier(Tag, StatType.MaxHealth, maxHealth, ModifierMethod.Additive));
+        }
+    }
+
+    public void ApplyToGlobal(int count)
+    {
+        int tier = GetTier(count);
+
+        foreach (var u in GetAllUnits())
+        {
+            u.RemoveModifierStats(Tag + "_Global");
+
+            if (tier >= 0 && WarriorTierEffects[tier].StatModifiers.TryGetValue(StatType.Endurance, out float endurance))
             {
-                tier = i + 1;
+                u.AddModifierStat(new StatModifier(Tag + "_Global", StatType.Endurance, endurance, ModifierMethod.Additive));
             }
         }
+    }
 
-        if (tier == lastTier) return;
-
-
-        switch (tier)
-        {
-            case 1:
-                unit.AddModifierStats(new List<StatModifier> 
-                {
-                    new StatModifier(synergyTag, StatType.Endurance, 0.1f, ModifierMethod.Additive),
-                    new StatModifier(synergyTag, StatType.MaxHealth, 40f, ModifierMethod.Additive)
-                });
-                break;
-            case 2:
-                unit.AddModifierStats(new List<StatModifier>
-                {
-                    new StatModifier(synergyTag, StatType.Endurance, 0.1f, ModifierMethod.Additive),
-                    new StatModifier(synergyTag, StatType.MaxHealth, 100f, ModifierMethod.Additive)
-                });
-                break;
-            case 3:
-                unit.AddModifierStats(new List<StatModifier>
-                {
-                    new StatModifier(synergyTag, StatType.Endurance, 0.1f, ModifierMethod.Additive),
-                    new StatModifier(synergyTag, StatType.MaxHealth, 150f, ModifierMethod.Additive)
-                });
-                break;
-            case 4:
-                unit.AddModifierStats(new List<StatModifier>
-                {
-                    new StatModifier(synergyTag, StatType.Endurance, 0.1f, ModifierMethod.Additive),
-                    new StatModifier(synergyTag, StatType.MaxHealth, 250f, ModifierMethod.Additive)
-                });
-                break;
-        }
-        
-        lastTier = tier;
+    private IEnumerable<UnitController> GetAllUnits()
+    {
+        return FindObjectsOfType<UnitController>();
     }
 }
