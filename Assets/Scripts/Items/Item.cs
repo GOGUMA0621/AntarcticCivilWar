@@ -104,7 +104,7 @@ public abstract class StatItem : PassiveItem
 
 public abstract class WhenHitItem : PassiveItem
 {
-
+    public abstract void WhenHit(UnitController unit, IDamageAble target);
 }
 
 public abstract class OnHitItem : PassiveItem

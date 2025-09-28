@@ -11,7 +11,7 @@ public interface IDamageAble
     /// <summary>
     /// 유닛이 파괴되었을 때 호출되는 이벤트입니다.
     /// </summary>
-    public event Action<GameObject> OnDestroyed;
+    public event Action<IDamageAble> OnDestroyed;
     /// <summary>
     /// 유닛이 파괴되었는지 여부를 반환합니다.
     /// </summary>
@@ -21,7 +21,6 @@ public interface IDamageAble
     /// </summary>
     /// <param name="damage">가해지는 <see cref="DamageData"/> 입니다. </param>
     public void ReceiveDamage(DamageData damage);
-    
 }
 /// <summary>
 /// 상태이상이 적용되는 객체 인터페이스입니다.

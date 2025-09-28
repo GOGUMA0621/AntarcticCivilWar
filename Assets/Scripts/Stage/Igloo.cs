@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Igloo : MonoBehaviour, IDamageAble, IStructure
 {
-    public event System.Action<GameObject> OnDestroyed;
+    public event System.Action<IDamageAble> OnDestroyed;
 
     [SerializeField] private GameObject pfReward;
 
@@ -118,7 +118,7 @@ public class Igloo : MonoBehaviour, IDamageAble, IStructure
 
         if (currentHealth <= 0f)
         {
-            OnDestroyed?.Invoke(this.gameObject);
+            OnDestroyed?.Invoke(this);
             if (IglooSpawnGenerator.igloos.Contains(this.gameObject))
             {
                 IglooSpawnGenerator.igloos.Remove(this.gameObject);

@@ -9,7 +9,6 @@ public class Unit : MonoBehaviour //���ֿ� ���� �θ� ���
 
     public GameObject originPrefab;
     public UnitData data;
-    //public NavMeshAgent agent { get; private set; }
     public UnitController controller { get; private set; }
     [SerializeField] public AstarMover mover;
     public UnitDistinction distinction { get; private set; }
@@ -17,7 +16,7 @@ public class Unit : MonoBehaviour //���ֿ� ���� �θ� ���
     public UnitAttackController attackController { get; private set; }
     public Rigidbody2D rb { get; private set; }
     public CapsuleCollider2D capsuleCollider { get; private set; }
-    public SpriteRenderer spriteRenderer;
+    [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public PlayerController playerController;
     public Animator animator { get; private set; }
 

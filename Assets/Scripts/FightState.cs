@@ -16,22 +16,9 @@ public class FightState : MonoBehaviour
 
     private void OnFightState()
     {
-        foreach (var unit in UnitManager.instance.allayList)
-        {
-            if (unit == null) continue; // 유닛이 파괴되었을 경우를 대비
-            unit.GoIdle();
-        }
-
-        foreach (var enemy in UnitManager.instance.enemyList)
-        {
-            if (enemy == null) continue; // 적이 파괴되었을 경우를 대비
-            foreach (var target in UnitManager.instance.allayList)
-            {
-                if (target == null) continue; // 타겟이 파괴되었을 경우를 대비
-                enemy.unit.detectTarget.AddTarget(target.gameObject); // 적이 공격할 타겟 추가
-            }
-            enemy.GoIdle();
-        }
+        UnitManager.instance.AssignTargetsToAllUnits();
+        UnitManager.instance.ChangeStateAllayList("Idle");
+        UnitManager.instance.ChangeStateEnemyList("Idle");
 
         fightButton.interactable = false; // 전투 시작 후 버튼 비활성화
     }

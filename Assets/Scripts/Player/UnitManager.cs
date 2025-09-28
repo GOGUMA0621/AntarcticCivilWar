@@ -51,7 +51,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
         foreach (var allay in allayPrefabList)
         {
             var allaydata = allay.prefab.GetComponent<Unit>().data;
-            playerGroupPower += allaydata.UnitPower * allay.count;
+            playerGroupPower += allaydata.UnitTier * allay.count;
         }
         this.playerGroupPower = playerGroupPower;
     }
@@ -88,7 +88,6 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
     {
         if (allayList.Contains(allay))
         {
-            allay.ResetUnit();
             allayList.Remove(allay);
             RemoveUnitPrefabList(allay.unit.originPrefab);
             CalculatePlayerGroupPower();
@@ -125,6 +124,19 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
             }
         }
     }
+
+    public bool HasUnit(string unitName)
+    {
+        foreach (var unit in allayList)
+        {
+            if (unit.unit.data.UnitName == unitName)
+            {
+                return true;
+            }
+        }
+        Debug.LogError($"유닛 {unitName}이(가) allayList에 없습니다.");
+        return false;
+    }
     #endregion
 
     #region 적군 관리
@@ -143,6 +155,37 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
             enemyList.Remove(enemy);
         }
     }
+    
+    public void ChangeStateEnemyList(string unitState)
+    {
+        foreach (var unit in enemyList)
+        {
+            if (unit.TryGetComponent<UnitController>(out UnitController unitController))
+            {
+                switch (unitState)
+                {
+                    case "IdleState":
+                        unitController.GoIdle();
+                        break;
+                    case "FollowState":
+                        unitController.GoFollow();
+                        break;
+                    case "AttackState":
+                        unitController.GoAttack();
+                        break;
+                    case "DieState":
+                        unitController.GoDie();
+                        break;
+                    case "CallState":
+                        unitController.GoCall();
+                        break;
+                    default:
+                        Debug.LogError($"Unknown state: {unitState}");
+                        break;
+                }
+            }
+        }
+    }
     #endregion
 
     #region 프리팹 관리
@@ -152,7 +195,7 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
         allayList.Clear();
         foreach (var unit in copy)
         {
-            for(int i = 0; i < unit.count; i++)
+            for (int i = 0; i < unit.count; i++)
             {
                 GameObject allay = Instantiate(unit.prefab, spawnPos, Quaternion.identity);
                 UnitController allayController = allay.GetComponent<UnitController>();
@@ -281,4 +324,26 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
     }
     #endregion
 
+    public void AssignTargetsToAllUnits()
+    {
+        // 아군 유닛에게 적군 리스트를 타겟으로 할당
+        foreach (var allay in allayList)
+        {
+            List<IDamageAble> enemyObjects = enemyList
+                .Where(e => e != null && e.gameObject.TryGetComponent<IDamageAble>(out _))
+                .Select(e => e.gameObject.GetComponent<IDamageAble>())
+                .ToList();
+            allay.unit.detectTarget.AddTargets(enemyObjects);
+        }
+
+        // 적군 유닛에게 아군 리스트를 타겟으로 할당
+        foreach (var enemy in enemyList)
+        {
+            List<IDamageAble> allayObjects = allayList
+                .Where(a => a != null && a.gameObject.TryGetComponent<IDamageAble>(out _))
+                .Select(a => a.gameObject.GetComponent<IDamageAble>())
+                .ToList();
+            enemy.unit.detectTarget.AddTargets(allayObjects);
+        }
+    }
 }

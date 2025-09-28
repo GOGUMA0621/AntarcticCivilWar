@@ -8,7 +8,7 @@ using UnityEngine;
 public class EnemyUnitLoader : MonoBehaviour
 {
     private EnemyPlacementData data;
-    [SerializeField] private TextAsset enemyDataFile;
+    public TextAsset enemyDataFile;
     [SerializeField] private PlacementGridManager grid;
     
     private void Awake()
@@ -61,7 +61,7 @@ public class EnemyUnitLoader : MonoBehaviour
                     {
                         if (allay != null)
                         {
-                            goUnit.unit.detectTarget.AddTarget(allay.gameObject);
+                            goUnit.unit.detectTarget.AddTarget(allay.GetComponent<IDamageAble>());
                         }
                     }
                 }

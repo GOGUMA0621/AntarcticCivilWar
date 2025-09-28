@@ -13,7 +13,6 @@ public class ResistanceSynergy : MonoBehaviour, ISynergy
 
     public string synergyDescription => "";
 
-    [SerializeField] private Sprite[] synergyIconsPreview;
     public Sprite synergyIcon => Resources.Load<Sprite>($"Synergy/{Name}");
     public int currentTier => lastTier;
 

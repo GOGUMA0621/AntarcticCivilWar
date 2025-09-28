@@ -13,10 +13,10 @@ public class StunStatusEffectSO : StatusEffectSO
 
         if (isEffectActive)
         {
-            currentSpeed = unit.controller.unitSpeed;
+            currentSpeed = unit.controller.UnitStats.moveSpeed;
             unit.controller.isStunned = true;
             unit.animator.ResetTrigger("attack");
-            unit.controller.unitSpeed = 0f;
+            unit.controller.UnitStats.moveSpeed = 0f;
         }
     }
 
@@ -26,7 +26,7 @@ public class StunStatusEffectSO : StatusEffectSO
         if (unit != null)
         {
             unit.controller.isStunned = false;
-            unit.controller.unitSpeed = currentSpeed;
+            unit.controller.UnitStats.moveSpeed = currentSpeed;
         }
     }
 }

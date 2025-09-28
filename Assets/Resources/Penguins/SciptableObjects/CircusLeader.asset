@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
+  m_Name: CircusLeader
+  m_EditorClassIdentifier: 
+  unitName: "\uC11C\uCEE4\uC2A4 \uB2E8\uC7A5"
+  unitDescription: 
+  unitTier: 5
+  unitIcon: {fileID: 1503128673, guid: 063b8b807706e7347a72287d985fbb7e, type: 3}
+  unitFaction: 1
+  unitType: 1
+  unitSynergyTags: []
+  unitAnimations: []
+  unitHP:
+  - 900
+  - 1500
+  - 2000
+  - 26000
+  unitMP: 110
+  unitSpeed: 3
+  unitDamage:
+  - 35
+  - 45
+  - 60
+  - 80
+  unitAttackType: 0
+  unitHasKnockback: 0
+  unitUnstoppable: 0
+  unitAttackSpeed: 0.7
+  unitAttackDistance: 1
+  unitProjectile: {fileID: 0}
+  unitProjectileMaxSpeed: 0
+  unitProjectileMaxHeight: 0
+  projectileTrajectoryAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileCorrectionAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileSpeedAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

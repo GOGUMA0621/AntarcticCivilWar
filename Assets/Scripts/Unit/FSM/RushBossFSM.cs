@@ -31,21 +31,24 @@ public class RushBossIdleState : IUnitState
 public class RushBossFollowState : IUnitState
 {
     private BossController boss;
+    private Transform targetTransform;
     public void Enter(UnitController unitController)
     {
         boss = unitController as BossController;
-        boss.SetTargetToMove(boss.unit.detectTarget.targetToAttack);
+        if (boss.unit.detectTarget.targetToAttack is Component comp)
+            targetTransform = comp.transform;
+        boss.SetTargetToMove(targetTransform);
     }
     public void Update()
     {
         var target = boss.unit.detectTarget.targetToAttack;
-        if (target == null || target.TryGetComponent<IDamageAble>(out var damageable) && damageable.IsDestroyed())
+        if (target == null || target.IsDestroyed())
         {
             boss.GoIdle();
             return;
         }
-        float distance = Vector3.Distance(boss.transform.position, target.position);
-        if (distance <= boss.unitAttackDistance)
+        float distance = Vector3.Distance(boss.transform.position, targetTransform.position);
+        if (distance <= boss.UnitStats.attackRange)
         {
             boss.GoAttack();
         }
@@ -59,10 +62,13 @@ public class RushBossFollowState : IUnitState
 public class RushBossAttackState : IUnitState
 {
     private BossController boss;
+    private Transform targetTransform;
 
     public void Enter(UnitController unitController)
     {
         this.boss = unitController as BossController;
+        if (boss.unit.detectTarget.targetToAttack is Component comp)
+            targetTransform = comp.transform;
         boss.StopMovement();
 
         boss.SetAnimation("AttackState");
@@ -81,23 +87,23 @@ public class RushBossAttackState : IUnitState
         }
 
         // Ÿ���� null�̰ų� �׾����� ���� �ʱ�ȭ
-        if (target == null || target.TryGetComponent<IDamageAble>(out var damageable) && damageable.IsDestroyed())
+        if (target == null || target.IsDestroyed())
         {
             boss.unit.detectTarget.SortClosestTarget();
             target = boss.unit.detectTarget.targetToAttack;
 
             if (target != null)
-                boss.SetTargetToMove(target);
+                boss.SetTargetToMove(targetTransform);
 
             boss.GoIdle();
             return;
         }
 
         // Ÿ�ٰ��� �Ÿ� üũ
-        float distance = Vector3.Distance(boss.transform.position, target.position);
+        float distance = Vector3.Distance(boss.transform.position, targetTransform.position);
 
         // �Ÿ��� ���� �������� �ָ� ���� ���·� ��ȯ
-        if (boss.RemainedDistance > boss.unitAttackDistance)
+        if (boss.RemainedDistance > boss.UnitStats.attackRange)
         {
             boss.GoFollow();
             return;

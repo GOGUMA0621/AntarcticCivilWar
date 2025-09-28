@@ -16,3 +16,9 @@ public interface IPasseiveSkillAttack
     public abstract void DoPassiveSkill();
     public abstract bool PassiveCondition();
 }
+
+public interface IShowtime : ISkill
+{
+    public abstract void StartShowtimeSkill();
+    public abstract void EndShowtimeSkill();
+}

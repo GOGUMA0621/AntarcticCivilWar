@@ -20,7 +20,7 @@ public class UnitDataEditor : Editor
     private SerializedProperty attackType;
     private SerializedProperty unitName;
     private SerializedProperty unitDescription;
-    private SerializedProperty unitPower;
+    private SerializedProperty unitTier;
     private SerializedProperty unitHP;
     private SerializedProperty unitMP;
     private SerializedProperty unitSpeed;
@@ -29,7 +29,6 @@ public class UnitDataEditor : Editor
     private SerializedProperty unitUnstoppable;
     private SerializedProperty unitAttackSpeed;
     private SerializedProperty unitAttackDistance;
-    private SerializedProperty unitSenseRadius;
     private SerializedProperty unitProjectile;
     private SerializedProperty unitProjectileMaxSpeed;
     private SerializedProperty unitProjectileMaxHeight;
@@ -49,7 +48,7 @@ public class UnitDataEditor : Editor
         attackType = serializedObject.FindProperty("unitAttackType");
         unitName = serializedObject.FindProperty("unitName");
         unitDescription = serializedObject.FindProperty("unitDescription");
-        unitPower = serializedObject.FindProperty("unitPower");
+        unitTier = serializedObject.FindProperty("unitTier");
         unitHP = serializedObject.FindProperty("unitHP");
         unitMP = serializedObject.FindProperty("unitMP");
         unitSpeed = serializedObject.FindProperty("unitSpeed");
@@ -58,7 +57,6 @@ public class UnitDataEditor : Editor
         unitUnstoppable = serializedObject.FindProperty("unitUnstoppable");
         unitAttackSpeed = serializedObject.FindProperty("unitAttackSpeed");
         unitAttackDistance = serializedObject.FindProperty("unitAttackDistance");
-        unitSenseRadius = serializedObject.FindProperty("unitSenseRadius");
         unitProjectile = serializedObject.FindProperty("unitProjectile");
         unitProjectileMaxSpeed = serializedObject.FindProperty("unitProjectileMaxSpeed");
         unitProjectileMaxHeight = serializedObject.FindProperty("unitProjectileMaxHeight");
@@ -72,18 +70,18 @@ public class UnitDataEditor : Editor
         serializedObject.Update();
         GUIStyle style = EditorStyles.helpBox;
         EditorGUILayout.PropertyField(unitIcon);
-        EditorGUILayout.LabelField("¿œπ›",EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("ÏùºÎ∞ò",EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(unitFaction);
         EditorGUILayout.PropertyField(unitType);
         EditorGUILayout.PropertyField(unitName);
         EditorGUILayout.PropertyField(unitDescription);
-        EditorGUILayout.PropertyField(unitPower);
+        EditorGUILayout.PropertyField(unitTier);
         EditorGUILayout.PropertyField(unitSynergyTags, true);
 
-        EditorGUILayout.LabelField("æ÷¥œ∏ﬁ¿Ãº«", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Ïï†ÎãàÎ©îÏù¥ÏÖò", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(unitAnimations, true);
 
-        EditorGUILayout.LabelField("¿¸≈ı", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Ï†ÑÌà¨", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         {
             EditorGUILayout.PropertyField(unitHP);
@@ -98,7 +96,6 @@ public class UnitDataEditor : Editor
         EditorGUILayout.PropertyField(unitDamage);
         EditorGUILayout.PropertyField(unitAttackDistance);
         EditorGUILayout.PropertyField(unitAttackSpeed);
-        EditorGUILayout.PropertyField(unitSenseRadius);
 
         switch (attackType)
         {
@@ -111,7 +108,7 @@ public class UnitDataEditor : Editor
             case UnitAttackType.Range:
                 {
                     EditorGUILayout.Space(10);
-                    EditorGUILayout.LabelField("≈ıªÁ√º", EditorStyles.boldLabel);
+                    EditorGUILayout.LabelField("Ìà¨ÏÇ¨Ï≤¥", EditorStyles.boldLabel);
                     EditorGUILayout.PropertyField(unitProjectile);
                     EditorGUILayout.PropertyField(unitProjectileMaxSpeed);
                     EditorGUILayout.PropertyField(unitProjectileMaxHeight);

@@ -27,7 +27,7 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
 
             if (interV.magnitude <= radius)
             {
-                float dot = Vector2.Dot(interV.normalized, unit.detectTarget.targetToAttack.position);
+                float dot = Vector2.Dot(interV.normalized, unit.detectTarget.targetToAttack.GetTransform().position);
                 float theta = Mathf.Acos(dot);
                 float degree = Mathf.Rad2Deg * theta;
 

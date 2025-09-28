@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 public class SynergyTierEffect
 {
-    public int RequiredCount; // ÇØ´ç Æ¼¾î¿¡ ÇÊ¿äÇÑ Ä³¸¯ÅÍ ¼ö
-    public string Description; // È¿°ú ¼³¸í
-    public Dictionary<StatType, float> StatModifiers; // Àû¿ëÇÒ ½ºÅÈ º¯È­
-    // ÇÊ¿ä½Ã Ãß°¡ È¿°ú(¿¹: Ã¹ °ø°İ Ãß°¡ ÇÇÇØ, ¸¶³ª È¸º¹ µî) ÇÊµå Ãß°¡
+    public int RequiredCount; // í•´ë‹¹ í‹°ì–´ì— í•„ìš”í•œ ìºë¦­í„° ìˆ˜
+    public string Description; // íš¨ê³¼ ì„¤ëª…
+    public Dictionary<StatType, float> StatModifiers; // ì ìš©í•  ìŠ¤íƒ¯ ë³€í™”
+    // í•„ìš”ì‹œ ì¶”ê°€ íš¨ê³¼(ì˜ˆ: ì²« ê³µê²© ì¶”ê°€ í”¼í•´, ë§ˆë‚˜ íšŒë³µ ë“±) í•„ë“œ ì¶”ê°€
 }

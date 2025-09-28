@@ -76,9 +76,33 @@ PrefabInstance:
       propertyPath: originPrefab
       value: 
       objectReference: {fileID: 7276052642024965527}
+    - target: {fileID: 7260305183551006058, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 7260305183551006058, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 7260305183551006058, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 7260305183551006058, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.651
+      objectReference: {fileID: 0}
+    - target: {fileID: 7260305183551006058, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.778
+      objectReference: {fileID: 0}
     - target: {fileID: 7466332037975673471, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8331289181537440733, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.453
       objectReference: {fileID: 0}
     - target: {fileID: 8517788560249143192, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: m_AnchorMax.y
@@ -169,7 +193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30f7b984d12832345ae00136f922bf18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  synergyIconsPreview: []
 --- !u!114 &-2038097024855498533
 MonoBehaviour:
   m_ObjectHideFlags: 0

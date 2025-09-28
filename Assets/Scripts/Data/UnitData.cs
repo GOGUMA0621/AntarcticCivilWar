@@ -34,8 +34,8 @@ namespace SciptableObjects
         [Multiline]
         [SerializeField] private string unitDescription = "";
         public string UnitDescription { get { return unitDescription; } }
-        [SerializeField] private int unitPower;
-        public int UnitPower { get { return unitPower; } }
+        [SerializeField] private int unitTier;
+        public int UnitTier { get { return unitTier; } }
         public Sprite unitIcon;
         public UnitFaction unitFaction;
         public UnitTierType unitType;
@@ -45,8 +45,8 @@ namespace SciptableObjects
         public AnimationClip[] unitAnimations;
 
 
-        [SerializeField] private float unitHP;
-        public float UnitHP { get { return unitHP; } }
+        [SerializeField] private float[] unitHP = new float[4];
+        public float[] UnitHP { get { return unitHP; } }
 
         [SerializeField] private int unitMP;
         public int UnitMP { get { return unitMP; } }
@@ -54,8 +54,8 @@ namespace SciptableObjects
         [SerializeField] private float unitSpeed;
         public float UnitSpeed { get { return unitSpeed; } }
 
-        [SerializeField] private float unitDamage;
-        public float UnitDamage { get { return unitDamage; } }
+        [SerializeField] private float[] unitDamage = new float[4];
+        public float[] UnitDamage { get { return unitDamage; } }
 
 
 
@@ -73,9 +73,6 @@ namespace SciptableObjects
 
         [SerializeField] private float unitAttackDistance;
         public float UnitAttackDistance { get { return unitAttackDistance; } }
-
-        [SerializeField] private float unitSenseRadius;
-        public float UnitSenseRadius { get { return unitSenseRadius; } }
 
         [SerializeField] private GameObject unitProjectile;
         public GameObject UnitProjectile { get { return unitProjectile; } }

@@ -14,7 +14,7 @@ public class PassiveStickyBomb : MonoBehaviour, IPasseiveSkillAttack
     private void Start()
     {
         unit = GetComponent<Unit>();
-        unit.controller.OnAttack += AttackCount;
+        unit.controller.OnHit += AttackCount;
     }
 
     public void DoPassiveSkill()

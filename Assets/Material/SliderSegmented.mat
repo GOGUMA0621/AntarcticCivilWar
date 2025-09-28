@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Progress
+  m_Name: SliderSegmented
   m_Shader: {fileID: 4800000, guid: 435fb504f25924c4fa5e7b8394163c08, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _LineColorSmall
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -28,11 +28,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 134409554cad3f445bd94d838361cda8, type: 3}
+        m_Texture: {fileID: 2800000, guid: bcc31a6e4af59924b82dbf0d1b61e23c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c0c5d88080c0b7c49962097c04310ffc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
@@ -42,9 +42,22 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
+    - _LineLengthLarge: 1
+    - _LineLengthSmall: 1
+    - _LineOffset: 0
+    - _LineThicknessLarge: 6.48
+    - _LineThicknessSmall: 4.33
+    - _MaxHP: 500
     - _Progress: 1
+    - _StepLarge: 500
+    - _StepSmall: 100
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _LineColorLarge: {r: 0, g: 0, b: 0, a: 0.7607843}
+    - _LineColorSmall: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0.41960785}
+    - _LineRange: {r: 0, g: 1, b: 0, a: 1}
+    - _LineThicknessLargeRange: {r: 13, g: 20, b: 0, a: 0}
+    - _LineThicknessSmallRange: {r: 8, g: 10, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

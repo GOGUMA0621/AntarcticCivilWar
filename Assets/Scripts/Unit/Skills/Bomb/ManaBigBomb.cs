@@ -5,11 +5,14 @@ using UnityEngine;
 public class ManaBigBomb : MonoBehaviour, IActiveSkill
 {
     private Unit unit;
+    private Transform targetTransform;
     [SerializeField] private GameObject _pfBigBomb;
 
     void Start()
     {
-      unit = GetComponent<Unit>();   
+      unit = GetComponent<Unit>();
+      if (unit.detectTarget.targetToAttack is Component comp)
+          targetTransform = comp.transform;
     }
 
     // Update is called once per frame
@@ -21,7 +24,7 @@ public class ManaBigBomb : MonoBehaviour, IActiveSkill
     public void ThrowBigBomb()
     {
         ProjectileController projectile = Instantiate(_pfBigBomb, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
-        projectile.InitialzeProjectile(unit.detectTarget.targetToAttack, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit);
+        projectile.InitialzeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit);
         projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
     }
 

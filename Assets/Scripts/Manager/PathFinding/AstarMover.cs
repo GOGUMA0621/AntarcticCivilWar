@@ -41,7 +41,7 @@ public class AstarMover : MonoBehaviour
 
     private FormationManger formationManager => FormationManger.instance;
 
-    public UnitController unitController;
+    [HideInInspector] public UnitController unitController;
 
     private void OnDisable()
     {
@@ -335,7 +335,7 @@ public class AstarMover : MonoBehaviour
 
     public float GetAttackRange()
     {
-        return unitController.unitAttackDistance;
+        return unitController.UnitStats.attackRange;
     }
 
 

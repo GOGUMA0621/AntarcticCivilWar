@@ -29,7 +29,6 @@ public class UnitPlaceState : IUnitState
     public void Exit()
     {
         dragController.canDrag = false;
-        unitController.ReUnit();
     }
 }
 
@@ -75,7 +74,7 @@ public class UnitFollowState : IUnitState
 
         if (target != null)
         {
-            unitController.SetTargetToMove(target, unitController.OnPathCompleteToAttack);
+            unitController.SetTargetToMove(target.GetTransform(), unitController.OnPathCompleteToAttack);
             unitController.StartMovement();
         }
     }
@@ -104,12 +103,10 @@ public class UnitAttackState : IUnitState
     private Animator animator;
     private float attackCooldown = 0f;
     private bool isAttacking = false;
-    private Transform target;
 
     public void Enter(UnitController unit)
     {
         this.unitController = unit;
-        target = unit.unit.detectTarget.targetToAttack;
         animator = unit.unit.animator;
         unitController.StopMovement();
         attackCooldown = 0f;
@@ -120,14 +117,14 @@ public class UnitAttackState : IUnitState
         attackCooldown -= Time.deltaTime;
 
         // 목표가 없거나 죽었으면 추적 상태로
-        if (target == null || IsTargetDead(target))
+        if (unitController.unit.detectTarget.targetToAttack == null || IsTargetDead(unitController.unit.detectTarget.targetToAttack.GetTransform()))
         {
             unitController.unit.detectTarget.SortClosestTarget();
-            target = unitController.unit.detectTarget.targetToAttack;
+            var target = unitController.unit.detectTarget.targetToAttack;
 
             if (target != null)
             {
-                unitController.SetTargetToMove(target, unitController.OnPathCompleteToAttack);
+                unitController.SetTargetToMove(target.GetTransform(), unitController.OnPathCompleteToAttack);
                 unitController.GoIdle();
             }
             else
@@ -137,16 +134,16 @@ public class UnitAttackState : IUnitState
             return;
         }
         // 목표가 사거리 밖으로 벗어나면 추적 상태로
-        else if (unitController.RemainedDistance > unitController.unitAttackDistance)
+        else if (unitController.RemainedDistance > unitController.UnitStats.attackRange)
         {
-            unitController.SetTargetToMove(target, unitController.OnPathCompleteToAttack);
+            unitController.SetTargetToMove(unitController.unit.detectTarget.targetToAttack.GetTransform(), unitController.OnPathCompleteToAttack);
             unitController.GoFollow();
             return;
         }
         // 공격 쿨타임이 끝나면 공격
         else if (attackCooldown <= 0f)
         {
-            if (target != null && !IsTargetDead(target))
+            if (unitController.unit.detectTarget.targetToAttack != null && !IsTargetDead(unitController.unit.detectTarget.targetToAttack.GetTransform()))
             {
                 animator.ResetTrigger("attack");
                 animator.SetTrigger("attack");

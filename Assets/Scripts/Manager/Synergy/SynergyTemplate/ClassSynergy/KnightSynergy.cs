@@ -18,13 +18,14 @@ public class KnightSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
     private int lastTier = -1;
 
     private KnightFirstAttackEffect firstAttackEffect;
+    private readonly List<UnitController> affectedUnits = UnitManager.instance.enemyList;
 
     private static readonly SynergyTierEffect[] KnightTierEffects = new SynergyTierEffect[]
     {
-        new SynergyTierEffect{ RequiredCount = 3, Description = "체력 100 증가, 첫 공격 추가피해 30", StatModifiers = new() { { StatType.MaxHealth, 100f }, { StatType.AdditionalDamage, 30f } } },
-        new SynergyTierEffect{ RequiredCount = 5, Description = "체력 150 증가, 첫 공격 추가피해 45+(추가 공격력 10%)", StatModifiers = new() { { StatType.MaxHealth, 150f }, { StatType.AdditionalDamage, 45f } } },
-        new SynergyTierEffect{ RequiredCount = 8, Description = "체력 200 증가, 첫 공격 추가피해 65+(추가 공격력 10%)", StatModifiers = new() { { StatType.MaxHealth, 200f }, { StatType.AdditionalDamage, 65f } } },
-        new SynergyTierEffect{ RequiredCount = 10, Description = "체력 300 증가, 첫 공격 추가피해 80+(추가 공격력 15%)", StatModifiers = new() { { StatType.MaxHealth, 300f }, { StatType.AdditionalDamage, 80f } } },
+        new SynergyTierEffect{ RequiredCount = 3,    Description = "체력 100 증가, 첫 공격 추가피해 30",                   StatModifiers = new() { { StatType.MaxHealth, 100f }, { StatType.AttackDamage, 30f } } },
+        new SynergyTierEffect{ RequiredCount = 5,    Description = "체력 150 증가, 첫 공격 추가피해 45+(추가 공격력 10%)",  StatModifiers = new() { { StatType.MaxHealth, 150f }, { StatType.AttackDamage, 45f } } },
+        new SynergyTierEffect{ RequiredCount = 8,    Description = "체력 200 증가, 첫 공격 추가피해 65+(추가 공격력 10%)",  StatModifiers = new() { { StatType.MaxHealth, 200f }, { StatType.AttackDamage, 65f } } },
+        new SynergyTierEffect{ RequiredCount = 10,   Description = "체력 300 증가, 첫 공격 추가피해 80+(추가 공격력 15%)",  StatModifiers = new() { { StatType.MaxHealth, 300f }, { StatType.AttackDamage, 80f } } },
     };
 
     private static readonly float[] globalMaxHealth = { 100f, 150f, 200f, 300f }; // 모든 유닛체력
@@ -109,10 +110,10 @@ public class KnightSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
             {
                 float bonus = firstAttackBaseDamage[tier];
                 if (firstAttackBonusPercent[tier] > 0)
-                    bonus += attacker.unitDamage * firstAttackBonusPercent[tier];
+                    bonus += attacker.UnitStats.attackDamage * firstAttackBonusPercent[tier];
 
                 // targetUnit.ReceiveDamage를 통해 추가피해 적용
-                targetUnit.ReceiveDamage(new DamageData(bonus, StatusEffectType.None, 0));
+                targetUnit.ReceiveDamage(new DamageData(bonus, StatusEffectType.Physical, 0));
                 used = true;
             }
         }
@@ -130,7 +131,7 @@ public class KnightSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
     {
         int tier = GetTier(count);
 
-        foreach (var u in GetAllUnits())
+        foreach (var u in UnitManager.instance.allayList)
         {
             u.RemoveModifierStats(Tag);
 

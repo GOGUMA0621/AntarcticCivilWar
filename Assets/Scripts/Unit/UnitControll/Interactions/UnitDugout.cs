@@ -34,15 +34,14 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
                 InputManager.instance.dragController.BeginDrag(newDragData);
             }
         }
-
         SetUnitInDugout(unit);
+
     }
 
     public void SetUnitInDugout(UnitController unit)
     {
         unitInDugout = unit;
-        unit.transform.SetParent(this.transform, false);
-        unit.transform.localPosition = Vector3.zero; // 참호 중앙에 위치
+        unit.transform.position = this.transform.position; // 참호 중앙에 위치
         unit.unit.rb.simulated = false;
     }
 

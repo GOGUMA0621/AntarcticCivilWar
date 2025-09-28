@@ -2,7 +2,8 @@ using UnityEngine;
 
 public enum StatusEffectType
 {
-    None,
+    Physical,
+    Magical,
     Slow,
     Freeze,
     Overwhelming,

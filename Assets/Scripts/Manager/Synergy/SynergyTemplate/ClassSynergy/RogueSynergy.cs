@@ -6,7 +6,7 @@ using UnityEngine;
 public class RogueSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
     public string Tag => "Rogue";
-    public string Name => "µµ¿˚";
+    public string Name => "ÎèÑÏ†Å";
     public bool allowDuplicate => true;
     public string synergyDescription => "";
     public Sprite synergyIcon => Resources.Load<Sprite>($"Synergy/{Name}");
@@ -19,12 +19,12 @@ public class RogueSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 
     private static readonly SynergyTierEffect[] RogueTierEffects = new SynergyTierEffect[]
     {
-        new SynergyTierEffect { RequiredCount = 3, Description = "∞¯∞›∑¬ 10¡ı∞°, 10% √ﬂ∞° «««ÿ", StatModifiers = new() { { StatType.AttackDamage, 10f }, { StatType.AdditionalDamage, 0.10f } } },
-        new SynergyTierEffect { RequiredCount = 5, Description = "∞¯∞›∑¬ 15¡ı∞°, 15% √ﬂ∞° «««ÿ", StatModifiers = new() { { StatType.AttackDamage, 15f }, { StatType.AdditionalDamage, 0.15f } } },
-        new SynergyTierEffect { RequiredCount = 7, Description = "∞¯∞›∑¬ 20¡ı∞°, 20% √ﬂ∞° «««ÿ", StatModifiers = new() { { StatType.AttackDamage, 20f }, { StatType.AdditionalDamage, 0.20f } } },
+        new SynergyTierEffect { RequiredCount = 3, Description = "Í≥µÍ≤©Î†• 10Ï¶ùÍ∞Ä, 10% Ï∂îÍ∞Ä ÌîºÌï¥", StatModifiers = new() { { StatType.AttackDamage, 10f }, { StatType.AdditionalDamage, 0.10f } } },
+        new SynergyTierEffect { RequiredCount = 5, Description = "Í≥µÍ≤©Î†• 15Ï¶ùÍ∞Ä, 15% Ï∂îÍ∞Ä ÌîºÌï¥", StatModifiers = new() { { StatType.AttackDamage, 15f }, { StatType.AdditionalDamage, 0.15f } } },
+        new SynergyTierEffect { RequiredCount = 7, Description = "Í≥µÍ≤©Î†• 20Ï¶ùÍ∞Ä, 20% Ï∂îÍ∞Ä ÌîºÌï¥", StatModifiers = new() { { StatType.AttackDamage, 20f }, { StatType.AdditionalDamage, 0.20f } } },
     };
 
-    private static readonly float[] globalAttackDamage = { 10f, 15f, 20f }; // ∏µÁ ¿Ø¥÷
+    private static readonly float[] globalAttackDamage = { 10f, 15f, 20f }; // Î™®Îì† Ïú†Îãõ
 
     public void Initialize(UnitController unit)
     {
@@ -46,7 +46,7 @@ public class RogueSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
     {
         int tier = GetTier(count);
 
-        // ±‚¡∏ »ø∞˙ ¡¶∞≈
+        // Í∏∞Ï°¥ Ìö®Í≥º Ï†úÍ±∞
         if (bonusEffect != null)
         {
             unit.UnregisterOnHitEffect(bonusEffect);
@@ -63,19 +63,19 @@ public class RogueSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 
         lastTier = tier;
 
-        // ∞¯∞›∑¬ ¡ı∞° ¿˚øÎ
+        // Í≥µÍ≤©Î†• Ï¶ùÍ∞Ä Ï†ÅÏö©
         if (RogueTierEffects[tier].StatModifiers.TryGetValue(StatType.AttackDamage, out float attackBonus))
         {
             unit.AddModifierStat(new StatModifier(Tag, StatType.AttackDamage, attackBonus, ModifierMethod.Additive));
         }
 
-        // ∏≈ ∞¯∞›Ω√ √ﬂ∞° «««ÿ »ø∞˙ µÓ∑œ
+        // Îß§ Í≥µÍ≤©Ïãú Ï∂îÍ∞Ä ÌîºÌï¥ Ìö®Í≥º Îì±Î°ù
         float addPercent = RogueTierEffects[tier].StatModifiers.TryGetValue(StatType.AdditionalDamage, out float add) ? add : 0.1f;
         bonusEffect = new RogueBonusDamageEffect(unit, addPercent);
         unit.RegisterOnHitEffect(bonusEffect);
     }
 
-    // ∏≈ ∞¯∞›Ω√ √ﬂ∞° «««ÿ »ø∞˙ ≈¨∑°Ω∫
+    // Îß§ Í≥µÍ≤©Ïãú Ï∂îÍ∞Ä ÌîºÌï¥ Ìö®Í≥º ÌÅ¥ÎûòÏä§
     private class RogueBonusDamageEffect : OnHitItem
     {
         private readonly UnitController owner;
@@ -91,27 +91,25 @@ public class RogueSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
         {
             if (attacker != owner) return;
 
-            // target¿Ã UnitController∂Û∏È √ﬂ∞°«««ÿ ¿˚øÎ
-            if (target is UnitController targetUnit && tag == "Enemy")
+            // targetÏù¥ UnitControllerÎùºÎ©¥ Ï∂îÍ∞ÄÌîºÌï¥ Ï†ÅÏö©
+            if (target is UnitController targetUnit && tag == "Enemy" && targetUnit.GetNormalizedHealth() > 0.2f)
             {
-                float bonus = 0f;
+                float bonus = attacker.UnitStats.attackDamage * percent;
 
-                bonus = attacker.unitDamage * percent;
-
-                // √ﬂ∞°«««ÿ ¿˚øÎ
-                targetUnit.ReceiveDamage(new DamageData(bonus, StatusEffectType.None, 0));
+                // Ï∂îÍ∞ÄÌîºÌï¥ Ï†ÅÏö©
+                targetUnit.ReceiveDamage(new DamageData(bonus, StatusEffectType.Physical, 0));
             }
         }
 
-        public override void ApplyEffect(UnitController unit){}
-        public override void UpdateEffect(UnitController unit){}
+        public override void ApplyEffect(UnitController unit) { }
+        public override void UpdateEffect(UnitController unit) { }
     }
 
     public void ApplyToGlobal(int count)
     {
         int tier = GetTier(count);
 
-        foreach (var u in GetAllUnits())
+        foreach (var u in UnitManager.instance.allayList)
         {
             u.RemoveModifierStats(Tag + "_Global");
 

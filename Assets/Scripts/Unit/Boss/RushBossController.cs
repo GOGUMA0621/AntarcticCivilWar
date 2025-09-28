@@ -71,7 +71,7 @@ public class RushBossController : BossController
             Die();
         }
 
-        if (currentHP <= maxHP * 0.5f)
+        if (currentHP <= UnitStats.maxHP * 0.5f)
         {
             float reducedDamage = damageBase * 0.8f;
             damage.damage = reducedDamage;
@@ -82,7 +82,7 @@ public class RushBossController : BossController
             damage.damage = damageAmount;
             base.ReceiveDamage(damage);
         }
-        float hpPercent = currentHP / maxHP;
+        float hpPercent = currentHP / UnitStats.maxHP;
         int newHpStep = Mathf.FloorToInt(hpPercent / hpThresholdStep);
 
         if (newHpStep < currentHpStep)
@@ -96,7 +96,7 @@ public class RushBossController : BossController
 
     protected override bool CanSkill()
     {
-        return currentHP <= maxHP * 0.5f;
+        return currentHP <= UnitStats.maxHP * 0.5f;
     }
 
     protected override void UseSkill()
@@ -338,7 +338,7 @@ public class RushBossController : BossController
 
     private void SetUntarget()
     {
-        DestroyEvent(this.gameObject);
+        DestroyEvent(this);
         isUnitDie = true;
     }
 
@@ -363,12 +363,14 @@ public class RushBossController : BossController
 
     public void MeleeAttack(float damage)
     {
-        DamageData damageData = new DamageData(damage, StatusEffectType.None, 0);
-
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.data.UnitSenseRadius);
+        DamageData damageData = new DamageData(damage, StatusEffectType.Physical, 0);
+        Transform targetTransform = null;
+        if (unit.detectTarget.targetToAttack is Component comp)
+            targetTransform = comp.transform;
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.data.UnitAttackDistance + 1f);
         foreach (Collider2D targetCollider in collider)
         {
-            if (targetCollider.transform == unit.detectTarget.targetToAttack)
+            if (targetCollider.transform == targetTransform)
             {
                 IDamageAble target = targetCollider.GetComponent<IDamageAble>();
                 target.ReceiveDamage(damageData);
@@ -378,10 +380,14 @@ public class RushBossController : BossController
 
     public void RushAttack(DamageData damageData)
     {
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.data.UnitSenseRadius);
+        Transform targetTransform = null;
+        if (unit.detectTarget.targetToAttack is Component comp)
+            targetTransform = comp.transform;
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.data.UnitAttackDistance + 1f);
         foreach (Collider2D targetCollider in collider)
         {
-            if (targetCollider.transform == unit.detectTarget.targetToAttack)
+
+            if (targetCollider.transform == targetTransform)
             {
                 if(targetCollider.TryGetComponent<IDamageAble>(out IDamageAble i)&& i is MonoBehaviour target)
                 {

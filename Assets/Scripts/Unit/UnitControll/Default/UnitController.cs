@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 /// <summary>
@@ -41,23 +40,21 @@ public class DamageData
 /// <summary>
 /// 유닛의 전반적인 컨트롤을 담당하는 클래스입니다.
 /// 유닛의 이동, 공격, 상태이상 적용, 스탯 계산 등을 담당합니다.
-/// 유닛의 상태를 관리하는 FSM을 구현합니다.
-/// 유닛의 애니메이션을 관리합니다.
-/// 유닛의 스탯을 관리합니다.
-/// 유닛의 아이템을 관리합니다.
-/// 유닛의 스킬을 관리합니다.
-/// 유닛의 상태이상을 관리합니다.
 /// </summary>
 public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛의 전반적인 컨트롤
 {
+    /// <summary>
+    /// 유닛이 파괴될 때 호출되는 이벤트입니다.
+    /// </summary>
+    public event Action<IDamageAble> OnDestroyed;
 
-    public event Action<GameObject> OnDestroyed;
     /// <summary>
     /// 유닛의 스탯을 저장하는 딕셔너리입니다.
     /// 스탯의 종류에 따라 스탯을 저장합니다.
     /// 초기 저장할 스탯을 저장합니다.
     /// </summary>
     private Dictionary<StatType, float> baseStats = new();
+
     /// <summary>
     /// 유닛의 스탯에 영향을 주는 모든 스탯 모디파이어를 저장하는 리스트입니다.
     /// 스탯 모디파이어는 스탯을 변경하는 모든 요소를 저장합니다.
@@ -69,15 +66,22 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// 최종 스탯은 기본 스탯과 모든 스탯 모디파이어를 적용한 스탯입니다.
     /// </summary>
     private Dictionary<StatType, float> finalStats = new();
+
     /// <summary>
     /// 유닛이 공격시 적용할 아이템을 저장하는 리스트입니다.
     /// 아이템은 유닛이 공격할 때 적용되는 효과를 저장합니다.
     /// </summary>
     private List<OnHitItem> onHitItemList = new();
+
     /// <summary>
     /// 유닛이 공격할 때 이 이벤트가 호출됩니다.
     /// </summary>
-    public event Action OnAttack;
+    public event Action OnHit;
+
+    /// <summary>
+    /// 유닛이 공격당할 때 이 이벤트가 호출됩니다.
+    /// </summary>
+    public event Action WhenHit;
 
     private StatusEffectManager statusEffectManager;
 
@@ -114,35 +118,26 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     private float pausedTime;
 
     public bool isStunned = false;
-    public float maxHP;
+
+    [HideInInspector] public UnitStats UnitStats => new UnitStats(finalStats);
+    [SerializeField] private UnitStats baseUnitStats;
     [SerializeField] public float currentHP;
-    public float maxMP;
+
     public float currentMP { get; private set; }
-    public float unitDamage;
-    public float unitSpeed;
-    public float unitAttackDistance;
-    public float unitCritChance = 0.0f;
 
     public bool isAllay = true;
 
     public int unitLevel = 1;
 
     public float unitAttackSpeed = 1.0f;
-    private float unitSenseDistance = 1.0f;
-
     protected IUnitState currentState;
     private IUnitState manaSkillState;
 
     #region 이벤트 관리
 
-    private void HandleAttackEvent(Transform tr)
+    public void DestroyEvent(IDamageAble damageAble)
     {
-        lastAttacker = tr;
-    }
-
-    public void DestroyEvent(GameObject gameObject)
-    {
-        OnDestroyed?.Invoke(gameObject);
+        OnDestroyed?.Invoke(damageAble);
     }
     #endregion
 
@@ -226,40 +221,33 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <summary>
     /// 유닛의 기본 스탯을 설정하는 메서드
     /// </summary>
-    private void SetUnit()
+    public void SetUnit()
     {
         if (unit.data != null)
         {
+            int idx = Mathf.Clamp(unitLevel - 1, 0, unit.data.UnitHP.Length - 1);
             baseStats.Clear();
-            baseStats.Add(StatType.MaxHealth, unit.data.UnitHP);
+            baseStats.Add(StatType.MaxHealth, unit.data.UnitHP[idx]);
             baseStats.Add(StatType.HealthRegen, 0);
             baseStats.Add(StatType.MaxMana, unit.data.UnitMP);
             baseStats.Add(StatType.ManaRegen, 5);
-            baseStats.Add(StatType.AttackDamage, unit.data.UnitDamage);
+            baseStats.Add(StatType.AttackDamage, unit.data.UnitDamage[unitLevel - 1]);
             baseStats.Add(StatType.AttackSpeed, unit.data.UnitAttackSpeed);
             baseStats.Add(StatType.AttackRange, unit.data.UnitAttackDistance);
             baseStats.Add(StatType.MoveSpeed, unit.data.UnitSpeed);
             baseStats.Add(StatType.CritChance, 0);
+            baseStats.Add(StatType.CritDamage, 1.3f);
             baseStats.Add(StatType.Endurance, 0);
             baseStats.Add(StatType.DamageAmp, 0);
 
+            baseUnitStats = new UnitStats(baseStats);
+
             RecalculateStats();
 
-            currentHP = maxHP;
+            currentHP = UnitStats.maxHP;
             currentMP = 0;
-            unitSenseDistance = unit.data.UnitSenseRadius;
         }
     }
-
-    public void ReUnit()
-    {
-        currentHP = maxHP;
-        currentMP = 0;
-        isUnitDie = false;
-        unit.rb.velocity = Vector2.zero;
-        unit.capsuleCollider.enabled = true;
-    }
-
 
     #endregion
 
@@ -305,11 +293,18 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
         AnimatorStateInfo stateInfo = unit.animator.GetCurrentAnimatorStateInfo(0);
         Vector2 currentPosition = transform.position;
+        Transform targetTransform = null;
+        if(unit.detectTarget.targetToAttack != null)
+        {
+            IDamageAble target = unit.detectTarget.targetToAttack;
+            if (target is Component comp)
+                targetTransform = comp.transform;
+        }
         if (stateInfo.IsTag("Battle"))
         {
-            if(unit.detectTarget.targetToAttack != null)
+            if (unit.detectTarget.targetToAttack != null)
             {
-                float targetDirection = unit.detectTarget.targetToAttack.transform.position.x - currentPosition.x;
+                float targetDirection = targetTransform.position.x - currentPosition.x;
 
                 if (targetDirection > 0)
                 {
@@ -325,7 +320,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         {
             float moveDirection = currentPosition.x - _lastPosition.x;
 
-            if (moveDirection > 0 )
+            if (moveDirection > 0)
             {
                 unit.spriteRenderer.flipX = false;
             }
@@ -416,7 +411,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         CollectMana();
         DoSkill();
-        OnAttack?.Invoke();
+        OnHit?.Invoke();
 
         if (unitPassiveSkill != null)
         {
@@ -442,7 +437,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <param name="amount"></param>
     public virtual void Heal(float amount)
     {
-        currentHP = Math.Clamp(currentHP += amount, 0f, maxHP);
+        currentHP = Math.Clamp(currentHP += amount, 0f, UnitStats.maxHP);
     }
 
     /// <summary>
@@ -459,7 +454,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         ApplyEffect(damage);
         CollectMana();
         DoSkill();
-
+        WhenHit?.Invoke();
         if (currentHP <= 0 && !isUnitDie) Die();
     }
 
@@ -470,7 +465,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         StopMovement();
         isUnitDie = true;
-        OnDestroyed?.Invoke(this.gameObject);
+        OnDestroyed?.Invoke(this);
 
         GoDie();
         // StartCoroutine(KnockBack(2.0f));
@@ -498,7 +493,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         unit.rb.velocity = Vector2.zero;
         unit.detectTarget.ClearTarget();
         isUnitDie = false;
-        currentHP = maxHP;
+        currentHP = UnitStats.maxHP;
         ChangeState(new UnitIdleState());
         UnitManager.instance.AddAllayList(this);
     }
@@ -509,7 +504,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <param name="damage">유닛에게 적용할 DamageData형식의 값</param>
     public void ApplyEffect(DamageData damage)
     {
-        if (damage.effectType == StatusEffectType.None)
+        if (damage.effectType == StatusEffectType.Physical || damage.effectType == StatusEffectType.Magical)
         {
             return;
         }
@@ -527,7 +522,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         if (canMana)
         {
             currentMP += finalStats[StatType.ManaRegen];
-            if (currentMP >= maxMP && maxMP > 0)
+            if (currentMP >= UnitStats.maxMP && UnitStats.maxMP > 0)
             {
                 currentMP = 0;
                 ChangeState(manaSkillState);
@@ -539,28 +534,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// </summary>
     public void DoSkill()
     {
-        if (currentMP >= maxMP && maxMP != 0) 
+        if (currentMP >= UnitStats.maxMP && UnitStats.maxMP != 0)
         {
             unit.animator.Play("ManaSkill");
             Debug.Log("마나");
             currentMP = 0;
-        }
-    }
-
-    /// <summary>
-    /// 유닛을 초기화 시키는 메서드
-    /// </summary>
-    public void ResetUnit()
-    {
-        if (unit.data != null)
-        {
-            maxHP = unit.data.UnitHP;
-            maxMP = unit.data.UnitMP;
-            unitDamage = unit.data.UnitDamage;
-            unitSpeed = unit.data.UnitSpeed;
-            unitAttackDistance = unit.data.UnitAttackDistance;
-            unitAttackSpeed = unit.data.UnitAttackSpeed;
-            unitSenseDistance = unit.data.UnitSenseRadius;
         }
     }
     /// <summary>
@@ -610,7 +588,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public float GetNormalizedHealth()
     {
-        return currentHP / maxHP;
+        return currentHP / UnitStats.maxHP;
     }
     #endregion
 
@@ -630,10 +608,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public void TriggerOnHit(IDamageAble target)
     {
-        foreach(var effect in onHitItemList)
+        foreach (var effect in onHitItemList)
         {
             effect.OnHit(this, target);
         }
+        OnHit?.Invoke();
     }
 
     #endregion
@@ -685,7 +664,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             float add = 0f;
             float multiple = 1f;
             float percent = 0f;
-            float percentMultiple = 1f;
 
             foreach (var mod in statModifierList.Where(m => m.statType == stat.Key))
             {
@@ -697,19 +675,9 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
                     multiple *= 1 + mod.value;
                 else if (mod.modifierMethod == ModifierMethod.AdditivePercent)
                     percent += mod.value;
-                else if (mod.modifierMethod == ModifierMethod.MultiplicativePercent)
-                    percentMultiple *= 1 + mod.value;
             }
-            finalStats[stat.Key] = (stat.Value + add) * multiple * (1 + percent) * percentMultiple;
+            finalStats[stat.Key] = (stat.Value + add) * multiple * (1 + percent);
         }
-
-        maxHP = finalStats[StatType.MaxHealth];
-        maxMP = finalStats[StatType.MaxMana];
-        unitDamage = finalStats[StatType.AttackDamage];
-        unitAttackDistance = finalStats[StatType.AttackRange];
-        unitAttackSpeed = finalStats[StatType.AttackSpeed];
-        unitSpeed = finalStats[StatType.MoveSpeed];
-        unitCritChance = finalStats[StatType.CritChance];
 
         ReBuildStats();
     }
@@ -722,7 +690,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         }
         else
         {
-            unit.mover.maxSpeed = unitSpeed;
+            unit.mover.maxSpeed = UnitStats.moveSpeed;
 
         }
     }
@@ -735,28 +703,26 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         if (unit != null)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(this.transform.position, unitAttackDistance);
+            Gizmos.DrawWireSphere(this.transform.position, UnitStats.attackRange);
         }
     }
-
-    [ContextMenu("ReattachSynergy")]
-    internal void ReattachSynergy()
+    public void ReattachSynergy()
     {
 
-    EditorApplication.delayCall += () =>
-    {
-        if (this == null) return; // 오브젝트가 파괴된 경우 방지
-        foreach (var component in GetComponents<MonoBehaviour>())
+        EditorApplication.delayCall += () =>
         {
-            if (component is ISynergy)
+            if (this == null) return; // 오브젝트가 파괴된 경우 방지
+            foreach (var component in GetComponents<MonoBehaviour>())
             {
-                Undo.DestroyObjectImmediate(component);
+                if (component is ISynergy)
+                {
+                    Undo.DestroyObjectImmediate(component);
+                }
             }
-        }
-        SynergyInstaller.AttachSynergy(this);
-        EditorUtility.SetDirty(this);
-    };
-}
+            SynergyInstaller.AttachSynergy(this);
+            EditorUtility.SetDirty(this);
+        };
+    }
 #endif
 
     public bool GetIsStunned()
