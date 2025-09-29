@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class UnitMarketManager : MonoBehaviour
@@ -10,11 +11,42 @@ public class UnitMarketManager : MonoBehaviour
     [SerializeField] private List<UnitSlot> playerUnitSlots; 
     //[SerializeField] private TextMeshProUGUI goldText;
 
+    [SerializeField] private Button toggleMarketButton;
+    [SerializeField] private Image toggleMarketButtonImage;
+
+    private Sprite openSprite;
+    private Sprite closeSprite;
+
     private void Start()
     {
         Debug.Log("UnitMarketManager Start 실행됨");
         UpdateGoldUI();
         LoadMarket();
+
+        openSprite = Resources.Load<Sprite>("Shop/OpenButton");
+        closeSprite = Resources.Load<Sprite>("Shop/CloseButton");
+
+        if (toggleMarketButton != null)
+            toggleMarketButton.onClick.AddListener(ToggleMarket);
+
+        if (toggleMarketButtonImage != null && closeSprite != null)
+            toggleMarketButtonImage.sprite = closeSprite;
+    }
+
+    public void ToggleMarket()
+    {
+        if (unitMarketUI.gameObject.activeSelf)
+        {
+            UnitMarketClose();
+            if (toggleMarketButtonImage != null && openSprite != null)
+                toggleMarketButtonImage.sprite = openSprite;
+        }
+        else
+        {
+            UnitMarketOpen();
+            if (toggleMarketButtonImage != null && closeSprite != null)
+                toggleMarketButtonImage.sprite = closeSprite;
+        }
     }
 
     public void LoadMarket()
@@ -62,6 +94,12 @@ public class UnitMarketManager : MonoBehaviour
             return;
         }
 
+        if (playerUnitSlots[slotIndex].icon.enabled == false)
+        {
+            Debug.LogWarning($"슬롯 {slotIndex}은(는) 이미 구매되었습니다.");
+            return;
+        }
+
         //if (player.coinAmount < 10000)
         //{
         //    Debug.Log("골드 부족!");
@@ -79,14 +117,9 @@ public class UnitMarketManager : MonoBehaviour
         Sprite icon = UnitPrefabsLoader.GetSprite(unit.name);
         if (icon == null) return;
 
-        foreach (var slot in playerUnitSlots)
-        {
-            if (!slot.icon.enabled)
-            {
-                slot.SetUnit(prefab);
-                break;
-            }
-        }
+        // 슬롯에 유닛 할당 및 아이콘 비활성화(구매 완료 표시)
+        playerUnitSlots[slotIndex].SetUnit(prefab);
+        playerUnitSlots[slotIndex].icon.enabled = false;
     }
 
     private void UpdateGoldUI()

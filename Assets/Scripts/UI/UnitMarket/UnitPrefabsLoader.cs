@@ -8,6 +8,7 @@ public static class UnitPrefabsLoader
     private static bool isInitialized = false;
     private static GameObject defaultPrefab;
     private static Dictionary<int, Sprite> tierSprites = new();
+    private static Dictionary<int, Sprite> tierShopSprites = new();
 
     public static void Initialize()
     {
@@ -34,6 +35,14 @@ public static class UnitPrefabsLoader
         tierSprites[3] = Resources.Load<Sprite>("Frame/epic");
         tierSprites[4] = Resources.Load<Sprite>("Frame/legend");
         tierSprites[5] = Resources.Load<Sprite>("Frame/special");
+
+        tierShopSprites[1] = Resources.Load<Sprite>("Shop/common");
+        tierShopSprites[2] = Resources.Load<Sprite>("Shop/rare");
+        tierShopSprites[3] = Resources.Load<Sprite>("Shop/epic");
+        tierShopSprites[4] = Resources.Load<Sprite>("Shop/legend");
+        tierShopSprites[5] = Resources.Load<Sprite>("Shop/special");
+
+
 
 
         Debug.Log($"UnitPrefabLoader 초기화 완료: {prefabCache.Count}개 프리팹 캐싱됨");
@@ -71,6 +80,17 @@ public static class UnitPrefabsLoader
         if (!isInitialized) Initialize();
 
         if (tierSprites.TryGetValue(tier, out Sprite sprite))
+            return sprite;
+
+        Debug.LogWarning($"티어 {tier}에 해당하는 스프라이트 없음");
+        return null;
+    }
+
+    public static Sprite GetShopTierSprite(int tier)
+    {
+        if (!isInitialized) Initialize();
+
+        if (tierShopSprites.TryGetValue(tier, out Sprite sprite))
             return sprite;
 
         Debug.LogWarning($"티어 {tier}에 해당하는 스프라이트 없음");

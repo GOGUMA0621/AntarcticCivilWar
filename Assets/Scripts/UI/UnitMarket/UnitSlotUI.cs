@@ -10,11 +10,12 @@ public class UnitSlotUI : MonoBehaviour
     public Image tierFrame;
     public TextMeshProUGUI[] synergyTexts;
     public TextMeshProUGUI priceText;
+    public TextMeshProUGUI unitNameText;
 
     public void Set(UnitDB unit, Sprite sprite)
     {
         unitImage.sprite = sprite;
-        tierFrame.sprite = UnitPrefabsLoader.GetTierSprite(unit.tier);
+        tierFrame.sprite = UnitPrefabsLoader.GetShopTierSprite(unit.tier);
         unitImage.enabled = true;
 
         for (int i = 0; i < synergyTexts.Length; i++)
@@ -26,6 +27,7 @@ public class UnitSlotUI : MonoBehaviour
         }
 
         priceText.text = "10000"; // 나중에 unit.price로 교체 가능
+        unitNameText.text = unit.name_kr;
     }
 
     public void Clear()
@@ -34,5 +36,6 @@ public class UnitSlotUI : MonoBehaviour
         foreach (var txt in synergyTexts)
             txt.text = "";
         priceText.text = "";
+        unitNameText.text = "";
     }
 }
