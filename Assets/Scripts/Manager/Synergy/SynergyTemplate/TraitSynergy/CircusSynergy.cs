@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Circus", SynergyType.Trait)]
+[SynergyTag("Circus", "서커스", SynergyType.Trait)]
 public class CircusSynergy : MonoBehaviour, ISynergy
 {
     public string Tag => "Circus";
@@ -61,12 +61,15 @@ public class CircusSynergy : MonoBehaviour, ISynergy
                 break;
             case 1:
                 circusLeader.AddModifierStat(new StatModifier(Tag, StatType.AttackSpeed, 0.2f, ModifierMethod.MultiplicativePercent));
+                circusLeader.unitLevel = 2;
                 break;
             case 2:
                 circusLeader.AddModifierStat(new StatModifier(Tag, StatType.ManaRegen, 5f, ModifierMethod.Additive));
+                circusLeader.unitLevel = 3;
                 break;
             case 3:
                 circusLeader.AddModifierStat(new StatModifier(Tag, StatType.Endurance, 0.25f, ModifierMethod.MultiplicativePercent));
+                circusLeader.unitLevel = 4;
                 break;
             default:
                 if (circusLeader != null)

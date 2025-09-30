@@ -114,8 +114,8 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
                     case "DieState":
                         unitController.GoDie();
                         break;
-                    case "CallState":
-                        unitController.GoCall();
+                    case "ManaSkillState":
+                        unitController.GoSkill();
                         break;
                     default:
                         Debug.LogError($"Unknown state: {unitState}");
@@ -176,8 +176,8 @@ public class UnitManager : SingleTonBehaviour<UnitManager>
                     case "DieState":
                         unitController.GoDie();
                         break;
-                    case "CallState":
-                        unitController.GoCall();
+                    case "ManaSkillState":
+                        unitController.GoSkill();
                         break;
                     default:
                         Debug.LogError($"Unknown state: {unitState}");

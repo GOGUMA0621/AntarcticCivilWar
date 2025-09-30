@@ -23,7 +23,7 @@ TagManager:
   - Ground
   - Structure
   - Obstacle
-  - Detector
+  - Draggable
   - Droppable
   - 
   - 

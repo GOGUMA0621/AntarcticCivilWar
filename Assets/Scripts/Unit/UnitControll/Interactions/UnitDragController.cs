@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldDragHandler, IEndWorldDragHandler
+public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldDragHandler, IEndWorldDragHandler, IWorldDraggable
 {
     private Vector3 startPosition;
     private PlacementGridManager gridManager;
@@ -10,15 +10,7 @@ public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldD
 
     public void Awake()
     {
-        var grid = FindObjectsByType<PlacementGridManager>(FindObjectsSortMode.None);
-        foreach (var g in grid)
-        {
-            if (g != null && g.tag == "Allay")
-            {
-                gridManager = g;
-                break;
-            }
-        }
+        gridManager = GridManager.instance.allayGrid;
         unit = GetComponent<UnitController>();
     }
 
@@ -36,7 +28,6 @@ public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldD
             return;
         }
         Debug.Log("드래그 시작");
-        unit.unit.rb.simulated = false;
         startPosition = this.transform.position;
         if (unit == null) return;
 
@@ -84,7 +75,6 @@ public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldD
         if(unit.tag == "Enemy" || !canDrag) return;
 
         Vector3 worldPos = data.worldPostion;
-        unit.unit.rb.simulated = true;
         worldPos.z = 0;
 
         int droppableLayer = LayerMask.NameToLayer("Droppable");

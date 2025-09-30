@@ -27,6 +27,8 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
 
     public Sprite GetTierIcon(int tier)
     {
+        if (tier < 0 || tier >= tierIcons.Count)
+            return null;
         return tierIcons[tier];
     }
 

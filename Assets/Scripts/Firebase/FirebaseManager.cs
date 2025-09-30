@@ -5,7 +5,7 @@ using Firebase.Firestore;
 using System.Threading.Tasks;
 
 
-//¾ÆÀÌÅÛ Á¤º¸¸¦ °¡Áø Å¬·¡½ºÀÓ
+//ì•„ì´í…œ ì •ë³´ë¥¼ ê°€ì§„ í´ë˜ìŠ¤ì„
 public class ItemDB
 {
     public int price;
@@ -22,7 +22,7 @@ public class ItemDB
     public List<string> applied_debuff = new();
 }
 
-// À¯´Ö Á¤º¸¸¦ °¡Áø Å¬·¡½ºÀÓ
+// ìœ ë‹› ì •ë³´ë¥¼ ê°€ì§„ í´ë˜ìŠ¤ì„
 public class UnitDB
 {   
     public int tier;
@@ -36,11 +36,12 @@ public class UnitDB
     public string type;
     public string attack_Type;
     public List<string> synergy = new();
+    public List<string> synergy_KR = new();
     public List<int> hp = new();
     public List<int> attack = new();
 }
 
-// !!!!!!!!!!»ç¿ëÇÒ Å¬·¡½º¿¡¼­ await FirebaseManager.ItemLoadData(); ¶Ç´Â UnitLoadData();ÇØÁÖ±â!!!!!!!
+// !!!!!!!!!!ì‚¬ìš©í•  í´ë˜ìŠ¤ì—ì„œ await FirebaseManager.ItemLoadData(); ë˜ëŠ” UnitLoadData();í•´ì£¼ê¸°!!!!!!!
 public static class FirebaseManager
 {
     private static FirebaseFirestore firestore = FirebaseFirestore.DefaultInstance;
@@ -50,7 +51,7 @@ public static class FirebaseManager
 
     public static bool isLoaded => items != null && units != null;
 
-    // ÆÄÀÌ¾îº£ÀÌ½º db¿¡ ÀúÀåµÇ¾îÀÖ´Â Á¤º¸µéÀ» ºÒ·¯¿À´Â °úÁ¤ÀÓ. »ç¿ë¹æ½ÄÀº items[¹®¼­ID(¾ÆÀÌÅÛ No.)].value;
+    // íŒŒì´ì–´ë² ì´ìŠ¤ dbì— ì €ì¥ë˜ì–´ìˆëŠ” ì •ë³´ë“¤ì„ ë¶ˆëŸ¬ì˜¤ëŠ” ê³¼ì •ì„. ì‚¬ìš©ë°©ì‹ì€ items[ë¬¸ì„œID(ì•„ì´í…œ No.)].value;
     public static async Task ItemLoadData()
     {
         QuerySnapshot itemDataLoad = await firestore.Collection("items").GetSnapshotAsync();
@@ -60,11 +61,11 @@ public static class FirebaseManager
             {
                 Dictionary<string, object> data = doc.ToDictionary();
 
-                int itemId = int.Parse(doc.Id); // << ¹®¼­ID´Â ÀúÀåµÉ¶§ ¹®ÀÚ¿­·Î ÀúÀåµÈ´Ù³×¿ä ±×·¡¼­ ParseÇÔ¼ö »ç¿ë
+                int itemId = int.Parse(doc.Id); // << ë¬¸ì„œIDëŠ” ì €ì¥ë ë•Œ ë¬¸ìì—´ë¡œ ì €ì¥ëœë‹¤ë„¤ìš” ê·¸ë˜ì„œ Parseí•¨ìˆ˜ ì‚¬ìš©
 
                 ItemDB item = new ItemDB
                 {
-                    // Int.Parse()¸¦ »ç¿ëÇÒ ¼ö µµÀÖÁö¸¸ ÆÄº£¿¡¼­ °¡Á®¿Â µ¥ÀÌÅÍ´Â objectÇü½ÄÀÌ¶ó³×¿ä             
+                    // Int.Parse()ë¥¼ ì‚¬ìš©í•  ìˆ˜ ë„ìˆì§€ë§Œ íŒŒë² ì—ì„œ ê°€ì ¸ì˜¨ ë°ì´í„°ëŠ” objectí˜•ì‹ì´ë¼ë„¤ìš”             
                     name_kr = data["name_kr"].ToString(),
                     name = data["name"].ToString(),
                     type = data["type"].ToString(),
@@ -74,7 +75,7 @@ public static class FirebaseManager
 
                     des = data.ContainsKey("des") ? data["des"].ToString() : "",
 
-                    // Á¸Àç ¿©ºÎ¿¡ µû¶ó Ã³¸®ÇÔ
+                    // ì¡´ì¬ ì—¬ë¶€ì— ë”°ë¼ ì²˜ë¦¬í•¨
                     price = data.ContainsKey("price") ? Convert.ToInt32(data["price"]) : 0,
                     cooltime = data.ContainsKey("cooltime") ? Convert.ToInt32(data["cooltime"]) : 0,
 
@@ -97,7 +98,7 @@ public static class FirebaseManager
                                 try { return Convert.ToSingle(obj); }
                                 catch
                                 {
-                                    Debug.LogWarning($"base_effect ¸®½ºÆ® ³»ºÎ º¯È¯ ½ÇÆĞ: {obj} ({obj?.GetType()})");
+                                    Debug.LogWarning($"base_effect ë¦¬ìŠ¤íŠ¸ ë‚´ë¶€ ë³€í™˜ ì‹¤íŒ¨: {obj} ({obj?.GetType()})");
                                     return 0f;
                                 }
                             }),
@@ -121,7 +122,7 @@ public static class FirebaseManager
                                 try { return Convert.ToSingle(obj); }
                                 catch
                                 {
-                                    Debug.LogWarning($"stack_effect ¸®½ºÆ® ³»ºÎ º¯È¯ ½ÇÆĞ: {obj} ({obj?.GetType()})");
+                                    Debug.LogWarning($"stack_effect ë¦¬ìŠ¤íŠ¸ ë‚´ë¶€ ë³€í™˜ ì‹¤íŒ¨: {obj} ({obj?.GetType()})");
                                     return 0f;
                                 }
                             }),
@@ -142,15 +143,15 @@ public static class FirebaseManager
         }
         catch(Exception ex) 
         {
-            Debug.LogError($"¾ÆÀÌÅÛ ·Îµå ¿À·ù: {ex}");
+            Debug.LogError($"ì•„ì´í…œ ë¡œë“œ ì˜¤ë¥˜: {ex}");
         }
         finally
         {
-            Debug.Log("¾ÆÀÌÅÛ ·Îµå ¿Ï·á");
+            Debug.Log("ì•„ì´í…œ ë¡œë“œ ì™„ë£Œ");
         }
     }
 
-    //ÀÌ°Ç À¯´Ö Á¤º¸. »ç¿ë¹æ½ÄÀº À§¿Í µ¿ÀÏÇÔ
+    //ì´ê±´ ìœ ë‹› ì •ë³´. ì‚¬ìš©ë°©ì‹ì€ ìœ„ì™€ ë™ì¼í•¨
     public static async Task UnitLoadData()
     {
         QuerySnapshot unitDataLoad = await firestore.Collection("units").GetSnapshotAsync();
@@ -187,7 +188,7 @@ public static class FirebaseManager
                     ? rawAtk.ConvertAll(obj => Convert.ToInt32(obj))
                     : new List<int>()
 
-                    // Á¸Àç ¿©ºÎ¿¡ µû¶ó Ã³¸®ÇÔ
+                    // ì¡´ì¬ ì—¬ë¶€ì— ë”°ë¼ ì²˜ë¦¬í•¨
                 };
 
 
@@ -205,20 +206,20 @@ public static class FirebaseManager
         }
         catch (Exception ex)
         {
-            Debug.LogWarning($"À¯´Ö ·Îµå ¿À·ù: {ex}");
+            Debug.LogWarning($"ìœ ë‹› ë¡œë“œ ì˜¤ë¥˜: {ex}");
         }
         finally
         {
-            Debug.Log("À¯´Ö ·Îµå ¿Ï·á");
+            Debug.Log("ìœ ë‹› ë¡œë“œ ì™„ë£Œ");
         }
     }
 
-    //Á¸ÀçÇÏÁö ¾Ê´Â ID¸¦ Á¶È¸ÇØµµ °ÔÀÓÀÌ Å©·¡½Ã ³ªÁö ¾Êµµ·Ï ¿¹¿Ü Ã³¸® Æ÷ÇÔÇÑ ¹öÀü
+    //ì¡´ì¬í•˜ì§€ ì•ŠëŠ” IDë¥¼ ì¡°íšŒí•´ë„ ê²Œì„ì´ í¬ë˜ì‹œ ë‚˜ì§€ ì•Šë„ë¡ ì˜ˆì™¸ ì²˜ë¦¬ í¬í•¨í•œ ë²„ì „
 
-    //+»ç¿ë¿¹½Ã+
-    //var ¿øÇÏ´Â º¯¼ö¸í(ex.oldDagger) = FirebaseManager.GetItemByID(1101001);
-    //oldDagger.name;         // ¾ÆÀÌÅÛ ÀÌ¸§
-    //oldDagger.cooltime;     // ÄğÅ¸ÀÓ
+    //+ì‚¬ìš©ì˜ˆì‹œ+
+    //var ì›í•˜ëŠ” ë³€ìˆ˜ëª…(ex.oldDagger) = FirebaseManager.GetItemByID(1101001);
+    //oldDagger.name;         // ì•„ì´í…œ ì´ë¦„
+    //oldDagger.cooltime;     // ì¿¨íƒ€ì„
 
     public static ItemDB GetItemByID(int id)
     {
@@ -226,11 +227,11 @@ public static class FirebaseManager
             return item;
         else
         {
-            Debug.LogWarning($"¾ÆÀÌÅÛ ID {id}¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning($"ì•„ì´í…œ ID {id}ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return null;
         }
 
-        //±×³É ¹Ù·Î¹Ù·Î items[itemID].value·Î »ç¿ëÇØµµ µÇ°í, È®½ÇÇÑ°Ô ÁÁ´Ù¸é ÀÌ ¹æ½ÄÀ» »ç¿ëÇÏ¸é µÊ
+        //ê·¸ëƒ¥ ë°”ë¡œë°”ë¡œ items[itemID].valueë¡œ ì‚¬ìš©í•´ë„ ë˜ê³ , í™•ì‹¤í•œê²Œ ì¢‹ë‹¤ë©´ ì´ ë°©ì‹ì„ ì‚¬ìš©í•˜ë©´ ë¨
     }
 
     public static UnitDB GetUnitByID(int id)
@@ -239,7 +240,7 @@ public static class FirebaseManager
             return unit;
         else
         {
-            Debug.LogWarning($"À¯´Ö ID {id}¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning($"ìœ ë‹› ID {id}ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return null;
         }
     }

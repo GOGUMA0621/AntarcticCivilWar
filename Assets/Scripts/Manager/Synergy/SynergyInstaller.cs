@@ -41,6 +41,20 @@ public static class SynergyInstaller
         .ToDictionary(a => a.Key,
                       a => a.Value.GetCustomAttribute<SynergyTagAttribute>()?.Type ?? SynergyType.Trait);
     }
+
+    /// <summary>
+    /// 영어 시너지 태그(이름)로 한글 이름을 반환합니다.
+    /// </summary>
+    public static string GetSynergyKoreanName(string tag)
+    {
+        if (synergyTypeMap.TryGetValue(tag, out var type))
+        {
+            var attr = type.GetCustomAttribute<SynergyTagAttribute>();
+            if (attr != null && !string.IsNullOrEmpty(attr.Tag_KR))
+                return attr.Tag_KR;
+        }
+        return tag; // 못 찾으면 영어 태그 그대로 반환
+    }
 #if UNITY_EDITOR
     /// <summary>
     /// <see cref="unit"/>에 Synergy를 부착합니다.

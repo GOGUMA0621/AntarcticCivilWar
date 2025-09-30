@@ -1,17 +1,18 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitAttackController : MonoBehaviour 
+public class UnitAttackController : MonoBehaviour
 {
-    public Action<Transform> OnAttackTransform; 
-
+    public Action<Transform> OnAttackTransform;
+    private List<ProjectileController> activeProjectiles = new List<ProjectileController>();
     public GameObject pfProjectile;
-    
+
     private Unit unit;
     private void Start()
     {
         unit = GetComponent<Unit>();
-        if(unit.data.unitAttackType == UnitAttackType.Range)
+        if (unit.data.unitAttackType == UnitAttackType.Range)
         {
             pfProjectile = unit.data.UnitProjectile;
         }
@@ -20,7 +21,7 @@ public class UnitAttackController : MonoBehaviour
     internal void Attack()
     {
         DamageData damageData = new DamageData(unit.controller.UnitStats.attackDamage, StatusEffectType.Physical, 0);
-        if(IsCritical(unit.controller.UnitStats.critChance))
+        if (IsCritical(unit.controller.UnitStats.critChance))
         {
             damageData.damage *= unit.controller.UnitStats.critDamage;
             // 크리티컬 효과 추가 처리
@@ -46,7 +47,7 @@ public class UnitAttackController : MonoBehaviour
 
     void RangeAttack(DamageData damageData = null)
     {
-        if(pfProjectile != null)
+        if (pfProjectile != null)
         {
             if (unit.detectTarget.targetToAttack != null)
             {
@@ -55,8 +56,10 @@ public class UnitAttackController : MonoBehaviour
                 GameObject projectileObject = Instantiate(pfProjectile, transform.position, Quaternion.identity);
                 projectileObject.SetActive(true);
                 ProjectileController projectile = projectileObject.GetComponent<ProjectileController>();
-                projectile.InitialzeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight,unit);
+                projectile.InitializeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit, this);
+                projectile.InitializeDamageData(damageData);
                 projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
+                AddProjectile(projectile);
                 projectile.SetOnHitCallback(() => { unit.controller.TriggerOnHit(target); });
             }
         }
@@ -75,7 +78,7 @@ public class UnitAttackController : MonoBehaviour
                 target.ReceiveDamage(damageData);
                 unit.controller.TriggerOnHit(target);
             }
-        } 
+        }
     }
 
     public void ResetProjectile()
@@ -92,5 +95,21 @@ public class UnitAttackController : MonoBehaviour
     {
         // criticalChance: 0~1 사이 값 (예: 0.25f = 25% 확률)
         return UnityEngine.Random.value < criticalChance;
+    }
+
+    public void RemoveProjectile(ProjectileController projectile)
+    {
+        if (activeProjectiles.Contains(projectile))
+        {
+            activeProjectiles.Remove(projectile);
+        }
+    }
+    
+    public void AddProjectile(ProjectileController projectile)
+    {
+        if (!activeProjectiles.Contains(projectile))
+        {
+            activeProjectiles.Add(projectile);
+        }
     }
 }

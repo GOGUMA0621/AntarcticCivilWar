@@ -14,22 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uB3CC\uACA9\uB300\uC7A5 \uD3AD\uC2A4\uD1A0"
   unitDescription: 
-  unitPower: 0
+  unitTier: 0
   unitIcon: {fileID: 22659418, guid: 3412e5fd3d1cae84e80da465d31889cf, type: 3}
-  unitFaction: 0
-  unitType: 0
-  unitSynergyType: 0
+  unitFaction: 3
+  unitType: 3
+  unitSynergyTags: []
   unitAnimations: []
-  unitHP: 10000
+  unitHP:
+  - 10000
   unitMP: 150
   unitSpeed: 5
-  unitDamage: 60
+  unitDamage:
+  - 60
   unitAttackType: 0
   unitHasKnockback: 0
   unitUnstoppable: 0
   unitAttackSpeed: 1.5
   unitAttackDistance: 3
-  unitSenseRadius: 8
   unitProjectile: {fileID: 0}
   unitProjectileMaxSpeed: 0
   unitProjectileMaxHeight: 0

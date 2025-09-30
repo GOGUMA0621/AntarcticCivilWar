@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Warrior", SynergyType.ClassType)]
+[SynergyTag("Warrior", "전사", SynergyType.ClassType)]
 public class WarriorSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
     public string Tag => "Warrior";

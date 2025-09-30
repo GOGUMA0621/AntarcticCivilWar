@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Knight", SynergyType.ClassType)]
+[SynergyTag("Knight", "기사", SynergyType.ClassType)]
 public class KnightSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
     public string Tag => "Knight";

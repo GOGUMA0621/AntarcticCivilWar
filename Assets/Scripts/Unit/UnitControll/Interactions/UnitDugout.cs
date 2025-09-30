@@ -15,7 +15,6 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
         if (unitInDugout != null)
         {
             Debug.LogWarning("참호에 이미 유닛이 있습니다. 기존 유닛을 교체합니다.");
-            unitInDugout.unit.rb.simulated = true;
             unitInDugout.transform.position = unit.transform.position; // 기존 유닛을 드롭한 위치로 이동
 
             // 기존 유닛을 드래그 상태로 전환
@@ -42,7 +41,29 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
     {
         unitInDugout = unit;
         unit.transform.position = this.transform.position; // 참호 중앙에 위치
-        unit.unit.rb.simulated = false;
+
+        // Null 체크 추가
+        if (unit.unit == null)
+        {
+            Debug.LogError("UnitController의 unit 필드가 할당되어 있지 않습니다! " + unit.name);
+            return;
+        }
+        if (unit.unit.rb == null)
+        {
+            Debug.LogError("Unit의 rb 필드가 할당되어 있지 않습니다! " + unit.name);
+            return;
+        }
+        unit.transform.tag = "Allay"; // 태그를 Allay로 변경
+        Debug.Log("SetUnitInDugout 호출됨 - 유닛이 참호에 배치되었습니다." + unitInDugout.name);
+    }
+
+    public void RemoveUnitFromDugout()
+    {
+        if (unitInDugout != null)
+        {
+            Destroy(unitInDugout.gameObject);
+            unitInDugout = null;
+        }
     }
 
     // Start is called before the first frame update
@@ -59,10 +80,13 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
 
     public void OnDragSourceRemoved(DragEventData data)
     {
-         if (unitInDugout != null)
+        if (unitInDugout != null && unitInDugout.unit != null && unitInDugout.unit.rb != null)
         {
-            unitInDugout.unit.rb.simulated = true;
             unitInDugout.transform.SetParent(null);
+            unitInDugout = null;
+        }
+        else
+        {
             unitInDugout = null;
         }
     }

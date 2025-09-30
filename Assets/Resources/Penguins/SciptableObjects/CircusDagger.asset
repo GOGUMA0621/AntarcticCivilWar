@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uC11C\uCEE4\uC2A4 \uB2E8\uAC80 \uACE1\uC608 \uD3AD\uADC4"
   unitDescription: 
-  unitPower: 2
+  unitTier: 3
   unitIcon: {fileID: -1290254670, guid: 3d576a1e9707ec245a493b9f00782323, type: 3}
   unitFaction: 1
   unitType: 0
@@ -27,16 +27,21 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 070e8a26099811e4f87b266cda66da27, type: 2}
   - {fileID: 7400000, guid: c818592afe0ecca46b9626fcacf820e2, type: 2}
   - {fileID: 7400000, guid: 6186c431a04a92d4c8e24555400ab27e, type: 2}
-  unitHP: 200
-  unitMP: 160
+  unitHP:
+  - 600
+  - 1150
+  - 2000
+  unitMP: 120
   unitSpeed: 3.5
-  unitDamage: 25
+  unitDamage:
+  - 30
+  - 50
+  - 80
   unitAttackType: 1
   unitHasKnockback: 0
   unitUnstoppable: 0
-  unitAttackSpeed: 1
-  unitAttackDistance: 5
-  unitSenseRadius: 8
+  unitAttackSpeed: 0.7
+  unitAttackDistance: 3
   unitProjectile: {fileID: 0}
   unitProjectileMaxSpeed: 3
   unitProjectileMaxHeight: 2
@@ -102,21 +107,30 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
+      value: 1
+      inSlope: -0.29999995
+      outSlope: -0.29999995
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.85
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
+      inSlope: 0.29999995
+      outSlope: 0.29999995
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

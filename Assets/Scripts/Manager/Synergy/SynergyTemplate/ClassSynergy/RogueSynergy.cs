@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Rogue", SynergyType.ClassType)]
+[SynergyTag("Rogue", "도적", SynergyType.ClassType)]
 public class RogueSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
     public string Tag => "Rogue";

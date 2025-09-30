@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Resistance", SynergyType.Faction)]
+[SynergyTag("Resistance", "레지스탕스", SynergyType.Faction)]
 public class ResistanceSynergy : MonoBehaviour, ISynergy
 {
     public string Tag => "Resistance";

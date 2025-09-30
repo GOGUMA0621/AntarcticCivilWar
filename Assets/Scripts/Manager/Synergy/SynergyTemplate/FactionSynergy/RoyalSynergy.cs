@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[SynergyTag("Royal", SynergyType.Faction)]
+[SynergyTag("Royal", "로얄", SynergyType.Faction)]
 public class RoyalSynergy : MonoBehaviour, ISynergy
 {
     public string Tag => "Royal";

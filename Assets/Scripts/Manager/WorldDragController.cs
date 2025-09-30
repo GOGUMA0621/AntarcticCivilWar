@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class WorldDragController
@@ -58,28 +59,33 @@ public class WorldDragController
         {
             isDragging = true;
             isPressing = false;
+            Debug.Log($"BeginDrag 호출됨 - {currentTarget.name}");
             beginHandler.OnBeginDrag(CreateDragEventData(worldPos));
         }
     }
 
     public void Drag()
     {
+        
         if (!isDragging || currentTarget == null) return;
         Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
 
         if (currentTarget is IWorldDragHandler dragHandler)
         {
+            Debug.Log($"Drag 호출됨 - {currentTarget.name}");
             dragHandler.OnDrag(CreateDragEventData(worldPos));
         }
     }
 
     public void EndDrag()
     {
-        if (!isDragging || currentTarget == null) return;
+       
+        if (!isDragging || currentTarget == null || InputManager.instance == null) return;
         Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
 
         if (currentTarget is IEndWorldDragHandler endHandler)
         {
+            Debug.Log($"EndDrag 호출됨 - {currentTarget.name}");
             endHandler.OnEndDrag(CreateDragEventData(worldPos));
         }
 
@@ -89,9 +95,9 @@ public class WorldDragController
 
     public void Drop()
     {
-        if (!isDragging) return;
+        if (!isDragging || InputManager.instance == null) return;
+        if(currentTarget == null) return;
 
-        // 드래그 종료 위치에서 레이캐스트
         int droppableLayer = LayerMask.NameToLayer("Droppable");
         int mask = 1 << droppableLayer;
         Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
@@ -101,7 +107,6 @@ public class WorldDragController
         if (hit.collider != null)
         {
             var dropHandler = hit.collider.GetComponent<IWorldDropHandler>();
-            Debug.Log($"드롭 위치에 {dropHandler} 발견");
             if (dropHandler != null)
             {
                 dropHandler.OnDrop(CreateDragEventData(worldPos));
@@ -111,26 +116,18 @@ public class WorldDragController
 
     private MonoBehaviour FindDraggableUnderPointer()
     {
-        int mask = ~(1 << LayerMask.NameToLayer("Detector"));
-        Ray ray = Camera.main.ScreenPointToRay(InputManager.instance.GetPointerScreenPosition());
-
-        RaycastHit2D hit2D = Physics2D.GetRayIntersection(ray, 10f, mask);
-        if (hit2D.collider != null && hit2D.collider.TryGetComponent<IWorldDraggable>(out var _))
+        Debug.Log("FindDraggableUnderPointer 호출됨");
+        int mask = ~(1 << LayerMask.NameToLayer("Detector")); // Detector 레이어 제외
+        Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
+        Debug.Log($"월드 포지션: {worldPos}");
+        Collider2D col = Physics2D.OverlapPoint(worldPos, mask);
+        if (col != null && col.TryGetComponent<IWorldDraggable>(out var draggable) && !col.TryGetComponent<IWorldDropHandler>(out var _))
         {
-
-            return hit2D.collider.GetComponent<IWorldDraggable>() as MonoBehaviour;
+            Debug.Log($"드래그 감지: {col.name}");
+            return draggable as MonoBehaviour;
         }
 
-
-        if (Physics.Raycast(ray, out RaycastHit hit3D, 100f, mask))
-        {
-            if (hit3D.collider.TryGetComponent<IWorldDraggable>(out var _))
-            {
-                Debug.Log($"{hit3D.collider.name}");
-                return hit3D.collider.GetComponent<IWorldDraggable>() as MonoBehaviour;
-            }
-        }
-
+        Debug.Log("드래그 가능한 오브젝트를 찾지 못함");
         return null;
     }
 

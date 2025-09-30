@@ -14,12 +14,18 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
     public float angleRange = 30f;
     public float radius = 3f;
 
+    public bool IsDurationSkill => throw new System.NotImplementedException();
+
+    public bool IsStandingSkill => throw new System.NotImplementedException();
+
+    public float Duration => throw new System.NotImplementedException();
+
     private void Start()
     {
         unit = GetComponent<Unit>();
     }
 
-    public void DoActiveSkill()
+    public void ActivateSkill()
     {
         foreach (Transform t in targets)
         {
@@ -45,6 +51,16 @@ public class Cooking_Welldone : MonoBehaviour,ISkill,IActiveSkill
         // DrawSolidArc(������, ��ֺ���(��������), �׷��� ���� ����, ����, ������)
         Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, angleRange / 2, radius);
         Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, -angleRange / 2, radius);
+    }
+
+    public void ActivateSkill(UnitController unit)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void DeactivateSkill(UnitController unit)
+    {
+        throw new System.NotImplementedException();
     }
 #endif
 }

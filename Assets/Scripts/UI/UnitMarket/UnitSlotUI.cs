@@ -21,12 +21,12 @@ public class UnitSlotUI : MonoBehaviour
         for (int i = 0; i < synergyTexts.Length; i++)
         {
             if (i < unit.synergy.Count)
-                synergyTexts[i].text = unit.synergy[i];
+                synergyTexts[i].text = SynergyInstaller.GetSynergyKoreanName(unit.synergy[i]);
             else
                 synergyTexts[i].text = "";
         }
 
-        priceText.text = "10000"; // 나중에 unit.price로 교체 가능
+        priceText.text = unit.tier.ToString();
         unitNameText.text = unit.name_kr;
     }
 

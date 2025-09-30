@@ -55,6 +55,33 @@ public class UnitSlot : MonoBehaviour, IBeginWorldDragHandler, IEndWorldDragHand
         dragHandler.enabled = true;
     }
 
+    public GameObject GetUnitPrefab()
+    {
+        return unitPrefab;
+    }
+
+    public UnitController GetUnitController()
+    {
+        if (unitPrefab == null)
+            return null;
+
+        var unit = unitPrefab.GetComponent<Unit>();
+        if (unit == null)
+        {
+            Debug.LogWarning("유닛 프리팹에 Unit 컴포넌트가 없습니다.");
+            return null;
+        }
+
+        var unitController = unit.GetComponent<UnitController>();
+        if (unitController == null)
+        {
+            Debug.LogWarning("유닛 프리팹에 UnitController 컴포넌트가 없습니다.");
+            return null;
+        }
+
+        return unitController;
+    }
+
     /// <summary>
     /// 유닛이 배치되었을 때 해당 슬롯을 초기화.
     /// 아이콘과 드래그 기능을 비활성화.

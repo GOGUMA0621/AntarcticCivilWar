@@ -14,7 +14,7 @@ public class Unit : MonoBehaviour //���ֿ� ���� �θ� ���
     public UnitDistinction distinction { get; private set; }
     public UnitDetectTarget detectTarget { get; private set; }
     public UnitAttackController attackController { get; private set; }
-    public Rigidbody2D rb { get; private set; }
+    public Rigidbody2D rb;
     public CapsuleCollider2D capsuleCollider { get; private set; }
     [HideInInspector] public SpriteRenderer spriteRenderer;
     [HideInInspector] public PlayerController playerController;
@@ -23,7 +23,8 @@ public class Unit : MonoBehaviour //���ֿ� ���� �θ� ���
     protected virtual void Awake()
     {
         controller = GetComponent<UnitController>();
-        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();

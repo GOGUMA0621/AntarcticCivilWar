@@ -14,27 +14,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uC74C\uC720\uC2DC\uC778 \uD3AD\uADC4"
   unitDescription: 
-  unitPower: 2
+  unitTier: 3
   unitIcon: {fileID: 927596032, guid: 7dd18ccfeb4ad48438a471908f8e3f1b, type: 3}
   unitFaction: 2
   unitType: 0
   unitSynergyTags:
   - Neutral
+  - Mage
   unitAnimations:
   - {fileID: 7400000, guid: 5abe73adbf9cf1a42b89d9d2a5c4e93b, type: 2}
   - {fileID: 7400000, guid: b021d8fbdb2244148aed815a772adc95, type: 2}
   - {fileID: 7400000, guid: dfccdeb7f317f054a8686b295f337650, type: 2}
   - {fileID: 7400000, guid: ea20b1a2485d3e242a6381b671b51045, type: 2}
-  unitHP: 180
+  unitHP:
+  - 600
+  - 1100
+  - 2000
   unitMP: 0
   unitSpeed: 3.5
-  unitDamage: 35
+  unitDamage:
+  - 35
+  - 60
+  - 80
   unitAttackType: 1
   unitHasKnockback: 0
   unitUnstoppable: 0
-  unitAttackSpeed: 1.5
-  unitAttackDistance: 8
-  unitSenseRadius: 10
+  unitAttackSpeed: 0.7
+  unitAttackDistance: 3
   unitProjectile: {fileID: 7427458923226158902, guid: ba8617c05e66fe44ebada2674aaa2399, type: 3}
   unitProjectileMaxSpeed: 3
   unitProjectileMaxHeight: 0.3

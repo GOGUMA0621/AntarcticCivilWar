@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("King", SynergyType.Trait)]
+[SynergyTag("King","KING", SynergyType.Trait)]
 public class KingSynergy : MonoBehaviour, ISynergy
 {
     public string Tag => "King";

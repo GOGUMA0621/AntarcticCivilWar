@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 66514abf247daf840ac5059bd2ebabb2, type: 3}
+    - target: {fileID: 6608719963075796228, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 7187066951326661771, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.17
@@ -80,10 +84,18 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 8192560954515517072, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.492
+      objectReference: {fileID: 0}
     - target: {fileID: 8829257697864109786, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+    - target: {fileID: 8829257697864109786, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
+      propertyPath: m_Color.a
+      value: 0.5372549
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

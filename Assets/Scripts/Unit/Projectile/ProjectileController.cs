@@ -7,6 +7,7 @@ using UnityEngine;
 public class ProjectileController : MonoBehaviour
 {
     [SerializeField] private ProjectileVisual visual;
+    private UnitAttackController attackController;
 
     private Action OnHitCallback;
 
@@ -16,7 +17,7 @@ public class ProjectileController : MonoBehaviour
 
     public DamageData projectileDamageData;
 
-    public Transform target {  get; private set; }
+    public Transform target { get; private set; }
     [SerializeField] private bool isAOE = false;
     [SerializeField] private float AOERange = 0f;
     private float moveSpeed;
@@ -38,21 +39,18 @@ public class ProjectileController : MonoBehaviour
     private float nextPositionXCorrectionAbsolute;
 
     private bool hasMoved = false;
-    private float existTime = 0f;
 
     private void Start()
     {
-        
+
         previousPos = transform.localPosition;
     }
 
     private void Update()
     {
         if (target == null) { Destroy(gameObject); return; }
-        
-        UpdateProjectilePosition();
 
-        existTime += Time.deltaTime;
+        UpdateProjectilePosition();
 
         Vector3 currentPos = transform.position;
         currentVelocity = (currentPos - previousPos) / Time.deltaTime;
@@ -76,12 +74,12 @@ public class ProjectileController : MonoBehaviour
             TryHitAndDestroy("Destroy Velocity 0");
             return;
         }
+    }
 
-        if(existTime >= 2f)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
+    private void OnDestroy()
+    {
+        if (attackController != null)
+            attackController.RemoveProjectile(this);
     }
 
     void TryHitAndDestroy(string reason = "")
@@ -90,7 +88,7 @@ public class ProjectileController : MonoBehaviour
         {
             if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
             {
-                if(target.TryGetComponent<IDamageAble>(out IDamageAble i))
+                if (target.TryGetComponent<IDamageAble>(out IDamageAble i))
                 {
                     i.ReceiveDamage(projectileDamageData);
                     OnHitAction();
@@ -116,9 +114,9 @@ public class ProjectileController : MonoBehaviour
         if (isAOE)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, AOERange);
-            foreach(Collider2D collider in colliders)
+            foreach (Collider2D collider in colliders)
             {
-                if(collider.TryGetComponent<IDamageAble>(out IDamageAble target) && collider != this.gameObject && collider.tag != unit.tag)
+                if (collider.TryGetComponent<IDamageAble>(out IDamageAble target) && collider != this.gameObject && collider.tag != unit.tag)
                 {
                     target.ReceiveDamage(projectileDamageData);
                     OnHitAction();
@@ -137,7 +135,7 @@ public class ProjectileController : MonoBehaviour
             {
                 moveSpeed = -moveSpeed;
             }
-            
+
             UpdatePositionWithXCurve();
         }
         else
@@ -146,11 +144,11 @@ public class ProjectileController : MonoBehaviour
             {
                 moveSpeed = -moveSpeed;
             }
-            
+
             UpdatePositionWithYCurve();
         }
 
-        
+
     }
 
     private void UpdatePositionWithXCurve()
@@ -166,7 +164,7 @@ public class ProjectileController : MonoBehaviour
 
         float nextPositionX = trajectoryStartPoint.x + nextXTrajectoryPosition + nextPositionXCorrectionAbsolute;
 
-        if(trajectoryRange.x > 0 && trajectoryRange.y > 0)
+        if (trajectoryRange.x > 0 && trajectoryRange.y > 0)
         {
             nextXTrajectoryPosition = -nextXTrajectoryPosition;
         }
@@ -177,7 +175,7 @@ public class ProjectileController : MonoBehaviour
         }
 
         Vector3 newPosition = new Vector3(nextPositionX, nextPositionY, 0);
-        
+
 
         CalculateNextSpeed(nextPositionYNormalized);
         projectileMoveDirection = newPosition - transform.position;
@@ -201,7 +199,7 @@ public class ProjectileController : MonoBehaviour
         Vector3 newPosition = new Vector3(nextPositionX, nextPositionY, 0);
 
         CalculateNextSpeed(nextPositionXNormalized);
-        
+
         projectileMoveDirection = newPosition - transform.position;
 
         transform.position = newPosition;
@@ -214,17 +212,23 @@ public class ProjectileController : MonoBehaviour
         moveSpeed = nextMoveSpeedNormailized * maxMoveSpeed;
     }
 
-    public void InitialzeProjectile(Transform target, float maxMoveSpeed, float trajectoryMaxHeight, Unit unit)
+    public void InitializeProjectile(Transform target, float maxMoveSpeed, float trajectoryMaxHeight, Unit unit, UnitAttackController attackController = null)
     {
         this.target = target;
         this.maxMoveSpeed = maxMoveSpeed;
         this.unit = unit;
+        this.attackController = attackController;
 
         float xDistanceToTarget = target.position.x - trajectoryStartPoint.x;
         this.trajectoryMaxRelativeHeight = Mathf.Abs(xDistanceToTarget) * trajectoryMaxHeight;
         trajectoryStartPoint = transform.position;
 
         visual.SetTarget(target);
+    }
+
+    public void InitializeDamageData(DamageData damageData)
+    {
+        this.projectileDamageData = damageData;
     }
 
     public void InitializeAnimaionCurve(AnimationCurve trajectoyAnimationCure, AnimationCurve axisCorrectionAnimationCurve, AnimationCurve speedAnimationCurve)
@@ -268,5 +272,12 @@ public class ProjectileController : MonoBehaviour
     public float GetNextPositionXCorrectionAbsolute()
     {
         return nextPositionXCorrectionAbsolute;
+    }
+    
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+        visual.SetTarget(newTarget);
+        // 필요하다면 trajectoryStartPoint 등도 재설정
     }
 }

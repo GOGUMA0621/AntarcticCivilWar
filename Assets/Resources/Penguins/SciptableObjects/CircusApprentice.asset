@@ -12,49 +12,122 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
   m_Name: CircusApprentice
   m_EditorClassIdentifier: 
-  unitName: 
+  unitName: "\uC11C\uCEE4\uC2A4 \uB9D0\uB2E8 \uB2E8\uC6D0 \uD3AD\uADC4"
   unitDescription: 
-  unitTier: 0
-  unitIcon: {fileID: 0}
-  unitFaction: 0
+  unitTier: 2
+  unitIcon: {fileID: -42225582, guid: 9073c6d328346dc46bd65f7a3948bf4f, type: 3}
+  unitFaction: 1
   unitType: 0
-  unitSynergyTags: []
+  unitSynergyTags:
+  - Resistance
+  - Archer
+  - Circus
   unitAnimations: []
   unitHP:
-  - 0
-  - 0
-  - 0
-  - 0
+  - 400
+  - 800
+  - 1500
   unitMP: 0
-  unitSpeed: 0
+  unitSpeed: 3.5
   unitDamage:
-  - 0
-  - 0
-  - 0
-  - 0
-  unitAttackType: 0
+  - 40
+  - 55
+  - 80
+  unitAttackType: 1
   unitHasKnockback: 0
   unitUnstoppable: 0
-  unitAttackSpeed: 0
-  unitAttackDistance: 0
+  unitAttackSpeed: 0.8
+  unitAttackDistance: 3
   unitProjectile: {fileID: 0}
   unitProjectileMaxSpeed: 0
   unitProjectileMaxHeight: 0
   projectileTrajectoryAnimationCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -2
+      outSlope: -2
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   projectileCorrectionAnimationCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   projectileSpeedAnimationCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1.0002275
+      inSlope: -2.0214136
+      outSlope: -2.0214136
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.49742848
+      value: -0.0052812174
+      inSlope: -0.010564685
+      outSlope: -0.010564685
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9997528
+      value: 0.9995102
+      inSlope: 2.0002842
+      outSlope: 2.0002842
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

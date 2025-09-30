@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[SynergyTag("Archer", SynergyType.ClassType)]
+[SynergyTag("Archer","궁수", SynergyType.ClassType)]
 public class ArcherSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
     public string Tag => "Archer";

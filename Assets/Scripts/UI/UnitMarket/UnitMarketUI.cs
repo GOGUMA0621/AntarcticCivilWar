@@ -7,17 +7,23 @@ using TMPro;
 public class UnitMarketUI : MonoBehaviour
 {
     public Transform slotGroup;
-    public UnitMarketManager unitMarketManager; // ¸Å´ÏÀú ¿¬°á
+    public UnitMarketManager unitMarketManager; // ë§¤ë‹ˆì € ì—°ê²°
 
     private List<UnitDB> selected = new();
 
+    private void Start()
+    {
+        GenerateShopUnits();
+        gameObject.SetActive(false);
+    }
+
     public void GenerateShopUnits()
     {
-        Debug.Log("GenerateShopUnits ½ÃÀÛ");
+        Debug.Log("GenerateShopUnits ì‹œìž‘");
         selected.Clear();
 
         var availableUnits = new List<UnitDB>(FirebaseManager.units.Values);
-        while (selected.Count < 4 && availableUnits.Count > 0)
+        while (selected.Count < 5 && availableUnits.Count > 0)
         {
             int i = Random.Range(0, availableUnits.Count);
             selected.Add(availableUnits[i]);
@@ -29,10 +35,10 @@ public class UnitMarketUI : MonoBehaviour
             UnitDB unit = selected[i];
             Transform slotTransform = slotGroup.GetChild(i);
             UnitSlotUI slotUI = slotTransform.GetComponent<UnitSlotUI>();
-
+            slotTransform.gameObject.SetActive(true);
             if (slotUI == null)
             {
-                Debug.LogWarning($"½½·Ô {i}¿¡ UnitSlotUI°¡ ¾ø½À´Ï´Ù.");
+                Debug.LogWarning($"ìŠ¬ë¡¯ {i}ì— UnitSlotUIê°€ ì—†ìŠµë‹ˆë‹¤.");
                 continue;
             }
 
@@ -51,6 +57,13 @@ public class UnitMarketUI : MonoBehaviour
     {
         if (index >= 0 && index < selected.Count)
             return selected[index];
+        return null;
+    }
+
+    public GameObject GetSlotObject(int index)
+    {
+        if (index >= 0 && index < slotGroup.childCount)
+            return slotGroup.GetChild(index).gameObject;
         return null;
     }
 }

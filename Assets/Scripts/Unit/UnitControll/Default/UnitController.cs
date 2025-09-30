@@ -131,7 +131,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public float unitAttackSpeed = 1.0f;
     protected IUnitState currentState;
-    private IUnitState manaSkillState;
 
     #region 이벤트 관리
 
@@ -158,9 +157,8 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         unit.rb.velocity = Vector2.zero;
         statusEffectManager = GetComponent<StatusEffectManager>();
         _lastPosition = transform.position;
+        unitSkill = GetComponent<IActiveSkill>();
         GoPlace();
-
-        manaSkillState = GetManaSkillState();
     }
 
     private void Update()
@@ -185,21 +183,22 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     private readonly IUnitState attackState = new UnitAttackState();
     private readonly IUnitState followState = new UnitFollowState();
     private readonly IUnitState dieState = new UnitDieState();
-    private readonly IUnitState callState = new UnitCallState();
+    private readonly IUnitState manaSkillState = new UnitManaSkillState();
 
     public virtual void GoPlace() => ChangeState(placeState);
     public virtual void GoIdle() => ChangeState(idleState);
     public virtual void GoAttack() => ChangeState(attackState);
     public virtual void GoFollow() => ChangeState(followState);
     public virtual void GoDie() => ChangeState(dieState);
-    public void GoCall() => ChangeState(callState);
+    public virtual void GoSkill(bool isStanding = false, float duration = 0f) => ChangeState(manaSkillState, isStanding, duration);
 
-    public void ChangeState(IUnitState newState)
+    public void ChangeState(IUnitState newState, bool force = false, float duration = 0f)
     {
-        if (currentState?.GetType() == newState.GetType()) 
+        if (currentState?.GetType() == newState.GetType())
         {
             return;
         }
+
         currentState?.Exit();
         currentState = newState;
         currentState.Enter(this);
@@ -231,7 +230,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             baseStats.Add(StatType.HealthRegen, 0);
             baseStats.Add(StatType.MaxMana, unit.data.UnitMP);
             baseStats.Add(StatType.ManaRegen, 5);
-            baseStats.Add(StatType.AttackDamage, unit.data.UnitDamage[unitLevel - 1]);
+            baseStats.Add(StatType.AttackDamage, unit.data.UnitDamage[idx]);
             baseStats.Add(StatType.AttackSpeed, unit.data.UnitAttackSpeed);
             baseStats.Add(StatType.AttackRange, unit.data.UnitAttackDistance);
             baseStats.Add(StatType.MoveSpeed, unit.data.UnitSpeed);
@@ -525,7 +524,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             if (currentMP >= UnitStats.maxMP && UnitStats.maxMP > 0)
             {
                 currentMP = 0;
-                ChangeState(manaSkillState);
+                GoSkill(true);
             }
         }
     }
@@ -534,10 +533,16 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// </summary>
     public void DoSkill()
     {
-        if (currentMP >= UnitStats.maxMP && UnitStats.maxMP != 0)
+        if(unitSkill != null && currentMP >= UnitStats.maxMP && UnitStats.maxMP != 0)
         {
-            unit.animator.Play("ManaSkill");
-            Debug.Log("마나");
+            if (unitSkill.IsDurationSkill)
+            {
+                GoSkill(true, unitSkill.Duration);
+            }
+            else
+            {
+                unitSkill.ActivateSkill(this);
+            }
             currentMP = 0;
         }
     }
@@ -588,7 +593,14 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public float GetNormalizedHealth()
     {
+        if (UnitStats.maxHP == 0) return 0;
         return currentHP / UnitStats.maxHP;
+    }
+    
+    public float GetNormalizedMana()
+    {
+        if (UnitStats.maxMP == 0) return 0;
+        return currentMP / UnitStats.maxMP;
     }
     #endregion
 
@@ -596,7 +608,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public void RegisterOnHitEffect(OnHitItem effect)
     {
-        if (!onHitItemList.Contains(effect)) 
+        if (!onHitItemList.Contains(effect))
             onHitItemList.Add(effect);
     }
 
@@ -687,11 +699,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         if (baseStats.Count == 0)
         {
             SetUnit();
-        }
-        else
-        {
-            unit.mover.maxSpeed = UnitStats.moveSpeed;
-
         }
     }
 

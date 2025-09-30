@@ -28,7 +28,7 @@ public static class UnitPrefabsLoader
         }
 
         if (defaultPrefab == null)
-            Debug.LogWarning("defaultPrefab Ã£À» ¼ö ¾øÀ½");
+            Debug.LogWarning("defaultPrefab is not set.");
 
         tierSprites[1] = Resources.Load<Sprite>("Frame/common");
         tierSprites[2] = Resources.Load<Sprite>("Frame/rare");
@@ -42,10 +42,7 @@ public static class UnitPrefabsLoader
         tierShopSprites[4] = Resources.Load<Sprite>("Shop/legend");
         tierShopSprites[5] = Resources.Load<Sprite>("Shop/special");
 
-
-
-
-        Debug.Log($"UnitPrefabLoader ÃÊ±âÈ­ ¿Ï·á: {prefabCache.Count}°³ ÇÁ¸®ÆÕ Ä³½ÌµÊ");
+        Debug.Log($"UnitPrefabLoader initialized: {prefabCache.Count} unit prefabs loaded.");
         isInitialized = true;
     }
 
@@ -56,8 +53,23 @@ public static class UnitPrefabsLoader
         if (prefabCache.TryGetValue(unitName, out GameObject prefab))
             return prefab;
 
-        Debug.LogWarning($"'{unitName}' ÀÌ¸§ÀÇ ÇÁ¸®ÆÕÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+        Debug.LogWarning($"'{unitName}' ìœ ë‹›ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         return defaultPrefab;
+    }
+
+    public static UnitController GetUnitController(string unitName)
+    {
+        GameObject prefab = GetPrefab(unitName);
+        if (prefab == null) return null;
+
+        UnitController unitController = prefab.GetComponent<UnitController>();
+        if (unitController == null)
+        {
+            Debug.LogWarning($"UnitController ì»´í¬ë„ŒíŠ¸ê°€ ì—†ëŠ” '{unitName}' í”„ë¦¬íŒ¹");
+            return null;
+        }
+
+        return unitController;
     }
 
     public static Sprite GetSprite(string unitName)
@@ -68,7 +80,7 @@ public static class UnitPrefabsLoader
         SpriteRenderer sr = prefab.GetComponent<SpriteRenderer>();
         if (sr == null)
         {
-            Debug.LogWarning($"SpriteRenderer°¡ ÇÁ¸®ÆÕ '{unitName}'¿¡ ¾øÀ½");
+            Debug.LogWarning($"SpriteRenderer ì»´í¬ë„ŒíŠ¸ê°€ ì—†ëŠ” '{unitName}' í”„ë¦¬íŒ¹");
             return null;
         }
 
@@ -82,7 +94,7 @@ public static class UnitPrefabsLoader
         if (tierSprites.TryGetValue(tier, out Sprite sprite))
             return sprite;
 
-        Debug.LogWarning($"Æ¼¾î {tier}¿¡ ÇØ´çÇÏ´Â ½ºÇÁ¶óÀÌÆ® ¾øÀ½");
+        Debug.LogWarning($"íƒ€ì… {tier}ì˜ ì•„ì´ì½˜ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
         return null;
     }
 
@@ -93,7 +105,7 @@ public static class UnitPrefabsLoader
         if (tierShopSprites.TryGetValue(tier, out Sprite sprite))
             return sprite;
 
-        Debug.LogWarning($"Æ¼¾î {tier}¿¡ ÇØ´çÇÏ´Â ½ºÇÁ¶óÀÌÆ® ¾øÀ½");
+        Debug.LogWarning($"ìƒì  {tier}ì˜ ì•„ì´ì½˜ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
         return null;
     }
 }

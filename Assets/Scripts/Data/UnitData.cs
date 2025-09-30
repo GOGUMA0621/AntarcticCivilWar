@@ -6,14 +6,16 @@ public enum UnitTierType
 {
     Normal,
     Special,
-    Minion
+    Minion,
+    Boss
 }
 
 public enum UnitFaction
 {
     Royal,
     Resistance,
-    Mercenary
+    Mercenary,
+    Boss
 }
 
 public enum UnitAttackType

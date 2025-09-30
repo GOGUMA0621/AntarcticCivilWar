@@ -8,6 +8,12 @@ public class ManaBigBomb : MonoBehaviour, IActiveSkill
     private Transform targetTransform;
     [SerializeField] private GameObject _pfBigBomb;
 
+    public bool IsDurationSkill => throw new System.NotImplementedException();
+
+    public bool IsStandingSkill => throw new System.NotImplementedException();
+
+    public float Duration => throw new System.NotImplementedException();
+
     void Start()
     {
       unit = GetComponent<Unit>();
@@ -24,12 +30,22 @@ public class ManaBigBomb : MonoBehaviour, IActiveSkill
     public void ThrowBigBomb()
     {
         ProjectileController projectile = Instantiate(_pfBigBomb, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
-        projectile.InitialzeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit);
+        projectile.InitializeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit);
         projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
     }
 
-    public void DoActiveSkill()
+    public void ActivateSkill()
     {
         unit.animator.Play("ManaSkill");
+    }
+
+    public void ActivateSkill(UnitController unit)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void DeactivateSkill(UnitController unit)
+    {
+        throw new System.NotImplementedException();
     }
 }

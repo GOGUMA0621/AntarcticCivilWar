@@ -6,9 +6,13 @@ public interface ISkill
 {
 }
 
-public interface IActiveSkill
+public interface IActiveSkill : ISkill
 {
-    public abstract void DoActiveSkill();
+    bool IsDurationSkill { get; }
+    bool IsStandingSkill { get; }
+    float Duration { get; }
+    public abstract void ActivateSkill(UnitController unit);
+    public abstract void DeactivateSkill(UnitController unit);
 }
 
 public interface IPasseiveSkillAttack

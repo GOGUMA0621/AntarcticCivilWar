@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uC694\uB9AC\uC655 \uD3AD\uADC4"
   unitDescription: 
-  unitPower: 5
+  unitTier: 4
   unitIcon: {fileID: -531321111, guid: c8b7ccf359b9706488a647eec77dbadb, type: 3}
   unitFaction: 1
   unitType: 1
@@ -27,16 +27,21 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 84b3cbb394f472241b73daa9b103087f, type: 2}
   - {fileID: 7400000, guid: bbb983b9d3ce9f94b95d6f14ad70df88, type: 2}
   - {fileID: 7400000, guid: 12a81d303bee167479244689080f6201, type: 2}
-  unitHP: 450
+  unitHP:
+  - 900
+  - 1500
+  - 2200
   unitMP: 200
   unitSpeed: 3.5
-  unitDamage: 40
+  unitDamage:
+  - 50
+  - 80
+  - 110
   unitAttackType: 0
   unitHasKnockback: 0
   unitUnstoppable: 0
-  unitAttackSpeed: 2
+  unitAttackSpeed: 0.7
   unitAttackDistance: 1
-  unitSenseRadius: 10
   unitProjectile: {fileID: 0}
   unitProjectileMaxSpeed: 0
   unitProjectileMaxHeight: 0

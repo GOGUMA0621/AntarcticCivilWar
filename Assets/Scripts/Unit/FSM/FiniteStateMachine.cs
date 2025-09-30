@@ -179,7 +179,6 @@ public class UnitDieState : IUnitState
     {
         this.unit = unit;
         animator = unit.unit.animator;
-        unit.unit.rb.simulated = false; // Rigidbody2D 비활성화
         unit.StopMovement();
         unit.SetAnimation("DieState");
     }
@@ -192,7 +191,6 @@ public class UnitDieState : IUnitState
     }
     public void Exit()
     {
-        unit.unit.rb.simulated = true; // Rigidbody2D 활성화
         unit.unit.detectTarget.ClearTarget(); // 타겟 초기화
     }
 }
@@ -200,26 +198,61 @@ public class UnitDieState : IUnitState
 public class UnitManaSkillState : IUnitState
 {
     private UnitController unit;
+    private float skillDuration = 0f;
+    private float skillTimer = 0f;
+    private bool skillStarted = false;
+
     public void Enter(UnitController unit)
     {
         this.unit = unit;
-        unit.canMana = false;
+        skillStarted = false;
+        skillTimer = 0f;
+
+        // 스킬 인터페이스에서 지속시간을 받아옴
+        if (unit.unitSkill != null && unit.unitSkill.IsDurationSkill)
+        {
+            skillDuration = unit.unitSkill.Duration;
+        }
+        else
+        {
+            // 즉발형이면 이 상태로 진입하지 않도록 설계되어야 함
+            unit.GoIdle();
+            return;
+        }
+
+        // 스킬 발동
+        unit.unitSkill.ActivateSkill(unit);
+
+        // 이동/정지 등 필요시 추가
         unit.StopMovement();
-        unit.SetAnimation("ManaSkillState");
+        unit.canMana = false;
+        skillStarted = true;
     }
+
     public void Update()
     {
-        AnimatorStateInfo state = unit.unit.animator.GetCurrentAnimatorStateInfo(0);
-        if (state.IsName("ManaSkillState") && state.normalizedTime >= 1f)
+        if (!skillStarted) return;
+
+        skillTimer += Time.deltaTime;
+
+        // 지속시간이 끝나면 스킬 종료
+        if (skillTimer >= skillDuration)
         {
+            // 스킬 종료 처리
+            unit.unitSkill.DeactivateSkill(unit); // 필요시 구현
+            unit.canMana = true;
             unit.GoIdle();
         }
     }
+
     public void Exit()
     {
-        unit.SetCurrentMana(0);
         unit.canMana = true;
-        unit.StartMovement();
+        // 필요시 스킬 종료 처리
+        if (unit.unitSkill != null && unit.unitSkill.IsDurationSkill)
+        {
+            unit.unitSkill.DeactivateSkill(unit);
+        }
     }
 }
 

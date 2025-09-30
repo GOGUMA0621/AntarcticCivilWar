@@ -12,9 +12,33 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 74358c0f3f07e6f499c020d404b86be2, type: 2}
+    - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: currentHP
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: baseUnitStats.maxHP
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: baseUnitStats.moveSpeed
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: baseUnitStats.attackRange
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: baseUnitStats.attackSpeed
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: baseUnitStats.attackDamage
+      value: 35
+      objectReference: {fileID: 0}
     - target: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: m_Name
-      value: BardPenguin
+      value: Bard_Penguin
       objectReference: {fileID: 0}
     - target: {fileID: 5744230692257079540, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: m_LocalPosition.x
@@ -93,4 +117,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d266e43786ee754b8edf68cb378e1c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  synergyIconsPreview: []

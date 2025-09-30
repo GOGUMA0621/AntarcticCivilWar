@@ -8,8 +8,10 @@ public class UnitMarketManager : MonoBehaviour
 {
    // [SerializeField] private Player player;
     [SerializeField] private UnitMarketUI unitMarketUI;
-    [SerializeField] private List<UnitSlot> playerUnitSlots; 
+    [SerializeField] private List<UnitSlot> playerUnitSlots;
     //[SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private UnitBench unitBench;
+    [SerializeField] private bool isInfiniteUnit = false;
 
     [SerializeField] private Button toggleMarketButton;
     [SerializeField] private Image toggleMarketButtonImage;
@@ -19,7 +21,7 @@ public class UnitMarketManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("UnitMarketManager Start ½ÇÇàµÊ");
+        Debug.Log("UnitMarketManager ì‹œì‘");
         UpdateGoldUI();
         LoadMarket();
 
@@ -53,11 +55,11 @@ public class UnitMarketManager : MonoBehaviour
     {
         if (unitMarketUI == null)
         {
-            Debug.LogError(" marketUI°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogError("unitMarketUIê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        Debug.Log("LoadMarket() È£ÃâµÊ ¡æ GenerateShopUnits() ½ÇÇà");
+        Debug.Log("LoadMarket() í˜¸ì¶œ: GenerateShopUnits() ì‹¤í–‰");
 
         unitMarketUI.GenerateShopUnits();
     }
@@ -66,7 +68,7 @@ public class UnitMarketManager : MonoBehaviour
     {
         //if (player.coinAmount < 2000)
         //{
-        //    Debug.Log("°ñµå ºÎÁ·!");
+        //    Debug.Log("ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!");
         //    return;
         //}
 
@@ -87,39 +89,18 @@ public class UnitMarketManager : MonoBehaviour
 
     public void BuyUnit(int slotIndex)
     {
-        UnitDB unit = unitMarketUI.GetUnitFromSlot(slotIndex);
-        if (unit == null)
+        UnitDB unitData = unitMarketUI.GetUnitFromSlot(slotIndex);
+        if (unitData == null)
         {
-            Debug.LogWarning($"½½·Ô {slotIndex}¿¡ À¯´Ö Á¤º¸ ¾øÀ½");
+            Debug.LogWarning($"ìŠ¬ë¡¯ {slotIndex}ì— ìœ ë‹›ì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        if (playerUnitSlots[slotIndex].icon.enabled == false)
-        {
-            Debug.LogWarning($"½½·Ô {slotIndex}Àº(´Â) ÀÌ¹Ì ±¸¸ÅµÇ¾ú½À´Ï´Ù.");
-            return;
-        }
-
-        //if (player.coinAmount < 10000)
-        //{
-        //    Debug.Log("°ñµå ºÎÁ·!");
-        //    return;
-        //}
-
-        //player.coinAmount -= 10000;
         UpdateGoldUI();
 
-        Debug.Log($"À¯´Ö ±¸¸Å ¿Ï·á: {unit.name_kr} (Tier {unit.tier})");
-
-        GameObject prefab = UnitPrefabsLoader.GetPrefab(unit.name);
-        if (prefab == null) return;
-
-        Sprite icon = UnitPrefabsLoader.GetSprite(unit.name);
-        if (icon == null) return;
-
-        // ½½·Ô¿¡ À¯´Ö ÇÒ´ç ¹× ¾ÆÀÌÄÜ ºñÈ°¼ºÈ­(±¸¸Å ¿Ï·á Ç¥½Ã)
-        playerUnitSlots[slotIndex].SetUnit(prefab);
-        playerUnitSlots[slotIndex].icon.enabled = false;
+        unitBench.AddUnitToBench(unitData);
+        if(!isInfiniteUnit)
+            unitMarketUI.GetSlotObject(slotIndex).SetActive(false);
     }
 
     private void UpdateGoldUI()
@@ -132,7 +113,7 @@ public class UnitMarketManager : MonoBehaviour
     {
         GameObject prefab = Resources.Load<GameObject>($"Units/{unitName}");
         if (prefab == null)
-            Debug.LogWarning($"À¯´Ö ÇÁ¸®ÆÕÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù: {unitName}");
+            Debug.LogWarning($"ìœ ë‹› í”„ë¦¬íŒ¹ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: {unitName}");
         return prefab;
     }
 }

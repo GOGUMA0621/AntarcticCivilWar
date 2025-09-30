@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Neutral", SynergyType.Faction)]
+[SynergyTag("Neutral", "중립", SynergyType.Faction)]
 public class NeutralSynergy : MonoBehaviour, ISynergy
 {
     public string Tag => "Neutral";

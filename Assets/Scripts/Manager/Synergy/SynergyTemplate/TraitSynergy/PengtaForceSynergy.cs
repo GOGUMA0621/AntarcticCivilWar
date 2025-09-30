@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Pengta_Force",SynergyType.Trait)]
+[SynergyTag("Pengta_Force", "펭타 포스",SynergyType.Trait)]
 public class PengtaForceSynergy : MonoBehaviour, ISynergy
 {
     public string Tag => "Pengta_Force";
