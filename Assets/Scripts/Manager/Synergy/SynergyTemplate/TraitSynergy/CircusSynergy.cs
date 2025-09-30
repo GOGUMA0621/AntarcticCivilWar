@@ -17,14 +17,14 @@ public class CircusSynergy : MonoBehaviour, ISynergy
 
     public Sprite synergyIcon => Resources.Load<Sprite>($"Synergy/{Name}");
 
-    public int[] tierThresholds => new int[] { 1, 2, 3, 4 };
+    public int[] tierThresholds => new int[] { 1, 4, 6, 7 };
 
     public int currentTier => lastTier;
     private int lastTier = -1;
     private UnitController unit;
     private UnitController circusLeader;
     private List<IShowtime> activeShowtimeSkills = new List<IShowtime>();
-    private readonly SynergyTierEffect[] CircusTierEffects = new SynergyTierEffect[]
+    public readonly SynergyTierEffect[] CircusTierEffects = new SynergyTierEffect[]
     {
         new SynergyTierEffect{ RequiredCount = 1, Description = "서커스 단장을 획득합니다.", StatModifiers = new() { } },
         new SynergyTierEffect{ RequiredCount = 4, Description = "서커스 단장의 공격 속도 20% 증가", StatModifiers = new() { { StatType.AttackSpeed, 0.2f } } },
@@ -42,7 +42,7 @@ public class CircusSynergy : MonoBehaviour, ISynergy
         for (int i = 0; i < tierThresholds.Length; i++)
         {
             if (count >= tierThresholds[i])
-                tier = i;
+                tier = i + 1;
         }
         return tier;
     }
@@ -56,20 +56,24 @@ public class CircusSynergy : MonoBehaviour, ISynergy
 
         switch (tier)
         {
-            case 0:
-                TrySpawnCircusLeader();
-                break;
             case 1:
-                circusLeader.AddModifierStat(new StatModifier(Tag, StatType.AttackSpeed, 0.2f, ModifierMethod.MultiplicativePercent));
-                circusLeader.unitLevel = 2;
+                TrySpawnCircusLeader();
+                Debug.Log(currentTier);
                 break;
             case 2:
-                circusLeader.AddModifierStat(new StatModifier(Tag, StatType.ManaRegen, 5f, ModifierMethod.Additive));
-                circusLeader.unitLevel = 3;
+                circusLeader.AddModifierStat(new StatModifier(Tag, StatType.AttackSpeed, 0.2f, ModifierMethod.MultiplicativePercent));
+                circusLeader.unitLevel = 2;
+                circusLeader.SetUnit(); // 스탯 갱신
                 break;
             case 3:
+                circusLeader.AddModifierStat(new StatModifier(Tag, StatType.ManaRegen, 5f, ModifierMethod.Additive));
+                circusLeader.unitLevel = 3;
+                circusLeader.SetUnit(); // 스탯 갱신
+                break;
+            case 4:
                 circusLeader.AddModifierStat(new StatModifier(Tag, StatType.Endurance, 0.25f, ModifierMethod.MultiplicativePercent));
                 circusLeader.unitLevel = 4;
+                circusLeader.SetUnit(); // 스탯 갱신
                 break;
             default:
                 if (circusLeader != null)
@@ -95,7 +99,10 @@ public class CircusSynergy : MonoBehaviour, ISynergy
         // 아군 그리드 매니저에서 정 가운데 좌표 구하기
         var allayGrid = GridManager.instance.allayGrid;
         if (allayGrid == null)
+        {
+            Debug.LogWarning("아군 그리드 매니저를 찾을 수 없습니다!");
             return;
+        }
 
         Vector2Int centerGridPos = allayGrid.GetCenterGridPos();
 
@@ -108,16 +115,22 @@ public class CircusSynergy : MonoBehaviour, ISynergy
             if (emptyGrid != null)
                 spawnPos = emptyGrid.Value;
             else
-                return; // 소환 불가
+            {
+                Debug.LogWarning("서커스 단장을 소환할 공간이 없습니다!");
+                return; 
+            }
         }
 
         // 단장 프리팹 소환
-        GameObject prefab = Resources.Load<GameObject>("Resources/prefabs/Units/Resistance/CircusLeader"); // 실제 경로에 맞게 수정
+        GameObject prefab = Resources.Load<GameObject>("Penguins/prefabs/Units/Resistance/CircusLeader"); // 실제 경로에 맞게 수정
         if (prefab != null)
         {
+            Debug.Log("서커스 단장 소환: " + spawnPos);
             GameObject leader = GameObject.Instantiate(prefab, allayGrid.GetGridWorldPos(spawnPos), Quaternion.identity);
             allayGrid.PlaceUnit(leader.GetComponent<Unit>(), spawnPos);
             circusLeader = leader.GetComponent<UnitController>();
+            circusLeader.GoPlace();
+            SynergyManager.instance.RegisterUnit(circusLeader, true);
         }
     }
 }

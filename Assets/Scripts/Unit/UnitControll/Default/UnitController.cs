@@ -119,7 +119,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
 
     public bool isStunned = false;
 
-    [HideInInspector] public UnitStats UnitStats => new UnitStats(finalStats);
+    [HideInInspector] public UnitStats UnitStats;
     [SerializeField] private UnitStats baseUnitStats;
     [SerializeField] public float currentHP;
 
@@ -146,7 +146,6 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         {
             synergy?.Initialize(this);
         }
-        SetUnit();
     }
     protected virtual void Start()
     {
@@ -159,6 +158,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         _lastPosition = transform.position;
         unitSkill = GetComponent<IActiveSkill>();
         GoPlace();
+        SetUnit();
     }
 
     private void Update()
@@ -445,7 +445,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <param name="damage"></param>
     public virtual void ReceiveDamage(DamageData damage)
     {
-        float endurance = finalStats[StatType.Endurance] / 100f;
+        float endurance = UnitStats.endurance;
         float damageRecution = Mathf.Clamp(endurance,0f,0.75f);
         float reducedDamage = damage.damage * (1 - damageRecution);
         
@@ -520,7 +520,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         if (canMana)
         {
-            currentMP += finalStats[StatType.ManaRegen];
+            currentMP += UnitStats.manaRegen;
             if (currentMP >= UnitStats.maxMP && UnitStats.maxMP > 0)
             {
                 currentMP = 0;
@@ -690,6 +690,12 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             }
             finalStats[stat.Key] = (stat.Value + add) * multiple * (1 + percent);
         }
+
+        UnitStats = new UnitStats(finalStats);
+
+        Debug.Log($"[RecalculateStats] baseStats: {string.Join(", ", baseStats.Select(kv => $"{kv.Key}:{kv.Value}"))}");
+        Debug.Log($"[RecalculateStats] statModifierList: {string.Join(", ", statModifierList.Select(m => $"{m.statType}:{m.value}({m.modifierMethod})"))}");
+        Debug.Log($"[RecalculateStats] finalStats: {string.Join(", ", finalStats.Select(kv => $"{kv.Key}:{kv.Value}"))}");
 
         ReBuildStats();
     }

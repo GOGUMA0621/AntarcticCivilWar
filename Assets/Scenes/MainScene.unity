@@ -10414,16 +10414,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitMarketUI: {fileID: 8918789256535953282}
-  playerUnitSlots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   unitBench: {fileID: 1107482689}
   isInfiniteUnit: 1
   toggleMarketButton: {fileID: 8918789256535953281}
@@ -10535,6 +10525,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1802521923013751069, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1802521923013751069, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 129b39aaa93ada8488a58cef0b5a2d97, type: 3}
     - target: {fileID: 1995809070264054414, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -10643,6 +10641,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3671307479549289988, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: unitBench
+      value: 
+      objectReference: {fileID: 1107482689}
     - target: {fileID: 3754015517085270482, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -10695,6 +10697,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6232318229581995348, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6232318229581995348, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f3176097654809f46819200dcc7c5ec6, type: 3}
     - target: {fileID: 6748604885184098386, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -10783,13 +10793,30 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnRerollClicked
       objectReference: {fileID: 0}
+    - target: {fileID: 8176427816283919583, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 8176427816283919583, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 8176427816283919583, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -864
+      objectReference: {fileID: 0}
+    - target: {fileID: 8176427816283919583, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -440
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2737712389885311576, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
     - {fileID: 6573328385998772673, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
     - {fileID: 7080814531713298815, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
     - {fileID: 5210956755385963711, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
     - {fileID: 8177829482387152156, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 324317031616934731, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 9113544831421940846, guid: 916f9826f4687184c9202f5672d0e216, type: 3}

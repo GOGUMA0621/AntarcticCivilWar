@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitSlot : MonoBehaviour, IBeginWorldDragHandler, IEndWorldDragHandler
+public class UnitSlot : MonoBehaviour
 {
+    
     [SerializeField] public Image icon;
     [SerializeField] private GameObject unitPrefab;
     [NonSerialized]
@@ -14,6 +15,7 @@ public class UnitSlot : MonoBehaviour, IBeginWorldDragHandler, IEndWorldDragHand
     [Header("테스트용")]
     [SerializeField] private Sprite testSprite;
     [SerializeField] private GameObject testUnitPrefab;
+
 
     void Awake()
     {
@@ -92,15 +94,5 @@ public class UnitSlot : MonoBehaviour, IBeginWorldDragHandler, IEndWorldDragHand
         icon.enabled = false;
         dragHandler.unitPrefab = null;
         dragHandler.enabled = false;
-    }
-
-    public void OnEndDrag(DragEventData data)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnBeginDrag(DragEventData data)
-    {
-        throw new NotImplementedException();
     }
 }

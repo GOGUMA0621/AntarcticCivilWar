@@ -5,7 +5,7 @@ using UnityEngine;
 public class UnitDetectTarget : MonoBehaviour //유닛 적 탐지
 {
     public IDamageAble targetToAttack; //공격할 타깃의 위치값
-    public List<IDamageAble> targets; // 타겟 리스트
+    public List<IDamageAble> targets = new List<IDamageAble>(); // 타겟 리스트
     private Unit unit;
     
     private void Start()

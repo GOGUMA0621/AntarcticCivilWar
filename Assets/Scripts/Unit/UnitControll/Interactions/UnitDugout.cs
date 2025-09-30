@@ -7,6 +7,8 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
 {
     [HideInInspector] public UnitController unitInDugout;
 
+    public bool isDropAllowed => true;
+
     public void OnDrop(DragEventData data)
     {
         Debug.Log("OnDrop 호출됨 - 유닛이 참호에 드롭되었습니다." + this.transform.name);

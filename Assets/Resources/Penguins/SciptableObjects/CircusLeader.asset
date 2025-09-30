@@ -17,7 +17,7 @@ MonoBehaviour:
   unitTier: 5
   unitIcon: {fileID: 1503128673, guid: 063b8b807706e7347a72287d985fbb7e, type: 3}
   unitFaction: 1
-  unitType: 1
+  unitType: 2
   unitSynergyTags: []
   unitAnimations: []
   unitHP:

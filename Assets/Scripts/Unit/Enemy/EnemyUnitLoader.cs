@@ -18,15 +18,6 @@ public class EnemyUnitLoader : MonoBehaviour
             Debug.LogError("Enemy data file is not assigned in the inspector.");
             return;
         }
-        // var grids = FindObjectsOfType<PlacementGridManager>();
-        // foreach (var grid in grids)
-        // {
-        //     if (grid != null && grid.tag == "Enemy")
-        //     {
-        //         this.grid = grid;
-        //         break;
-        //     }
-        // }
 
         RebuildSceneFromData();
     }
@@ -54,7 +45,7 @@ public class EnemyUnitLoader : MonoBehaviour
                 go.tag = "Enemy";
                 if (go.TryGetComponent<UnitController>(out var goUnit))
                 {
-                    SynergyManager.instance.RegisterUnit(goUnit, false);
+                    UnitManager.instance.enemyList.Add(goUnit);
                     goUnit.unit.originPrefab = prefab;
                     goUnit.unit.spriteRenderer.flipX = true;
                     foreach (var allay in UnitManager.instance.allayList)

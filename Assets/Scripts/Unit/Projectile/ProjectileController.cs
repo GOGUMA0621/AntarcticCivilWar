@@ -86,22 +86,20 @@ public class ProjectileController : MonoBehaviour
     {
         if (this.TryGetComponent<Animator>(out Animator animator))
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+            if (target.TryGetComponent<IDamageAble>(out IDamageAble i))
             {
-                if (target.TryGetComponent<IDamageAble>(out IDamageAble i))
-                {
-                    i.ReceiveDamage(projectileDamageData);
-                    OnHitAction();
-                }
-                Debug.Log(reason + " + Animator 완료 후 파괴");
-                Destroy(this.gameObject);
+                i.ReceiveDamage(projectileDamageData);
+                Debug.Log(reason + " + 타격 판정");
+                OnHitAction();
             }
+            Destroy(this.gameObject);
         }
         else
         {
             if (target.TryGetComponent<IDamageAble>(out IDamageAble i))
             {
                 i.ReceiveDamage(projectileDamageData);
+                Debug.Log(reason + " + 타격 판정");
                 OnHitAction();
             }
             //Debug.Log(reason + " + 바로 파괴");

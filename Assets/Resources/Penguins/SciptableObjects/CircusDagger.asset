@@ -42,7 +42,7 @@ MonoBehaviour:
   unitUnstoppable: 0
   unitAttackSpeed: 0.7
   unitAttackDistance: 3
-  unitProjectile: {fileID: 0}
+  unitProjectile: {fileID: 7240340908294295380, guid: a72c9fe39e9f73245894bde683140b0c, type: 3}
   unitProjectileMaxSpeed: 3
   unitProjectileMaxHeight: 2
   projectileTrajectoryAnimationCurve:

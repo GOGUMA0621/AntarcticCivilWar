@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldDragHandler, IEndWorldDragHandler, IWorldDraggable
 {
+    public bool isDropAllowed => isDropAllowedToBench;
+    public bool isDropAllowedToBench = true; // bench에 드롭 허용 여부
     private Vector3 startPosition;
     private PlacementGridManager gridManager;
     private UnitController unit;
@@ -12,6 +14,7 @@ public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldD
     {
         gridManager = GridManager.instance.allayGrid;
         unit = GetComponent<UnitController>();
+        
     }
 
     public void OnBeginDrag(DragEventData data)
@@ -87,7 +90,11 @@ public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldD
             var dropHandler = col.GetComponent<IWorldDropHandler>();
             if (dropHandler != null)
             {
-                Debug.Log("드롭 핸들러 발견: " + col.name);
+                if (!isDropAllowed)
+                {
+                    Debug.Log("이 오브젝트에는 드롭할 수 없습니다.");
+                    break; // 드롭이 허용되지 않으면 다음 콜라이더 검사
+                }
                 return; // 드롭이 성공했으므로 더 이상 진행하지 않음
             }
         }

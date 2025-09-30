@@ -52,6 +52,14 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: -13657995
       objectReference: {fileID: 0}
+    - target: {fileID: 1669627952285921979, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: isDropAllowed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1669627952285921979, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: isDropAllowedToBench
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: maxHP
       value: 0

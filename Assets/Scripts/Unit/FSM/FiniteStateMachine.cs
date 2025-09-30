@@ -20,6 +20,7 @@ public class UnitPlaceState : IUnitState
         dragController.canDrag = true;
         unitController.SetAnimation("IdleState");
         unitController.StopMovement();
+        Debug.Log($"UnitPlaceState Enter - {unitController.name}");
     }
 
     public void Update()

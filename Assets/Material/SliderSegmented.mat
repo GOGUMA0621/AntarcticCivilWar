@@ -45,8 +45,8 @@ Material:
     - _LineLengthLarge: 1
     - _LineLengthSmall: 1
     - _LineOffset: 0
-    - _LineThicknessLarge: 6.48
-    - _LineThicknessSmall: 4.33
+    - _LineThicknessLarge: 8.43
+    - _LineThicknessSmall: 5.55
     - _MaxHP: 500
     - _Progress: 1
     - _StepLarge: 500
@@ -55,7 +55,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _LineColorLarge: {r: 0, g: 0, b: 0, a: 0.7607843}
-    - _LineColorSmall: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0.41960785}
+    - _LineColorSmall: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0.6156863}
     - _LineRange: {r: 0, g: 1, b: 0, a: 1}
     - _LineThicknessLargeRange: {r: 13, g: 20, b: 0, a: 0}
     - _LineThicknessSmallRange: {r: 8, g: 10, b: 0, a: 0}

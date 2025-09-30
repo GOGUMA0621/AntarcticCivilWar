@@ -360,6 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a758854f8b0071040831ddf3596da877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDropAllowedToBench: 1
   canDrag: 1
 --- !u!114 &6345866539272163795
 MonoBehaviour:
@@ -602,8 +603,8 @@ Transform:
   m_GameObject: {fileID: 7402805765775057532}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.444, y: 0.58, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalPosition: {x: 0.669, y: 0.58, z: 0}
+  m_LocalScale: {x: 0.45, y: 0.45, z: 0.45}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3892378131018841494}
@@ -623,6 +624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867381a7491849e47b59f31699fa7205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitController: {fileID: 5257417320873170678}
   LevelIcon: {fileID: 9140979076505461398}
   unitLevel1: {fileID: 21300000, guid: 6d13fe48d410b2b4ca580489627b2a8e, type: 3}
   unitLevel2: {fileID: 1400631532, guid: 2f7254386a71ce1469349d987312c1c8, type: 3}

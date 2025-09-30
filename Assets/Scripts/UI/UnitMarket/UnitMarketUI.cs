@@ -10,10 +10,11 @@ public class UnitMarketUI : MonoBehaviour
     public UnitMarketManager unitMarketManager; // 매니저 연결
 
     private List<UnitDB> selected = new();
+    public bool isFirstLoad = true;
 
     private void Start()
     {
-        GenerateShopUnits();
+        isFirstLoad = true;
         gameObject.SetActive(false);
     }
 
@@ -51,6 +52,12 @@ public class UnitMarketUI : MonoBehaviour
 
             slotUI.Set(unit, sprite);
         }
+    }
+    private IEnumerator RefreshUnitMarketAfterDelay()
+    {
+        GenerateShopUnits();
+        yield return new WaitForFixedUpdate();
+        gameObject.SetActive(false);
     }
 
     public UnitDB GetUnitFromSlot(int index)

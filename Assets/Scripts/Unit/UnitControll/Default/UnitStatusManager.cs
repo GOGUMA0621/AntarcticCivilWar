@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnitStatusManager : MonoBehaviour
 {
-    private UnitController unitController;
+    [SerializeField] private UnitController unitController;
 
     [Header("Unit Level Sprites")]
     [SerializeField] private SpriteRenderer LevelIcon;
@@ -26,9 +26,8 @@ public class UnitStatusManager : MonoBehaviour
     private float maxMP;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        unitController = transform.parent.GetComponent<UnitController>();
         hpBarMaterial = new Material(HPBar.material);
         mpBarMaterial = new Material(MPBar.material);
         HPBar.material = hpBarMaterial;
@@ -38,8 +37,10 @@ public class UnitStatusManager : MonoBehaviour
         UpdateUnitLevelVisual();
 
         maxHP = unitController.UnitStats.maxHP;
+        maxMP = unitController.UnitStats.maxMP;
 
-        hpBarMaterial.SetFloat("_MaxHP", maxHP);
+        UpdateHealthBar();
+        UpdateManaBar();
     }
 
     // Update is called once per frame
@@ -52,14 +53,11 @@ public class UnitStatusManager : MonoBehaviour
 
     private void UpdateHealthBar()
     {
-        if(unitController == null || unitController.unit == null)
-            return;
-        if(maxHP != unitController.UnitStats.maxHP)
+        if( maxHP != unitController.UnitStats.maxHP)
         {
             maxHP = unitController.UnitStats.maxHP;
             hpBarMaterial.SetFloat("_MaxHP", maxHP);
         }
-
         float healthPercent = unitController.GetNormalizedHealth();
         hpBarMaterial.SetFloat("_Progress", healthPercent);
     }
@@ -87,7 +85,8 @@ public class UnitStatusManager : MonoBehaviour
                     LevelIcon.sprite = unitLevel3;
                     break;
                 case 4:
-                    LevelIcon.sprite = unitLevel4;
+                    if(unitLevel4 != null)
+                        LevelIcon.sprite = unitLevel4;
                     break;
                 default:
                     Debug.LogWarning("지원되지 않는 유닛 레벨: " + unitLevel);

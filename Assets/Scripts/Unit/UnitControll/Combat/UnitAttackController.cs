@@ -70,12 +70,13 @@ public class UnitAttackController : MonoBehaviour
         IDamageAble target = unit.detectTarget.targetToAttack;
         Transform targetTransform = target.GetTransform();
 
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, unit.controller.UnitStats.attackRange);
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, 5f);
         foreach (Collider2D targetCollider in collider)
         {
             if (targetCollider.transform == targetTransform)
             {
                 target.ReceiveDamage(damageData);
+                Debug.Log($"{this.gameObject}가 {targetTransform.gameObject}를 공격, 데미지: {damageData.damage}");
                 unit.controller.TriggerOnHit(target);
             }
         }

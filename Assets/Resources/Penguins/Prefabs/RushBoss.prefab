@@ -92,6 +92,10 @@ PrefabInstance:
       propertyPath: canDrag
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9128392274147578142, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: unitController
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
     m_RemovedGameObjects: []

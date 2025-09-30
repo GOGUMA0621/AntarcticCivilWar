@@ -96,7 +96,16 @@ public class WorldDragController
     public void Drop()
     {
         if (!isDragging || InputManager.instance == null) return;
-        if(currentTarget == null) return;
+        if (currentTarget == null) return;
+
+        // Drop 금지 조건 추가 (예: canDropToBench가 false면 Drop 금지)
+        if (currentTarget.TryGetComponent(out IWorldDraggable worldDragHandler))
+        {
+            if (!worldDragHandler.isDropAllowed)
+            {
+                return;
+            }
+        }
 
         int droppableLayer = LayerMask.NameToLayer("Droppable");
         int mask = 1 << droppableLayer;
@@ -139,7 +148,7 @@ public class WorldDragController
 
 public interface IWorldDraggable
 {
-
+    public bool isDropAllowed { get; }
 }
 
 public interface IBeginWorldDragHandler : IWorldDraggable

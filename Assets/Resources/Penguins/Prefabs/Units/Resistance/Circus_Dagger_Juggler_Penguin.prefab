@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: m_Name
-      value: CircusDagger_Penguin
+      value: Circus_Dagger_Juggler_Penguin
       objectReference: {fileID: 0}
     - target: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: m_TagString

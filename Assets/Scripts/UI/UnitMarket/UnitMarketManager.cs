@@ -8,7 +8,6 @@ public class UnitMarketManager : MonoBehaviour
 {
    // [SerializeField] private Player player;
     [SerializeField] private UnitMarketUI unitMarketUI;
-    [SerializeField] private List<UnitSlot> playerUnitSlots;
     //[SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private UnitBench unitBench;
     [SerializeField] private bool isInfiniteUnit = false;
@@ -85,6 +84,11 @@ public class UnitMarketManager : MonoBehaviour
     public void UnitMarketOpen()
     {
         unitMarketUI.gameObject.SetActive(true);
+        if (unitMarketUI.isFirstLoad)
+        {
+            unitMarketUI.GenerateShopUnits();
+            unitMarketUI.isFirstLoad = false;
+        }
     }
 
     public void BuyUnit(int slotIndex)

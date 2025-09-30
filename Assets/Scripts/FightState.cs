@@ -17,8 +17,8 @@ public class FightState : MonoBehaviour
     private void OnFightState()
     {
         UnitManager.instance.AssignTargetsToAllUnits();
-        UnitManager.instance.ChangeStateAllayList("Idle");
-        UnitManager.instance.ChangeStateEnemyList("Idle");
+        UnitManager.instance.ChangeStateAllayList("IdleState");
+        UnitManager.instance.ChangeStateEnemyList("IdleState");
 
         fightButton.interactable = false; // 전투 시작 후 버튼 비활성화
     }
