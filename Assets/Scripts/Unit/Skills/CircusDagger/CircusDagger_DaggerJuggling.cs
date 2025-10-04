@@ -5,36 +5,40 @@ using UnityEngine;
 public class CircusDagger_DaggerJuggling : MonoBehaviour, IActiveSkill
 {
     [SerializeField] private float skillDuration = 5f;
+    [SerializeField] private GameObject daggerPrefab;
+    private UnitController unit;
 
-    public bool IsDurationSkill => throw new System.NotImplementedException();
+    private DamageData[] damageDatas;
 
-    public bool IsStandingSkill => throw new System.NotImplementedException();
+    public bool IsDurationSkill => true;
 
-    public float Duration => throw new System.NotImplementedException();
+    public bool IsStandingSkill => true;
 
-    public void ActivateSkill()
+    public float Duration => skillDuration;
+
+    public void DaggerJuggling()
     {
-        StartCoroutine(DaggerJugglingRoutine());
+        ProjectileController dagger = Instantiate(daggerPrefab, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
+        dagger.SetTarget(unit.unit.detectTarget.targetToAttack.GetTransform());
+        dagger.InitializeProjectile(unit.unit.detectTarget.targetToAttack.GetTransform(), unit.unit.data.UnitMaxProjectileSpeed, unit.unit.data.UnitMaxProjectileHeight, unit.unit);
+        dagger.InitializeAnimaionCurve(unit.unit.data.ProjectileTrajectoryAnimationCurve, unit.unit.data.ProjectileCorrectionAnimationCurve, unit.unit.data.ProjectileSpeedAnimationCurve); 
+        dagger.InitializeDamageData(damageDatas[unit.unitLevel - 1]);
     }
 
     public void ActivateSkill(UnitController unit)
     {
-        throw new System.NotImplementedException();
+        this.unit = unit;
+        StartCoroutine(DaggerJugglingRoutine());
     }
 
     public void DeactivateSkill(UnitController unit)
     {
-        throw new System.NotImplementedException();
+        unit.isSkillActive = false;
     }
 
     private IEnumerator DaggerJugglingRoutine()
     {
-        var unit = GetComponent<UnitController>();
-        if (unit == null) yield break;
-        unit.GoSkill(isStanding: false, duration: skillDuration);
-
         yield return new WaitForSeconds(skillDuration);
-        
-        unit.GoIdle();
+        DeactivateSkill(unit);
     }
 }

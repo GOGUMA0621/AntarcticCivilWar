@@ -110,7 +110,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     public IActiveSkill unitSkill;
     public IPasseiveSkillAttack unitPassiveSkill;
     public bool canMana = true;
-
+    public bool isSkillActive = false;
 
     private string currentAnimationName;
     private bool isPaused = false;
@@ -229,7 +229,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             baseStats.Add(StatType.MaxHealth, unit.data.UnitHP[idx]);
             baseStats.Add(StatType.HealthRegen, 0);
             baseStats.Add(StatType.MaxMana, unit.data.UnitMP);
-            baseStats.Add(StatType.ManaRegen, 5);
+            baseStats.Add(StatType.ManaGain, 5);
             baseStats.Add(StatType.AttackDamage, unit.data.UnitDamage[idx]);
             baseStats.Add(StatType.AttackSpeed, unit.data.UnitAttackSpeed);
             baseStats.Add(StatType.AttackRange, unit.data.UnitAttackDistance);
@@ -246,6 +246,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             currentHP = UnitStats.maxHP;
             currentMP = 0;
         }
+    }
+
+    public int GetUnitLevel()
+    {
+        return unitLevel;
     }
 
     #endregion
@@ -269,7 +274,14 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         if(currentState is UnitFollowState)
         {
-          GoAttack();
+          if(isSkillActive)
+            {
+                GoSkill(true, unitSkill.Duration);
+            }
+            else
+            {
+                GoAttack();
+            }
         }
     }
 
@@ -409,7 +421,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     public void UnitAttack()
     {
         CollectMana();
-        DoSkill();
+        TryActivateSkill();
         OnHit?.Invoke();
 
         if (unitPassiveSkill != null)
@@ -452,7 +464,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         currentHP -= reducedDamage;
         ApplyEffect(damage);
         CollectMana();
-        DoSkill();
+        TryActivateSkill();
         WhenHit?.Invoke();
         if (currentHP <= 0 && !isUnitDie) Die();
     }
@@ -520,7 +532,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     {
         if (canMana)
         {
-            currentMP += UnitStats.manaRegen;
+            currentMP += UnitStats.manaGain;
             if (currentMP >= UnitStats.maxMP && UnitStats.maxMP > 0)
             {
                 currentMP = 0;
@@ -531,18 +543,14 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
     /// <summary>
     /// 유닛의 스킬을 사용하는 메서드
     /// </summary>
-    public void DoSkill()
+    public void TryActivateSkill()
     {
         if(unitSkill != null && currentMP >= UnitStats.maxMP && UnitStats.maxMP != 0)
         {
-            if (unitSkill.IsDurationSkill)
-            {
-                GoSkill(true, unitSkill.Duration);
-            }
-            else
-            {
-                unitSkill.ActivateSkill(this);
-            }
+            unitSkill.ActivateSkill(this);
+            isSkillActive = true;
+            canMana = false;
+            GoSkill(true);
             currentMP = 0;
         }
     }

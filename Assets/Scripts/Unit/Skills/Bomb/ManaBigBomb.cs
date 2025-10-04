@@ -4,48 +4,38 @@ using UnityEngine;
 
 public class ManaBigBomb : MonoBehaviour, IActiveSkill
 {
-    private Unit unit;
+    private UnitController unit;
     private Transform targetTransform;
     [SerializeField] private GameObject _pfBigBomb;
 
-    public bool IsDurationSkill => throw new System.NotImplementedException();
+    public bool IsDurationSkill => false;
 
-    public bool IsStandingSkill => throw new System.NotImplementedException();
+    public bool IsStandingSkill => true;
 
-    public float Duration => throw new System.NotImplementedException();
+    public float Duration => 0f;
 
-    void Start()
-    {
-      unit = GetComponent<Unit>();
-      if (unit.detectTarget.targetToAttack is Component comp)
-          targetTransform = comp.transform;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField] private DamageData[] damageDatas;
 
     public void ThrowBigBomb()
     {
-        ProjectileController projectile = Instantiate(_pfBigBomb, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
-        projectile.InitializeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit);
-        projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
-    }
+        DamageData data = damageDatas[unit.unitLevel - 1];
 
-    public void ActivateSkill()
-    {
-        unit.animator.Play("ManaSkill");
+        ProjectileController projectile = Instantiate(_pfBigBomb, transform.position, Quaternion.identity).GetComponent<ProjectileController>();
+        projectile.InitializeDamageData(data);
+        projectile.SetTarget(targetTransform);
+        projectile.InitializeProjectile(targetTransform, unit.unit.data.UnitMaxProjectileSpeed, unit.unit.data.UnitMaxProjectileHeight, unit.unit);
+        projectile.InitializeAnimaionCurve(unit.unit.data.ProjectileTrajectoryAnimationCurve, unit.unit.data.ProjectileCorrectionAnimationCurve, unit.unit.data.ProjectileSpeedAnimationCurve);
+        DeactivateSkill(unit);
     }
 
     public void ActivateSkill(UnitController unit)
     {
-        throw new System.NotImplementedException();
+        this.unit = unit;
+        targetTransform = unit.unit.detectTarget.targetToAttack.GetTransform();
     }
 
     public void DeactivateSkill(UnitController unit)
     {
-        throw new System.NotImplementedException();
+        unit.isSkillActive = false;
     }
 }

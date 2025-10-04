@@ -28,7 +28,7 @@ public class CircusSynergy : MonoBehaviour, ISynergy
     {
         new SynergyTierEffect{ RequiredCount = 1, Description = "서커스 단장을 획득합니다.", StatModifiers = new() { } },
         new SynergyTierEffect{ RequiredCount = 4, Description = "서커스 단장의 공격 속도 20% 증가", StatModifiers = new() { { StatType.AttackSpeed, 0.2f } } },
-        new SynergyTierEffect{ RequiredCount = 6, Description = "서커스 단장의 초당 마나 회복 5 추가", StatModifiers = new() { { StatType.ManaRegen, 5f } } },
+        new SynergyTierEffect{ RequiredCount = 6, Description = "서커스 단장의 초당 마나 회복 5 추가", StatModifiers = new() { { StatType.ManaGain, 5f } } },
         new SynergyTierEffect{ RequiredCount = 7, Description = "서커스 단장의 받는 피해감소 25% 추가", StatModifiers = new() { { StatType.Endurance, 0.25f } } },
     };
 
@@ -66,7 +66,7 @@ public class CircusSynergy : MonoBehaviour, ISynergy
                 circusLeader.SetUnit(); // 스탯 갱신
                 break;
             case 3:
-                circusLeader.AddModifierStat(new StatModifier(Tag, StatType.ManaRegen, 5f, ModifierMethod.Additive));
+                circusLeader.AddModifierStat(new StatModifier(Tag, StatType.ManaGain, 5f, ModifierMethod.Additive));
                 circusLeader.unitLevel = 3;
                 circusLeader.SetUnit(); // 스탯 갱신
                 break;

@@ -8952,7 +8952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fcf4c69aabdd364492a82acd77cd19d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridType: 0
+  gridType: 1
   width: 12
   height: 7
   cellSize: 1
@@ -8984,7 +8984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47b870c152c9eae429250b2119e85b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyDataFile: {fileID: 4900000, guid: f2e28b38c6669d146b9107bfa2b3957e, type: 3}
+  enemyDataFile: {fileID: 4900000, guid: 4324e96eec8e51c47aec74ff4b951254, type: 3}
   grid: {fileID: 1159989902}
 --- !u!1001 &1225635004
 PrefabInstance:
@@ -10784,6 +10784,10 @@ PrefabInstance:
     - target: {fileID: 6748604885184098386, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6755291180446791037, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6809814678764733995, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

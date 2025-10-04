@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Mage", "마법사", SynergyType.ClassType)]
+[SynergyTag("Mage", "??????", SynergyType.ClassType)]
 public class MageSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
     public string Tag => "Mage";
-    public string Name => "마법사";
+    public string Name => "??????";
     public bool allowDuplicate => true;
     public string synergyDescription => "";
     public Sprite synergyIcon => Resources.Load<Sprite>($"Synergy/{Name}");
@@ -18,10 +18,10 @@ public class MageSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 
     private static readonly SynergyTierEffect[] MageTierEffects = new SynergyTierEffect[]
     {
-        new SynergyTierEffect{ RequiredCount = 3, Description = "펭포스 20증가, 마술사 캐릭터들의 초당 마나 회복 +1", StatModifiers = new() { { StatType.Pengforce, 20f }, { StatType.ManaRegen, 1f } } },
-        new SynergyTierEffect{ RequiredCount = 5, Description = "펭포스 25증가, 마술사 캐릭터들의 초당 마나 회복 +2", StatModifiers = new() { { StatType.Pengforce, 25f }, { StatType.ManaRegen, 2f } } },
-        new SynergyTierEffect{ RequiredCount = 7, Description = "펭포스 30증가, 마술사 캐릭터들의 초당 마나 회복 +3", StatModifiers = new() { { StatType.Pengforce, 30f }, { StatType.ManaRegen, 3f } } },
-        new SynergyTierEffect{ RequiredCount = 9, Description = "펭포스 40증가, 마술사 캐릭터들의 초당 마나 회복 +6", StatModifiers = new() { { StatType.Pengforce, 40f }, { StatType.ManaRegen, 6f } } },
+        new SynergyTierEffect{ RequiredCount = 3, Description = "펭포스 20증가, 마술사 캐릭터들의 초당 마나 회복 +1", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 20f }, { StatType.ManaRegen, 1f } } },
+        new SynergyTierEffect{ RequiredCount = 5, Description = "펭포스 25증가, 마술사 캐릭터들의 초당 마나 회복 +2", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 25f }, { StatType.ManaRegen, 2f } } },
+        new SynergyTierEffect{ RequiredCount = 7, Description = "펭포스 30증가, 마술사 캐릭터들의 초당 마나 회복 +3", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 30f }, { StatType.ManaRegen, 3f } } },
+        new SynergyTierEffect{ RequiredCount = 9, Description = "펭포스 40증가, 마술사 캐릭터들의 초당 마나 회복 +6", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 40f }, { StatType.ManaRegen, 6f } } },
     };
 
 
@@ -55,10 +55,10 @@ public class MageSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 
         lastTier = tier;
 
-        // 마법사 캐릭터들의 초당 마나 회복량 증가
-        if (MageTierEffects[tier].StatModifiers.TryGetValue(StatType.ManaRegen, out float manaRegen))
+        // 펭포스와 마나 회복량을 증가시키는 효과 적용
+        if (MageTierEffects[tier].StatModifiers.TryGetValue(StatType.ManaGain, out float manaRegen))
         {
-            unit.AddModifierStat(new StatModifier(Tag, StatType.ManaRegen, manaRegen, ModifierMethod.Additive));
+            unit.AddModifierStat(new StatModifier(Tag, StatType.ManaGain, manaRegen, ModifierMethod.Additive));
         }
     }
 

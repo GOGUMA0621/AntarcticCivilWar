@@ -58,7 +58,7 @@ public class KingSynergy : MonoBehaviour, ISynergy
                 {
                     new StatModifier(Tag, StatType.DamageAmp, 0.2f, ModifierMethod.Additive),
                     new StatModifier(Tag, StatType.Endurance, 0.2f, ModifierMethod.Additive),
-                    new StatModifier(Tag, StatType.ManaRegen, 4f, ModifierMethod.Additive),
+                    new StatModifier(Tag, StatType.ManaGain, 4f, ModifierMethod.Additive),
                 });
                 break;
         }

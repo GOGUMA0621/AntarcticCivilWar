@@ -46,6 +46,7 @@ public class WorldDragController
     {
         Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
 
+        // 항상 currentTarget을 새로 찾음
         if (data != null && data.source != null)
         {
             currentTarget = data.source;
@@ -61,6 +62,13 @@ public class WorldDragController
             isPressing = false;
             Debug.Log($"BeginDrag 호출됨 - {currentTarget.name}");
             beginHandler.OnBeginDrag(CreateDragEventData(worldPos));
+        }
+        else
+        {
+            // currentTarget이 없으면 드래그 상태 초기화
+            isDragging = false;
+            isPressing = false;
+            currentTarget = null;
         }
     }
 
@@ -87,9 +95,10 @@ public class WorldDragController
         {
             Debug.Log($"EndDrag 호출됨 - {currentTarget.name}");
             endHandler.OnEndDrag(CreateDragEventData(worldPos));
+            currentTarget = null;
         }
-
         currentTarget = null;
+
         isDragging = false;
     }
 
@@ -128,7 +137,6 @@ public class WorldDragController
         Debug.Log("FindDraggableUnderPointer 호출됨");
         int mask = ~(1 << LayerMask.NameToLayer("Detector")); // Detector 레이어 제외
         Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
-        Debug.Log($"월드 포지션: {worldPos}");
         Collider2D col = Physics2D.OverlapPoint(worldPos, mask);
         if (col != null && col.TryGetComponent<IWorldDraggable>(out var draggable) && !col.TryGetComponent<IWorldDropHandler>(out var _))
         {

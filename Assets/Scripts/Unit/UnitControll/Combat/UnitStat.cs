@@ -7,6 +7,7 @@ public enum StatType
     MaxHealth,
     HealthRegen,
     MaxMana,
+    ManaGain,
     ManaRegen,
     AttackDamage,
     AdditionalDamage,
@@ -55,6 +56,7 @@ public class UnitStats
     public float attackRange;
     public float moveSpeed;
     public float healthRegen;
+    public float manaGain;
     public float manaRegen;
     public float critChance;
     public float critDamage;
@@ -71,6 +73,7 @@ public class UnitStats
         attackRange  = stats.TryGetValue(StatType.AttackRange, out var ar) ? ar : 1f;
         moveSpeed    = stats.TryGetValue(StatType.MoveSpeed, out var ms) ? ms : 1f;
         healthRegen  = stats.TryGetValue(StatType.HealthRegen, out var hr) ? hr : 0f;
+        manaGain     = stats.TryGetValue(StatType.ManaGain, out var mg) ? mg : 0f;
         manaRegen    = stats.TryGetValue(StatType.ManaRegen, out var mr) ? mr : 0f;
         critChance   = stats.TryGetValue(StatType.CritChance, out var cc) ? cc : 0.2f;
         critDamage   = stats.TryGetValue(StatType.CritDamage, out var cd) ? cd : 1.3f;

@@ -10,41 +10,39 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
-  m_Name: CircusDagger
+  m_Name: CircusTamer
   m_EditorClassIdentifier: 
-  unitName: "\uB2E8\uAC80 \uACE1\uC608 \uD3AD\uADC4"
+  unitName: "\uC870\uB828\uC0AC \uD3AD\uADC4"
   unitDescription: 
   unitTier: 3
-  unitIcon: {fileID: -1290254670, guid: 3d576a1e9707ec245a493b9f00782323, type: 3}
+  unitIcon: {fileID: 0}
   unitFaction: 1
   unitType: 0
   unitSynergyTags:
   - Resistance
-  - Rogue
+  - Mage
   - Circus
-  unitAnimations:
-  - {fileID: 7400000, guid: c456586aba9bd094190dabf487cb3183, type: 2}
-  - {fileID: 7400000, guid: 070e8a26099811e4f87b266cda66da27, type: 2}
-  - {fileID: 7400000, guid: c818592afe0ecca46b9626fcacf820e2, type: 2}
-  - {fileID: 7400000, guid: 6186c431a04a92d4c8e24555400ab27e, type: 2}
+  unitAnimations: []
   unitHP:
-  - 600
-  - 1150
-  - 2000
-  unitMP: 120
-  unitSpeed: 3.5
+  - 750
+  - 1200
+  - 2100
+  - 0
+  unitMP: 200
+  unitSpeed: 0
   unitDamage:
   - 30
   - 50
-  - 80
+  - 90
+  - 0
   unitAttackType: 1
   unitHasKnockback: 0
   unitUnstoppable: 0
-  unitAttackSpeed: 0.7
-  unitAttackDistance: 3
-  unitProjectile: {fileID: 7240340908294295380, guid: a72c9fe39e9f73245894bde683140b0c, type: 3}
-  unitProjectileMaxSpeed: 3
-  unitProjectileMaxHeight: 2
+  unitAttackSpeed: 1
+  unitAttackDistance: 2
+  unitProjectile: {fileID: 0}
+  unitProjectileMaxSpeed: 0
+  unitProjectileMaxHeight: 0
   projectileTrajectoryAnimationCurve:
     serializedVersion: 2
     m_Curve:
