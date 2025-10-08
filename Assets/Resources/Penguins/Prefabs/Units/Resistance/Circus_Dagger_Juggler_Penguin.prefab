@@ -133,6 +133,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       insertIndex: -1
       addedObject: {fileID: -6704236771569627761}
+    - targetCorrespondingSourceObject: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6901728417667047081}
+    - targetCorrespondingSourceObject: {fileID: 5744230692257079530, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6462656311228476542}
   m_SourcePrefab: {fileID: 100100000, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
 --- !u!1 &2857135275580914450 stripped
 GameObject:
@@ -175,3 +181,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6503cfb034cdc54e9e7852076b0f46b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6901728417667047081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2857135275580914450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cb4ffbfde849cc41a9dea6ef70e08ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillDuration: 5
+  daggerPrefab: {fileID: 7240340908294295380, guid: a72c9fe39e9f73245894bde683140b0c, type: 3}
+--- !u!114 &6462656311228476542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2857135275580914450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28b6044f4022f6489d81d97a764ae7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  burning: {fileID: 7400000, guid: 19c2ab7291884284ab1aa3e0dde55c83, type: 2}
+  burningDaggerPrefab: {fileID: 3473815611056847703, guid: a9d1b86af69eb7540b541d2a2ff26142, type: 3}
+  damageDatas: []

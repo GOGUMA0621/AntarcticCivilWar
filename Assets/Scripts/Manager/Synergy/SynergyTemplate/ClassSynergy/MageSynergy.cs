@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SynergyTag("Mage", "??????", SynergyType.ClassType)]
+[SynergyTag("Mage", "ë§ˆìˆ ì‚¬", SynergyType.ClassType)]
 public class MageSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 {
     public string Tag => "Mage";
-    public string Name => "??????";
+    public string Name => "ë§ˆìˆ ì‚¬";
     public bool allowDuplicate => true;
     public string synergyDescription => "";
     public Sprite synergyIcon => Resources.Load<Sprite>($"Synergy/{Name}");
@@ -18,10 +18,10 @@ public class MageSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 
     private static readonly SynergyTierEffect[] MageTierEffects = new SynergyTierEffect[]
     {
-        new SynergyTierEffect{ RequiredCount = 3, Description = "ÆëÆ÷½º 20Áõ°¡, ¸¶¼ú»ç Ä³¸¯ÅÍµéÀÇ ÃÊ´ç ¸¶³ª È¸º¹ +1", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 20f }, { StatType.ManaRegen, 1f } } },
-        new SynergyTierEffect{ RequiredCount = 5, Description = "ÆëÆ÷½º 25Áõ°¡, ¸¶¼ú»ç Ä³¸¯ÅÍµéÀÇ ÃÊ´ç ¸¶³ª È¸º¹ +2", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 25f }, { StatType.ManaRegen, 2f } } },
-        new SynergyTierEffect{ RequiredCount = 7, Description = "ÆëÆ÷½º 30Áõ°¡, ¸¶¼ú»ç Ä³¸¯ÅÍµéÀÇ ÃÊ´ç ¸¶³ª È¸º¹ +3", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 30f }, { StatType.ManaRegen, 3f } } },
-        new SynergyTierEffect{ RequiredCount = 9, Description = "ÆëÆ÷½º 40Áõ°¡, ¸¶¼ú»ç Ä³¸¯ÅÍµéÀÇ ÃÊ´ç ¸¶³ª È¸º¹ +6", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 40f }, { StatType.ManaRegen, 6f } } },
+        new SynergyTierEffect{ RequiredCount = 3, Description = "í­í¬ìŠ¤ 20ì¦ê°€, ë§ˆìˆ ì‚¬ ìºë¦­í„°ë“¤ì˜ ì´ˆë‹¹ ë§ˆë‚˜ íšŒë³µ +1", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 20f }, { StatType.ManaRegen, 1f } } },
+        new SynergyTierEffect{ RequiredCount = 5, Description = "í­í¬ìŠ¤ 25ì¦ê°€, ë§ˆìˆ ì‚¬ ìºë¦­í„°ë“¤ì˜ ì´ˆë‹¹ ë§ˆë‚˜ íšŒë³µ +2", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 25f }, { StatType.ManaRegen, 2f } } },
+        new SynergyTierEffect{ RequiredCount = 7, Description = "í­í¬ìŠ¤ 30ì¦ê°€, ë§ˆìˆ ì‚¬ ìºë¦­í„°ë“¤ì˜ ì´ˆë‹¹ ë§ˆë‚˜ íšŒë³µ +3", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 30f }, { StatType.ManaRegen, 3f } } },
+        new SynergyTierEffect{ RequiredCount = 9, Description = "í­í¬ìŠ¤ 40ì¦ê°€, ë§ˆìˆ ì‚¬ ìºë¦­í„°ë“¤ì˜ ì´ˆë‹¹ ë§ˆë‚˜ íšŒë³µ +6", StatModifiers = new Dictionary<StatType, float> { { StatType.Pengforce, 40f }, { StatType.ManaRegen, 6f } } },
     };
 
 
@@ -55,7 +55,7 @@ public class MageSynergy : MonoBehaviour, ISynergy, ISynergyGlobal
 
         lastTier = tier;
 
-        // ÆëÆ÷½º¿Í ¸¶³ª È¸º¹·®À» Áõ°¡½ÃÅ°´Â È¿°ú Àû¿ë
+        // í­í¬ìŠ¤ì™€ ë§ˆë‚˜ íšŒë³µëŸ‰ì„ ì¦ê°€ì‹œí‚¤ëŠ” íš¨ê³¼ ì ìš©
         if (MageTierEffects[tier].StatModifiers.TryGetValue(StatType.ManaGain, out float manaRegen))
         {
             unit.AddModifierStat(new StatModifier(Tag, StatType.ManaGain, manaRegen, ModifierMethod.Additive));

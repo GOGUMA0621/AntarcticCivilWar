@@ -8,7 +8,7 @@ public static class ComponentExtention
         return (obj as Component)?.transform;
     }
 }
-
+#if UNITY_EDITOR
 public class UnitPrefabTools
 {
     [MenuItem("Assets/모든 유닛 프리팹 SetUnit 실행",false, 20)]
@@ -25,3 +25,4 @@ public class UnitPrefabTools
         }
     }
 }
+#endif

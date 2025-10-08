@@ -34,6 +34,7 @@ public class CircusDagger_DaggerJuggling : MonoBehaviour, IActiveSkill
     public void DeactivateSkill(UnitController unit)
     {
         unit.isSkillActive = false;
+        unit.canMana = true;
     }
 
     private IEnumerator DaggerJugglingRoutine()
