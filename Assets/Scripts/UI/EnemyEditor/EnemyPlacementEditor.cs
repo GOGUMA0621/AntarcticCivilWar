@@ -17,6 +17,7 @@ public class EnemyUnitData
     public string unitId;
     public Vector2Int gridPos;
     public string assetPath;
+    public int level; // 유닛 레벨
 }
 
 [System.Serializable]
@@ -60,6 +61,8 @@ public class EnemyPlacementEditor : EditorWindow
     }
 
     private List<PrefabInfo> prefabList = new();
+
+    private int selectedLevel = 1; // 선택한 레벨 저장 변수
 
 
     [MenuItem("Tools/적 유닛 배치 툴")]
@@ -133,6 +136,10 @@ public class EnemyPlacementEditor : EditorWindow
                 selectedPrefab = info.prefab;
             }
         }
+
+        // 여기 추가!
+        GUILayout.Label("유닛 레벨 선택", EditorStyles.boldLabel);
+        selectedLevel = EditorGUILayout.IntSlider("레벨", selectedLevel, 1, 3);
 
         if (selectedPrefab != null)
         {
@@ -292,7 +299,8 @@ public class EnemyPlacementEditor : EditorWindow
             {
                 unitId = selectedPrefab.name,
                 gridPos = gridPos,
-                assetPath = AssetDatabase.GetAssetPath(selectedPrefab)
+                assetPath = AssetDatabase.GetAssetPath(selectedPrefab),
+                level = selectedLevel // 유닛 레벨 저장
             });
 
             e.Use();
@@ -345,6 +353,13 @@ public class EnemyPlacementEditor : EditorWindow
 
                 if(go.GetComponent<EditorSpawnMarker>() == null)
                     go.AddComponent<EditorSpawnMarker>();
+
+                // 저장된 레벨 적용
+                var unit = go.GetComponent<Unit>();
+                if (unit != null && unit.controller != null)
+                {
+                    unit.controller.unitLevel = enemy.level;
+                }
 
                 SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
                 if (sr != null && sr.sprite != null)
@@ -404,7 +419,8 @@ public class EnemyPlacementEditor : EditorWindow
         {
             unitId = selectedPrefab.name,
             gridPos = gridPos,
-            assetPath = AssetDatabase.GetAssetPath(selectedPrefab)
+            assetPath = AssetDatabase.GetAssetPath(selectedPrefab),
+            level = selectedLevel // 유닛 레벨 저장
         });
 
         e.Use();
@@ -415,9 +431,15 @@ public class EnemyPlacementEditor : EditorWindow
         GameObject go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         go.transform.position = GridUtility.GridToWorld(gridPos, grid.origin, grid.cellSize);
         go.name = prefab.name + $"({gridPos.x},{gridPos.y})";
-
         go.tag = "Enemy";
         go.AddComponent<EditorSpawnMarker>();
+
+        // 유닛 레벨 적용
+        var unit = go.GetComponent<Unit>();
+        if (unit != null && unit.controller != null)
+        {
+            unit.controller.unitLevel = selectedLevel; // UnitData에 level 필드가 있어야 함
+        }
 
         SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
         if (sr != null && sr.sprite != null)
