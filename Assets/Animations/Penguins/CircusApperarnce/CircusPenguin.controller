@@ -20,7 +20,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: ad4cc0a888997774eb2c94fc9ee39ca2, type: 2}
+  m_Motion: {fileID: 7400000, guid: 9226b5f77c9ac2449af0416cba5a0c8b, type: 2}
   m_Tag: 
   m_SpeedParameter: motionMultiplierValue
   m_MirrorParameter: isFollow
@@ -84,7 +84,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 4a1fae6607a7150409c19444fa00c15b, type: 2}
+  m_Motion: {fileID: 7400000, guid: 6cc2d870a58b63245a0b58dfc533f387, type: 2}
   m_Tag: 
   m_SpeedParameter: motionMultiplierValue
   m_MirrorParameter: 
@@ -120,7 +120,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Walrus
+  m_Name: CircusPenguin
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: isFollow
@@ -223,9 +223,6 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: 7200772456634112347}
     m_Position: {x: 740, y: 30, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 1475036649158105514}
-    m_Position: {x: 740, y: 100, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 2152270430207856896}
@@ -257,35 +254,9 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 286b14c72547ca84bb142bf5d35613ae, type: 2}
+  m_Motion: {fileID: 7400000, guid: 5a43ce6c674107e47b4cfe12e8a221f2, type: 2}
   m_Tag: 
   m_SpeedParameter: speed
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
---- !u!1102 &1475036649158105514
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: CircusDagger_Idle
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c456586aba9bd094190dabf487cb3183, type: 2}
-  m_Tag: 
-  m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 

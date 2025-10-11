@@ -1,0 +1,49 @@
+{
+    "enemies": [
+        {
+            "unitId": "Resistance_Normal_Penguin",
+            "gridPos": {
+                "x": 1,
+                "y": 5
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Resistance/Resistance_Normal_Penguin.prefab",
+            "level": 1
+        },
+        {
+            "unitId": "Resistance_Normal_Penguin",
+            "gridPos": {
+                "x": 1,
+                "y": 3
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Resistance/Resistance_Normal_Penguin.prefab",
+            "level": 1
+        },
+        {
+            "unitId": "Resistance_Normal_Penguin",
+            "gridPos": {
+                "x": 1,
+                "y": 1
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Resistance/Resistance_Normal_Penguin.prefab",
+            "level": 1
+        },
+        {
+            "unitId": "Circus_Dagger_Juggler_Penguin",
+            "gridPos": {
+                "x": 3,
+                "y": 4
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Resistance/Circus_Dagger_Juggler_Penguin.prefab",
+            "level": 1
+        },
+        {
+            "unitId": "Circus_Dagger_Juggler_Penguin",
+            "gridPos": {
+                "x": 3,
+                "y": 2
+            },
+            "assetPath": "Assets/Resources/Penguins/Prefabs/Units/Resistance/Circus_Dagger_Juggler_Penguin.prefab",
+            "level": 1
+        }
+    ]
+}

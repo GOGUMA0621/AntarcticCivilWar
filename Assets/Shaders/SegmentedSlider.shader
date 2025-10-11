@@ -12,12 +12,15 @@
         _LineColorSmall("Small Line Color", Color) = (1,1,1,0.5)
         _LineThicknessSmall("Small Line Thickness", Float) = 5
         _LineLengthSmall("Small Line Length", Range(0.01,1)) = 0.2
-        
+
         [Header(Segment Large Line Settings)]
         _StepLarge("Large Line Step", Float) = 500
         _LineColorLarge("Large Line Color", Color) = (1,1,0,1)
         _LineThicknessLarge("Large Line Thickness", Float) = 10
         _LineLengthLarge("Large Line Length", Range(0.01,1)) = 0.4
+
+        [Header(Vertical Anchor)]
+        _AnchorFromTop("Anchor From Top (0=bottom,1=top)", Range(0,1)) = 0
     }
 
     CGINCLUDE
@@ -36,6 +39,7 @@
     float _LineThicknessLarge;
     float _LineLengthSmall;
     float _LineLengthLarge;
+    float _AnchorFromTop;
 
     struct v2f{
         float4 pos:SV_POSITION;
@@ -53,38 +57,44 @@
         float2 uv = i.uv;
         float4 baseColor = tex2D(_MainTex, uv);
 
+        // progress clip (horizontal)
         if(uv.x > _Progress)
         {
             baseColor.a = 0;
             return baseColor;
         }
 
+        // compute usable tex width
         float texWidth = _MainTex_TexelSize.z;
 
         float uvThicknessLarge = _LineThicknessLarge / texWidth;
         float uvThicknessSmall = _LineThicknessSmall / texWidth;
 
+        // vertical coordinate, allow anchoring from top or bottom
+        float yCoord = (_AnchorFromTop > 0.5) ? (1.0 - uv.y) : uv.y;
+
         float hpAtUV = uv.x * _MaxHP;
         float largeLineDist = abs(fmod(hpAtUV, _StepLarge));
         float largeLineAlpha = step(largeLineDist, uvThicknessLarge * _MaxHP);
-        if (uv.y >= _LineLengthLarge) largeLineAlpha = 0.0;
+
+        if (yCoord >= _LineLengthLarge) largeLineAlpha = 0.0;
 
         // maxHP가 largeLineStep으로 나누어떨어지는지 판별
         float epsilon = 0.001;
         bool isDivisible = abs(fmod(_MaxHP, _StepLarge)) < epsilon;
 
-        // 마지막 위치에서 큰 선 표시 여부 결정
+        // 마지막 위치에서 큰 선 표시 여부 결정 (yCoord 기준)
         if (isDivisible && abs(hpAtUV - _MaxHP) < (uvThicknessLarge * _MaxHP)) {
             largeLineAlpha = 1.0;
         }else if (hpAtUV < (_StepLarge * 0.5)) 
         {
             largeLineAlpha = 0.0;
         }
-        
 
         float smallLineDist = abs(fmod(hpAtUV, _StepSmall));
         float smallLineAlpha = step(smallLineDist, uvThicknessSmall * _MaxHP) * (1 - largeLineAlpha);
-        if (uv.y >= _LineLengthSmall) smallLineAlpha = 0.0;
+
+        if (yCoord >= _LineLengthSmall) smallLineAlpha = 0.0;
 
         float lineAlpha = max(largeLineAlpha, smallLineAlpha);
 

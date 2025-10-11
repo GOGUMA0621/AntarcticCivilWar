@@ -234,7 +234,7 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
             baseStats.Add(StatType.AttackSpeed, unit.data.UnitAttackSpeed);
             baseStats.Add(StatType.AttackRange, unit.data.UnitAttackDistance);
             baseStats.Add(StatType.MoveSpeed, unit.data.UnitSpeed);
-            baseStats.Add(StatType.CritChance, 0);
+            baseStats.Add(StatType.CritChance, 0.2f);
             baseStats.Add(StatType.CritDamage, 1.3f);
             baseStats.Add(StatType.Endurance, 0);
             baseStats.Add(StatType.DamageAmp, 0);

@@ -11,7 +11,7 @@ public class TilemapManager : SingleTonBehaviour<TilemapManager>
     
 
     public Tilemap tilemap;
-    [Tooltip("½ºÆù¿¡ ºÎÇÕÇÏÁö ¾Ê´Â Å¸ÀÏ")]
+    [Tooltip("ìŠ¤í°ì— ë¶€í•©í•˜ì§€ ì•ŠëŠ” íƒ€ì¼")]
     public TileBase[] restrictedTiles;
 
     private HashSet<TileBase> restrictedTileSet;
@@ -67,22 +67,22 @@ public class TilemapManager : SingleTonBehaviour<TilemapManager>
 
         switch (side)
         {
-            case 0: //¿ŞÂÊ
+            case 0: //ì™¼ìª½
                 spawnTile = new Vector3Int(minBounds.x, Random.Range(minBounds.y, maxBounds.y), 0);
                 spawnTile.x += randomOffset;
                 break;
 
-            case 1: //¿À¸¥ÂÊ
+            case 1: //ì˜¤ë¥¸ìª½
                 spawnTile = new Vector3Int(maxBounds.x, Random.Range(minBounds.y, maxBounds.y), 0);
                 spawnTile.x -= randomOffset;
                 break;
 
-            case 2: // À§ÂÊ
+            case 2: // ìœ„ìª½
                 spawnTile = new Vector3Int(Random.Range(minBounds.x, maxBounds.x), maxBounds.y, 0);
                 spawnTile.y -= randomOffset;
                 break;
 
-            case 3: //¾Æ·¡ÂÊ
+            case 3: //ì•„ë˜ìª½
                 spawnTile = new Vector3Int(Random.Range(minBounds.x, maxBounds.y), minBounds.y, 0);
                 spawnTile.y += randomOffset;
                 break;
@@ -108,37 +108,37 @@ public class TilemapManager : SingleTonBehaviour<TilemapManager>
 
         Vector3Int destinationTile;
 
-        // Å×µÎ¸®¿¡ °¡±î¿îÁö È®ÀÎ
+        // í…Œë‘ë¦¬ì— ê°€ê¹Œìš´ì§€ í™•ì¸
         bool nearLeft = spawnTile.x - minBounds.x <= maxOffset;
         bool nearRight = maxBounds.x - spawnTile.x <= maxOffset;
         bool nearBottom = spawnTile.y - minBounds.y <= maxOffset;
         bool nearTop = maxBounds.y - spawnTile.y <= maxOffset;
 
-        if (nearLeft) // ¿ŞÂÊ Å×µÎ¸® ±ÙÃ³ ¡æ ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
+        if (nearLeft) // ì™¼ìª½ í…Œë‘ë¦¬ ê·¼ì²˜ â†’ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì´ë™
         {
             destinationTile = new Vector3Int(maxBounds.x, Random.Range(minBounds.y, maxBounds.y), 0);
         }
-        else if (nearRight) // ¿À¸¥ÂÊ Å×µÎ¸® ±ÙÃ³ ¡æ ¿ŞÂÊÀ¸·Î ÀÌµ¿
+        else if (nearRight) // ì˜¤ë¥¸ìª½ í…Œë‘ë¦¬ ê·¼ì²˜ â†’ ì™¼ìª½ìœ¼ë¡œ ì´ë™
         {
             destinationTile = new Vector3Int(minBounds.x, Random.Range(minBounds.y, maxBounds.y), 0);
         }
-        else if (nearBottom) // ¾Æ·¡ÂÊ Å×µÎ¸® ±ÙÃ³ ¡æ À§ÂÊÀ¸·Î ÀÌµ¿
+        else if (nearBottom) // ì•„ë˜ìª½ í…Œë‘ë¦¬ ê·¼ì²˜ â†’ ìœ„ìª½ìœ¼ë¡œ ì´ë™
         {
             destinationTile = new Vector3Int(Random.Range(minBounds.x, maxBounds.x), maxBounds.y, 0);
         }
-        else if (nearTop) // À§ÂÊ Å×µÎ¸® ±ÙÃ³ ¡æ ¾Æ·¡ÂÊÀ¸·Î ÀÌµ¿
+        else if (nearTop) // ìœ„ìª½ í…Œë‘ë¦¬ ê·¼ì²˜ â†’ ì•„ë˜ìª½ìœ¼ë¡œ ì´ë™
         {
             destinationTile = new Vector3Int(Random.Range(minBounds.x, maxBounds.y), minBounds.y, 0);
         }
         else
         {
-            // ³»ºÎ¶ó¸é °¡±î¿î °æ°è¸¦ Ã£±â
+            // ë‚´ë¶€ë¼ë©´ ê°€ê¹Œìš´ ê²½ê³„ë¥¼ ì°¾ê¸°
             int distanceLeft = spawnTile.x - minBounds.x;
             int distanceRight = maxBounds.x - spawnTile.x;
             int distanceBottom = spawnTile.y - minBounds.y;
             int distanceTop = maxBounds.y - spawnTile.y;
 
-            // °¡Àå °¡±î¿î °æ°è¸¦ Ã£À½
+            // ê°€ì¥ ê°€ê¹Œìš´ ê²½ê³„ë¥¼ ì°¾ìŒ
             int minDistance = Mathf.Min(distanceLeft, distanceRight, distanceBottom, distanceTop);
 
             if (minDistance == distanceLeft) destinationTile = new Vector3Int(maxBounds.x, spawnTile.y, 0);
@@ -152,7 +152,7 @@ public class TilemapManager : SingleTonBehaviour<TilemapManager>
             GetOppositeDestination(spawnTile, minOffset, maxOffset);
         }
 
-        return destinationTile; // ¿ùµå ÁÂÇ¥ º¯È¯
+        return destinationTile; // ì›”ë“œ ì¢Œí‘œ ë³€í™˜
     }
 
 

@@ -10,22 +10,28 @@ public class EnemyUnitLoader : MonoBehaviour
     private EnemyPlacementData data;
     public TextAsset enemyDataFile;
     [SerializeField] private PlacementGridManager grid;
-    
+
     private void Awake()
+    {
+        // 이전 동작 유지: 에디터/인스펙터에 TextAsset이 있으면 Awake에서 로드
+        if (enemyDataFile != null)
+        {
+            RebuildSceneFromData();
+        }
+    }
+
+    // 기존 내부 메서드 유지(호출 가능)
+    private void RebuildSceneFromData()
     {
         if (enemyDataFile == null)
         {
-            Debug.LogError("Enemy data file is not assigned in the inspector.");
+            Debug.LogWarning("EnemyUnitLoader: enemyDataFile is null, skipping RebuildSceneFromData.");
             return;
         }
 
-        RebuildSceneFromData();
-    }
-
-    private void RebuildSceneFromData()
-    {
         data = JsonUtility.FromJson<EnemyPlacementData>(enemyDataFile.text);
 
+        // 기존 로직 유지
         foreach (var enemy in data.enemies)
         {
             GameObject prefab = null;
@@ -66,5 +72,24 @@ public class EnemyUnitLoader : MonoBehaviour
                 Debug.LogWarning($"프리팹 로드 실패: {enemy.unitId}, path: {enemy.assetPath}");
             }
         }
+    }
+
+    // 새로 추가: 런타임에 TextAsset과 Grid를 전달해서 로드하게 함
+    public void LoadFromTextAsset(TextAsset textAsset, PlacementGridManager targetGrid)
+    {
+        if (textAsset == null)
+        {
+            Debug.LogError("EnemyUnitLoader.LoadFromTextAsset: provided TextAsset is null.");
+            return;
+        }
+        if (targetGrid == null)
+        {
+            Debug.LogError("EnemyUnitLoader.LoadFromTextAsset: provided PlacementGridManager is null.");
+            return;
+        }
+
+        enemyDataFile = textAsset;
+        grid = targetGrid;
+        RebuildSceneFromData();
     }
 }

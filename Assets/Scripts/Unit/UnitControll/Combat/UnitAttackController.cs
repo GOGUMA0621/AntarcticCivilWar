@@ -6,7 +6,17 @@ public class UnitAttackController : MonoBehaviour
 {
     public Action<Transform> OnAttackTransform;
     private List<ProjectileController> activeProjectiles = new List<ProjectileController>();
+
+    // 기존 단일 프리팹 유지(호환용)
     public GameObject pfProjectile;
+
+    // 추가: 여러 발사체를 지원하는 풀과 발사 모드
+    public List<GameObject> projectilePrefabs = new List<GameObject>();
+
+    public enum ProjectileFireMode { Random, Sequential }
+    public ProjectileFireMode projectileFireMode = ProjectileFireMode.Random;
+
+    private int nextProjectileIndex = 0;
 
     private Unit unit;
     private void Start()
@@ -14,7 +24,12 @@ public class UnitAttackController : MonoBehaviour
         unit = GetComponent<Unit>();
         if (unit.data.unitAttackType == UnitAttackType.Range)
         {
+            // 기존 단일 프리팹을 기본으로 사용하되, 풀에 없으면 추가
             pfProjectile = unit.data.UnitProjectile;
+            if (pfProjectile != null && (projectilePrefabs == null || projectilePrefabs.Count == 0))
+            {
+                projectilePrefabs = new List<GameObject> { pfProjectile };
+            }
         }
     }
 
@@ -45,15 +60,37 @@ public class UnitAttackController : MonoBehaviour
         }
     }
 
+    // 발사체 선택 헬퍼
+    private GameObject GetNextProjectilePrefab()
+    {
+        if (projectilePrefabs != null && projectilePrefabs.Count > 0)
+        {
+            if (projectileFireMode == ProjectileFireMode.Random)
+            {
+                int idx = UnityEngine.Random.Range(0, projectilePrefabs.Count);
+                return projectilePrefabs[idx];
+            }
+            else // Sequential
+            {
+                var prefab = projectilePrefabs[nextProjectileIndex % projectilePrefabs.Count];
+                nextProjectileIndex = (nextProjectileIndex + 1) % projectilePrefabs.Count;
+                return prefab;
+            }
+        }
+        // 폴백: 기존 단일 프리팹 사용
+        return pfProjectile;
+    }
+
     void RangeAttack(DamageData damageData = null)
     {
-        if (pfProjectile != null)
+        var chosenPrefab = GetNextProjectilePrefab();
+        if (chosenPrefab != null)
         {
             if (unit.detectTarget.targetToAttack != null)
             {
                 IDamageAble target = unit.detectTarget.targetToAttack;
                 Transform targetTransform = target.GetTransform();
-                GameObject projectileObject = Instantiate(pfProjectile, transform.position, Quaternion.identity);
+                GameObject projectileObject = Instantiate(chosenPrefab, transform.position, Quaternion.identity);
                 projectileObject.SetActive(true);
                 ProjectileController projectile = projectileObject.GetComponent<ProjectileController>();
                 projectile.InitializeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit, this);
@@ -85,11 +122,22 @@ public class UnitAttackController : MonoBehaviour
     public void ResetProjectile()
     {
         pfProjectile = unit.data.UnitProjectile;
+        nextProjectileIndex = 0;
     }
 
+    // 기존 SetProjectile 유지 + 풀을 설정하는 새 오버로드
     public void SetProjectile(GameObject projectile)
     {
         pfProjectile = projectile;
+        projectilePrefabs = new List<GameObject> { projectile };
+        nextProjectileIndex = 0;
+    }
+
+    public void SetProjectiles(List<GameObject> projectiles, ProjectileFireMode mode = ProjectileFireMode.Random)
+    {
+        projectilePrefabs = projectiles ?? new List<GameObject>();
+        projectileFireMode = mode;
+        nextProjectileIndex = 0;
     }
 
     public bool IsCritical(float criticalChance)

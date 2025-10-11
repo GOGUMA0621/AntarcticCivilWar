@@ -53,19 +53,19 @@ public class RoundMapGenerator : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
-    {
-        if (grid == null) return;
+    // void OnDrawGizmos()
+    // {
+    //     if (grid == null) return;
 
-        Gizmos.color = Color.gray;
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                Vector3Int cellPos = new Vector3Int(originX + x, originY + y, 0);
-                Vector3 worldPos = grid.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0);
-                Gizmos.DrawWireCube(worldPos, Vector3.one);
-            }
-        }
-    }
+    //     Gizmos.color = Color.gray;
+    //     for (int y = 0; y < height; y++)
+    //     {
+    //         for (int x = 0; x < width; x++)
+    //         {
+    //             Vector3Int cellPos = new Vector3Int(originX + x, originY + y, 0);
+    //             Vector3 worldPos = grid.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0);
+    //             Gizmos.DrawWireCube(worldPos, Vector3.one);
+    //         }
+    //     }
+// }
 }
