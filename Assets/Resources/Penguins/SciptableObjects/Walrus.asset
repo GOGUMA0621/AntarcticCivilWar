@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
+  m_Name: Walrus
+  m_EditorClassIdentifier: 
+  unitName: "\uBC14\uB2E4 \uCF54\uB07C\uB9AC"
+  unitDescription: 
+  unitTier: 0
+  unitIcon: {fileID: 1299217991, guid: fb33d5fffa48aff4caf573d8838501dd, type: 3}
+  unitFaction: 1
+  unitType: 2
+  unitSynergyTags: []
+  unitAnimations: []
+  unitHP:
+  - 400
+  - 600
+  - 1000
+  - 0
+  unitMP: 0
+  unitSpeed: 3
+  unitDamage:
+  - 30
+  - 70
+  - 90
+  - 0
+  unitAttackType: 0
+  unitHasKnockback: 0
+  unitUnstoppable: 0
+  unitAttackSpeed: 0.6
+  unitAttackDistance: 1
+  unitProjectile: {fileID: 0}
+  unitProjectileMaxSpeed: 0
+  unitProjectileMaxHeight: 0
+  projectileTrajectoryAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileCorrectionAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileSpeedAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

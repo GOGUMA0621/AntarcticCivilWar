@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ab2d375e437d6488af9c8101bd0f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemRarity: 0
   itemId: 1101001
   itemName: "\uB0A1\uC740 \uB2E8\uAC80"
   itemDescription: "\uB0A1\uACE0 \uB179\uC774 \uC2A8 \uB2E8\uAC80. \uB2E4\uB978 \uC758\uBBF8\uB85C
@@ -129,9 +130,9 @@ MonoBehaviour:
     5 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   itemCooldown: 0
   itemPrice: 8
-  icon: {fileID: 21300000, guid: 4eff9f0c30a8ee34b8953c245d5a442e, type: 3}
-  effectBaseValue: 0
-  effectStackValue: 0
+  icon: {fileID: 21300000, guid: 418f03260f7a0a342a5159b708de339c, type: 3}
+  effectBaseValue: []
+  effectStackValue: []
   effectDuration: 0
   damageIncrease: 5
   stackDamageAmount: 5

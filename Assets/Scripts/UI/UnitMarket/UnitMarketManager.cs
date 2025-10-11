@@ -13,6 +13,7 @@ public class UnitMarketManager : MonoBehaviour
     [SerializeField] private bool isInfiniteUnit = false;
 
     [SerializeField] private Button toggleMarketButton;
+    [SerializeField] private Button rerollButton;
     [SerializeField] private Image toggleMarketButtonImage;
 
     private Sprite openSprite;
@@ -29,6 +30,8 @@ public class UnitMarketManager : MonoBehaviour
 
         if (toggleMarketButton != null)
             toggleMarketButton.onClick.AddListener(ToggleMarket);
+        if (rerollButton != null)
+            rerollButton.onClick.AddListener(OnRerollClicked);
 
         if (toggleMarketButtonImage != null && closeSprite != null)
             toggleMarketButtonImage.sprite = closeSprite;
@@ -78,12 +81,15 @@ public class UnitMarketManager : MonoBehaviour
 
     public void UnitMarketClose()
     {
+        rerollButton.gameObject.SetActive(false);
         unitMarketUI.gameObject.SetActive(false);
     }
 
     public void UnitMarketOpen()
     {
         unitMarketUI.gameObject.SetActive(true);
+        rerollButton.gameObject.SetActive(true);
+        //첫 로드일 때만 유닛 생성
         if (unitMarketUI.isFirstLoad)
         {
             unitMarketUI.GenerateShopUnits();

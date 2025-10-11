@@ -19,9 +19,9 @@ public class UnitGroupSO : ScriptableObject
 
     public List<UnitGroup> groupUnits = new List<UnitGroup>();
 
-    private int previousIndex; // ÀÌÀü ÀÎµ¦½º °ª ÀúÀå
-    private double lastEditTime; // ¸¶Áö¸· ÆíÁı ½Ã°£ ÀúÀå
-    private const double editDelay = 1f; // 1ÃÊ ÈÄ ÃÖÁ¾ Àû¿ë
+    private int previousIndex; // ì´ì „ ì¸ë±ìŠ¤ ê°’ ì €ì¥
+    private double lastEditTime; // ë§ˆì§€ë§‰ í¸ì§‘ ì‹œê°„ ì €ì¥
+    private const double editDelay = 1f; // 1ì´ˆ í›„ ìµœì¢… ì ìš©
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -29,26 +29,26 @@ public class UnitGroupSO : ScriptableObject
         if (previousIndex == index || index < 0)
             return;
 
-        // ¸¶Áö¸· ¼öÁ¤ ½Ã°£ °»½Å
+        // ë§ˆì§€ë§‰ ìˆ˜ì • ì‹œê°„ ê°±ì‹ 
         lastEditTime = EditorApplication.timeSinceStartup;
 
-        // EditorApplication.update¸¦ »ç¿ëÇÏ¿© ÀÏÁ¤ ½Ã°£ÀÌ Áö³­ ÈÄ ½ÇÇà
+        // EditorApplication.updateë¥¼ ì‚¬ìš©í•˜ì—¬ ì¼ì • ì‹œê°„ì´ ì§€ë‚œ í›„ ì‹¤í–‰
         EditorApplication.update -= CheckAndApplyNameChange;
         EditorApplication.update += CheckAndApplyNameChange;
 
-        previousIndex = index; // º¯°æµÈ index ÀúÀå
+        previousIndex = index; // ë³€ê²½ëœ index ì €ì¥
     }
 
     private void CheckAndApplyNameChange()
     {
-        // »ç¿ëÀÚ°¡ ¸¶Áö¸·À¸·Î °ªÀ» º¯°æÇÑ ÈÄ ÀÏÁ¤ ½Ã°£ÀÌ Áö³µ´ÂÁö È®ÀÎ
+        // ì‚¬ìš©ìê°€ ë§ˆì§€ë§‰ìœ¼ë¡œ ê°’ì„ ë³€ê²½í•œ í›„ ì¼ì • ì‹œê°„ì´ ì§€ë‚¬ëŠ”ì§€ í™•ì¸
         if (EditorApplication.timeSinceStartup - lastEditTime < editDelay)
             return;
 
-        // ÃÖÁ¾ÀûÀ¸·Î ÀÌ¸§ º¯°æ Àû¿ë
+        // ìµœì¢…ì ìœ¼ë¡œ ì´ë¦„ ë³€ê²½ ì ìš©
         ApplyNameChange();
 
-        // ¾÷µ¥ÀÌÆ® ÇÔ¼ö Á¦°Å (´õ ÀÌ»ó ½ÇÇàµÇÁö ¾Êµµ·Ï ÇÔ)
+        // ì—…ë°ì´íŠ¸ í•¨ìˆ˜ ì œê±° (ë” ì´ìƒ ì‹¤í–‰ë˜ì§€ ì•Šë„ë¡ í•¨)
         EditorApplication.update -= CheckAndApplyNameChange;
     }
 

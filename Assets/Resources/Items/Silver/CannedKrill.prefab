@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b83bbe5a0e8526743b0608305028e870, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemRarity: 0
   itemId: 1103001
   itemName: "\uD06C\uB9B4 \uC0C8\uC6B0 \uD1B5\uC870\uB9BC"
   itemDescription: "\uD06C\uB9B4 \uC0C8\uC6B0\uB85C \uB9CC\uB4E0 \uD1B5\uC870\uB9BC
@@ -129,7 +130,7 @@ MonoBehaviour:
     \uC99D\uAC00\uD569\uB2C8\uB2E4."
   itemCooldown: 0
   itemPrice: 10
-  icon: {fileID: 21300000, guid: ac69ad3d0b819be419fc9b548fc643ed, type: 3}
-  effectBaseValue: 15
-  effectStackValue: 15
+  icon: {fileID: 21300000, guid: 8bd041a2304665045a654ffa85e71312, type: 3}
+  effectBaseValue: []
+  effectStackValue: []
   effectDuration: 0

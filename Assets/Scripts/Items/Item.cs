@@ -40,16 +40,22 @@ public abstract class Item : MonoBehaviour
     {
         lock (lockObject)
         {
-            var item = FirebaseManager.GetItemByID(itemId);
-            itemName = item.name_kr;
-            itemDescription = item.des;
-            itemAbilityDescription = item.effect;
-            itemCooldown = item.cooltime;
-            itemPrice = item.price;
-            itemRarity = item.rarity;
+            Initialize(itemId);
         }
     }
 
+    public virtual void Initialize(int id)
+    {
+        itemId = id;
+        var item = FirebaseManager.GetItemByID(itemId);
+        itemName = item.name_kr;
+        itemDescription = item.des;
+        itemAbilityDescription = item.effect;
+        itemCooldown = item.cooltime;
+        itemPrice = item.price;
+        itemRarity = item.rarity;
+        icon = Resources.Load<Sprite>($"Icons/{item.name}");
+    }
 }
 
 public abstract class ActiveItem : Item

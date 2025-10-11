@@ -91,7 +91,7 @@ PrefabInstance:
     - target: {fileID: 6954157858192903475, guid: c762ff49305ed104c910b4663eec48d3, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: b77381ca7a1ceb44eafe3a48bcebd56d, type: 3}
+      objectReference: {fileID: 21300000, guid: 2bfee5d488a3fc54ba4e446395e2643f, type: 3}
     - target: {fileID: 7334989772228664578, guid: c762ff49305ed104c910b4663eec48d3, type: 3}
       propertyPath: m_Name
       value: Sunglasses
@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc322d63ae900b24cb678e3f9b2fafbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemRarity: 0
   itemId: 1104001
   itemName: "\uC120\uAE00\uB77C\uC2A4"
   itemDescription: "\uAE4C\uB9CC \uC120\uAE00\uB77C\uC2A4 \uC785\uB2C8\uB2E4. \uC4F0\uACE0
@@ -129,8 +130,7 @@ MonoBehaviour:
     15% \uC99D\uAC00\uD569\uB2C8\uB2E4."
   itemCooldown: 0
   itemPrice: 15
-  icon: {fileID: 21300000, guid: b77381ca7a1ceb44eafe3a48bcebd56d, type: 3}
-  effectBaseValue: 0
-  effectStackValue: 0
+  icon: {fileID: 21300000, guid: 2bfee5d488a3fc54ba4e446395e2643f, type: 3}
+  effectBaseValue: []
+  effectStackValue: []
   effectDuration: 0
-  attackSpeedIncrease: 15

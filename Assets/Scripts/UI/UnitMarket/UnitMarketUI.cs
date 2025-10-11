@@ -8,14 +8,13 @@ public class UnitMarketUI : MonoBehaviour
 {
     public Transform slotGroup;
     public UnitMarketManager unitMarketManager; // 매니저 연결
-
     private List<UnitDB> selected = new();
     public bool isFirstLoad = true;
 
     private void Start()
     {
         isFirstLoad = true;
-        gameObject.SetActive(false);
+        StartCoroutine(RefreshUnitMarketAfterDelay());
     }
 
     public void GenerateShopUnits()

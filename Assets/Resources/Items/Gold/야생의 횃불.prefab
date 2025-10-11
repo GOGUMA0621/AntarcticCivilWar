@@ -13,7 +13,7 @@ GameObject:
   m_Layer: 0
   m_Name: "\uC57C\uC0DD\uC758 \uD683\uBD88"
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: 0333af30d9372d443a9008239690803e, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -44,14 +44,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdec81761723e87459e5c0765936738c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemRarity: 0
+  itemRarity: 1
   itemId: 1101004
-  itemName: 
-  itemDescription: 
-  itemAbilityDescription: 
+  itemName: "\uC57C\uC0DD\uC758 \uD683\uBD88"
+  itemDescription: "\uB05D\uC5C6\uC774 \uD0C0\uC624\uB974\uB294 \uD683\uBD88\uC785\uB2C8\uB2E4.
+    \uB204\uAD70\uAC00 \uC6B0\uC5F0\uD788 \uBC1C\uACAC\uD55C \uD683\uBD88\uB85C \uB204\uAC00
+    \uD53C\uC6E0\uB294\uC9C0\uB294 \uC54C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
+  itemAbilityDescription: "\uC544\uAD70 \uBB34\uB9AC\uC758 \uCE90\uB9AD\uD130\uAC00
+    \uCCB4\uB825\uC774 40% \uC774\uD558\uC77C \uACBD\uC6B0 \uACF5\uACA9\uC18D\uB3C4\uAC00
+    30% \uC99D\uAC00\uD569\uB2C8\uB2E4.(\uACF1\uACC4\uC0B0)"
   itemCooldown: 0
-  itemPrice: 0
-  icon: {fileID: 0}
+  itemPrice: 30
+  icon: {fileID: 21300000, guid: 0333af30d9372d443a9008239690803e, type: 3}
   effectBaseValue: []
   effectStackValue: []
   effectDuration: 0

@@ -12,7 +12,7 @@ public class FirebaseLoader : MonoBehaviour
         await FirebaseManager.UnitLoadData();
 
         IsLoaded = true;
-        Debug.Log("Firebase µ¥ÀÌÅÍ ·Îµù ¿Ï·á");
+        Debug.Log("Firebase ë°ì´í„° ë¡œë”© ì™„ë£Œ");
 
         UnitPrefabsLoader.Initialize();
     }
