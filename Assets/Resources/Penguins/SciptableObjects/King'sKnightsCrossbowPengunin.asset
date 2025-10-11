@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ceb5eb8bc382834ea7d0301b61ea332, type: 3}
+  m_Name: King'sKnightsCrossbowPengunin
+  m_EditorClassIdentifier: 
+  unitName: "\uC655\uAD6D \uCE5C\uC704\uB300 \uC11D\uAD81 \uD3AD\uADC4"
+  unitDescription: 
+  unitTier: 3
+  unitIcon: {fileID: -531346515, guid: d6ce1ff58ff05524bbdc895e16f563a1, type: 3}
+  unitFaction: 0
+  unitType: 0
+  unitSynergyTags:
+  - Royal
+  - Archer
+  - King's_knights
+  unitAnimations:
+  - {fileID: 7400000, guid: c12eb1a79b476a544b4f6f0b0850cdab, type: 2}
+  - {fileID: 7400000, guid: f08478197782dca4aa0f2d9a535ea137, type: 2}
+  - {fileID: 7400000, guid: 5bcc2eff84524484da34995e8e98b90e, type: 2}
+  - {fileID: 7400000, guid: 9ada78dbc76d4a343b534f10a0dfc512, type: 2}
+  unitHP:
+  - 600
+  - 1150
+  - 2000
+  unitMP: 80
+  unitSpeed: 3
+  unitDamage:
+  - 40
+  - 65
+  - 90
+  unitAttackType: 1
+  unitHasKnockback: 0
+  unitUnstoppable: 0
+  unitAttackSpeed: 0.6
+  unitAttackDistance: 3
+  unitProjectile: {fileID: 7240340908294295380, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
+  unitProjectileMaxSpeed: 0
+  unitProjectileMaxHeight: 0
+  projectileTrajectoryAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileCorrectionAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  projectileSpeedAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1.0002275
+      inSlope: -2.0214136
+      outSlope: -2.0214136
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.49742848
+      value: -0.0052812174
+      inSlope: -0.010564685
+      outSlope: -0.010564685
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9997528
+      value: 0.9995102
+      inSlope: 2.0002842
+      outSlope: 2.0002842
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

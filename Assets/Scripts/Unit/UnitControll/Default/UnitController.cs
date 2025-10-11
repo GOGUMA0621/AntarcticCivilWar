@@ -756,4 +756,10 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         return isUnitDie;
     }
 
+    public float GetFinalStat(StatType statType)
+    {
+        if (finalStats != null && finalStats.TryGetValue(statType, out float value))
+            return value;
+        return 0f;
+    }
 }
