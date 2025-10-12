@@ -429,26 +429,26 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     /// </summary>
     public void UnitAttack()
     {
-        CollectMana();
-        TryActivateSkill();
-        OnHit?.Invoke();
+        CollectMana();// 마나 수집
+        TryActivateSkill(); // 스킬 발동 시도
+        OnHit?.Invoke();// 공격시 이벤트 호출
 
         if (unitPassiveSkill != null)
         {
             if (unitPassiveSkill.PassiveCondition())
             {
-                unitPassiveSkill.DoPassiveSkill();
+                unitPassiveSkill.DoPassiveSkill();// 패시브 스킬 발동
             }
             else
             {
                 //Debug.Log(name);
-                unit.attackController.Attack();
+                unit.attackController.Attack();// 일반 공격
             }
         }
         else
         {
             //Debug.Log(name);
-            unit.attackController.Attack();
+            unit.attackController.Attack();// 일반 공격
         }
     }
     /// <summary>
@@ -483,24 +483,13 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     /// </summary>
     internal void Die()
     {
-        StopMovement();
+        StopMovement(); //유닛의 이동 멈춤
         isUnitDie = true;
-        OnDestroyed?.Invoke(this);
+        OnDestroyed?.Invoke(this); //유닛이 죽었음을 알림
 
-        GoDie();
-        // StartCoroutine(KnockBack(2.0f));
-        unit.detectTarget.ClearTarget();
-        unit.capsuleCollider.enabled = false;
-
-        if (this.tag != "Unit")
-        {
-            UnitManager.instance.AddUnitToRevive(this);
-
-        }
-        if (this.transform.tag == "Unit")
-        {
-            UnitManager.instance.RemoveAllayList(this);
-        }
+        GoDie();// 유닛의 상태를 죽음 상태로 변경
+        unit.detectTarget.ClearTarget(); //유닛의 타겟 초기화
+        unit.capsuleCollider.enabled = false; //유닛의 콜라이더 비활성화
     }
 
     /// <summary>
@@ -622,19 +611,28 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     #endregion
 
     #region 아이템
-
+    /// <summary>
+    /// 유닛의 공격 시 발동할 아이템을 등록하는 메서드
+    /// </summary>
+    /// <param name="effect">등록할 아이템 효과</param>
     public void RegisterOnHitEffect(OnHitItem effect)
     {
         if (!onHitItemList.Contains(effect))
             onHitItemList.Add(effect);
     }
-
+    /// <summary>
+    /// 유닛의 공격 시 발동할 아이템을 해제하는 메서드
+    /// </summary>
+    /// <param name="effect">해제할 아이템 효과</param>
     public void UnregisterOnHitEffect(OnHitItem effect)
     {
         if (onHitItemList.Contains(effect))
             onHitItemList.Remove(effect);
     }
-
+    /// <summary>
+    /// 유닛이 공격할 때 아이템 효과를 발동하는 메서드
+    /// </summary>
+    /// <param name="target">대상 유닛</param>
     public void TriggerOnHit(IDamageAble target)
     {
         foreach (var effect in onHitItemList)
@@ -651,25 +649,32 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     {
         currentMP = amount;
     }
-
+    /// <summary>
+    /// 유닛의 스탯에 모디파이어를 추가하는 메서드
+    /// </summary>
+    /// <param name="mod">추가할 모디파이어</param>
     public void AddModifierStat(StatModifier mod)
     {
         if(baseStats.Count == 0)
         {
             SetUnit();
         }
-
+        // 기존 같은 소스ID와 스탯타입을 가진 모디파이어 제거 후 추가
         statModifierList.RemoveAll(m => m.sourceId == mod.sourceId && m.statType == mod.statType);
         statModifierList.Add(mod);
         RecalculateStats();
     }
-
+    /// <summary>
+    /// 유닛의 스탯에 모디파이어를 여러개 추가하는 메서드
+    /// </summary>
+    /// <param name="mods">추가할 모디파이어 리스트</param>
     public void AddModifierStats(List<StatModifier> mods)
     {
         if (baseStats.Count == 0)
         {
             SetUnit();
         }
+        // 기존 같은 소스ID와 스탯타입을 가진 모디파이어 제거 후 추가
         foreach (var mod in mods)
         {
             statModifierList.RemoveAll(m => m.sourceId == mod.sourceId && m.statType == mod.statType);
@@ -677,13 +682,18 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
         }
         RecalculateStats();
     }
-
+    /// <summary>
+    /// 유닛의 스탯에서 특정 소스ID를 가진 모디파이어를 제거하는 메서드
+    /// </summary>
+    /// <param name="sourceId">제거할 모디파이어의 소스ID</param>
     public void RemoveModifierStats(string sourceId)
     {
         statModifierList.RemoveAll(m => m != null && m.sourceId == sourceId);
         RecalculateStats();
     }
-
+    /// <summary>
+    /// 유닛의 스탯을 재계산하는 메서드
+    /// </summary>
     private void RecalculateStats()
     {
         finalStats.Clear();
@@ -696,27 +706,24 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
 
             foreach (var mod in statModifierList.Where(m => m.statType == stat.Key))
             {
-                if (mod.modifierMethod == ModifierMethod.Additive)
+                if (mod.modifierMethod == ModifierMethod.Additive) //더하기
                 {
                     add += mod.value;
                 }
-                else if (mod.modifierMethod == ModifierMethod.Multiplicative)
+                else if (mod.modifierMethod == ModifierMethod.Multiplicative) //곱하기
                     multiple *= 1 + mod.value;
-                else if (mod.modifierMethod == ModifierMethod.AdditivePercent)
+                else if (mod.modifierMethod == ModifierMethod.AdditivePercent) //백분율 더하기
                     percent += mod.value;
             }
-            finalStats[stat.Key] = (stat.Value + add) * multiple * (1 + percent);
+            finalStats[stat.Key] = (stat.Value + add + (stat.Value * (1 + percent))) * multiple;
         }
 
-        UnitStats = new UnitStats(finalStats);
-
-        Debug.Log($"[RecalculateStats] baseStats: {string.Join(", ", baseStats.Select(kv => $"{kv.Key}:{kv.Value}"))}");
-        Debug.Log($"[RecalculateStats] statModifierList: {string.Join(", ", statModifierList.Select(m => $"{m.statType}:{m.value}({m.modifierMethod})"))}");
-        Debug.Log($"[RecalculateStats] finalStats: {string.Join(", ", finalStats.Select(kv => $"{kv.Key}:{kv.Value}"))}");
-
+        UnitStats = new UnitStats(finalStats); // 최종 스탯 업데이트
         ReBuildStats();
     }
-
+    /// <summary>
+    /// 유닛의 스탯이 비어있을 경우 기본 스탯을 다시 설정하는 메서드
+    /// </summary>
     private void ReBuildStats()
     {
         if (baseStats.Count == 0)

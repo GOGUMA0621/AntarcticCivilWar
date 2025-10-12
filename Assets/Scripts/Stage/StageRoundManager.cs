@@ -105,9 +105,11 @@ public class StageRoundManager : SingleTonBehaviour<StageRoundManager>
 
     void Start()
     {
+        
         GenerateAllRoundCandidates();
         map.SetActive(false); // 초기에는 맵 UI 비활성화
         // 첫 라운드 후보 보여주기 등
+        ShowRoundCandidates();
     }
 
     // 전체 라운드 후보 생성

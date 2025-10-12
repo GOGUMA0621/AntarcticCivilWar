@@ -32,9 +32,12 @@ public class UnitAttackController : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// 공격 실행
+    /// </summary>
     internal void Attack()
     {
+        // 데미지 데이터 생성
         DamageData damageData = new DamageData(unit.controller.UnitStats.attackDamage, StatusEffectType.Physical, 0);
         if (IsCritical(unit.controller.UnitStats.critChance))
         {
@@ -48,11 +51,11 @@ public class UnitAttackController : MonoBehaviour
             var attackType = unit.data.unitAttackType;
             switch (attackType)
             {
-                case UnitAttackType.Melee:
+                case UnitAttackType.Melee: // 근접 공격
                     MeleeAttack(damageData);
                     break;
 
-                case UnitAttackType.Range:
+                case UnitAttackType.Range: // 원거리 공격
                     RangeAttack(damageData);
                     break;
 
@@ -60,17 +63,20 @@ public class UnitAttackController : MonoBehaviour
         }
     }
 
-    // 발사체 선택 헬퍼
+    /// <summary>
+    /// 다음 발사체 프리팹을 선택합니다.
+    /// </summary>
+    /// <returns>선택된 발사체 프리팹</returns>
     private GameObject GetNextProjectilePrefab()
     {
         if (projectilePrefabs != null && projectilePrefabs.Count > 0)
         {
-            if (projectileFireMode == ProjectileFireMode.Random)
+            if (projectileFireMode == ProjectileFireMode.Random) // 무작위
             {
                 int idx = UnityEngine.Random.Range(0, projectilePrefabs.Count);
                 return projectilePrefabs[idx];
             }
-            else // Sequential
+            else // 순차적
             {
                 var prefab = projectilePrefabs[nextProjectileIndex % projectilePrefabs.Count];
                 nextProjectileIndex = (nextProjectileIndex + 1) % projectilePrefabs.Count;
@@ -80,7 +86,10 @@ public class UnitAttackController : MonoBehaviour
         // 폴백: 기존 단일 프리팹 사용
         return pfProjectile;
     }
-
+    /// <summary>
+    /// 원거리 공격 처리
+    /// </summary>
+    /// <param name="damageData">공격에 대한 데미지 데이터</param>
     void RangeAttack(DamageData damageData = null)
     {
         var chosenPrefab = GetNextProjectilePrefab();
@@ -95,13 +104,17 @@ public class UnitAttackController : MonoBehaviour
                 ProjectileController projectile = projectileObject.GetComponent<ProjectileController>();
                 projectile.InitializeProjectile(targetTransform, unit.data.UnitMaxProjectileSpeed, unit.data.UnitMaxProjectileHeight, unit, this);
                 projectile.InitializeDamageData(damageData);
-                projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve, unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
+                projectile.InitializeAnimaionCurve(unit.data.ProjectileTrajectoryAnimationCurve,
+                                                    unit.data.ProjectileCorrectionAnimationCurve, unit.data.ProjectileSpeedAnimationCurve);
                 AddProjectile(projectile);
                 projectile.SetOnHitCallback(() => { unit.controller.TriggerOnHit(target); });
             }
         }
     }
-
+    /// <summary>
+    /// 근접 공격 처리
+    /// </summary>
+    /// <param name="damageData">공격에 대한 데미지 데이터</param>
     void MeleeAttack(DamageData damageData = null)
     {
         IDamageAble target = unit.detectTarget.targetToAttack;
