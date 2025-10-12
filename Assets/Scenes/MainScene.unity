@@ -9738,7 +9738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47b870c152c9eae429250b2119e85b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyDataFile: {fileID: 4900000, guid: 4324e96eec8e51c47aec74ff4b951254, type: 3}
+  enemyDataFile: {fileID: 4900000, guid: b7ac26dfe6de84340a7edbba52eb6aec, type: 3}
   grid: {fileID: 1159989902}
 --- !u!114 &1159989905
 MonoBehaviour:
@@ -12966,7 +12966,7 @@ PrefabInstance:
     - target: {fileID: 1802521923013751069, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
       propertyPath: m_SpriteState.m_DisabledSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 129b39aaa93ada8488a58cef0b5a2d97, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 1995809070264054414, guid: 916f9826f4687184c9202f5672d0e216, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

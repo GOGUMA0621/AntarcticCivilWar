@@ -224,17 +224,25 @@ public class AstarMover : MonoBehaviour
         // 목표 그리드 저장 (한 칸마다 재계산할 최종 목표)
         lastTargetGridPos = gridScanner.WorldToGrid(worldDestination);
 
+        // --- 추가: 현재 씬에 점유된 그리드 집합을 복사하고 요청자(자기 자신)의 현재 칸은 제외 ---
+        var occupied = new HashSet<Vector2Int>(AllUnitGridPositions);
+        // 현재 위치(요청자) 칸은 예외로 허용 (시작 칸이 막혀 길 생성 불가해지는 것을 방지)
+        var startGrid = gridScanner.WorldToGrid(this.transform.position);
+        occupied.Remove(startGrid);
+        // 목표칸도 허용(타겟에 도달 가능하게)
+        occupied.Remove(lastTargetGridPos);
+
         AstarPathFinding.instance.RequestPath(
-            gridScanner.WorldToGrid(this.transform.position),
+            startGrid,
             lastTargetGridPos,
             this.gameObject,
-            OnPathFound
+            OnPathFound,
+            occupied // 새로 추가된 파라미터
         );
     }
 
     private void OnPathFound(List<Vector2Int> path)
     {
-        Debug.Log($"[OnPathFound] {gameObject.name} 경로 개수: {(path == null ? -1 : path.Count)}");
         if (path == null || path.Count == 0)
         {
             isMoving = false;

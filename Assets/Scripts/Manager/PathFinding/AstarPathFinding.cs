@@ -55,7 +55,7 @@ public class AstarPathFinding : SingleTonBehaviour<AstarPathFinding>
     /// <param name="start">시작 점 입니다.</param>
     /// <param name="end">끝 점 입니다.</param>
     /// <param name="callback">경로 계산 이후 호출될 callback 입니다.</param>
-    public void RequestPath(Vector2Int start, Vector2Int end, GameObject self, Action<List<Vector2Int>> callback)
+    public void RequestPath(Vector2Int start, Vector2Int target, GameObject requester, Action<List<Vector2Int>> callback, HashSet<Vector2Int> occupiedCells = null)
     {
         float now = Time.time;
         if (lastRequestTime.TryGetValue(start, out float last) && now - last < pathCooldown)
@@ -65,10 +65,10 @@ public class AstarPathFinding : SingleTonBehaviour<AstarPathFinding>
         }
         lastRequestTime[start] = now;
 
-        requestQueue.Enqueue(new PathRequest(start, end, callback));
+        requestQueue.Enqueue(new PathRequest(start, target, callback));
         if (!isProcessingRequest)
         {
-            ProcessPathRequests(self);
+            ProcessPathRequests(requester, occupiedCells);
         }
     }
     /// <summary>
@@ -77,14 +77,14 @@ public class AstarPathFinding : SingleTonBehaviour<AstarPathFinding>
     /// 캐싱된 경로는 요청 큐에서 제거되지 않습니다.
     /// 캐싱된 경로는 요청 큐에 있는 경로와 동일한 시작점과 끝점을 가진 경로입니다.
     /// </summary>
-    private async void ProcessPathRequests(GameObject self)
+    private async void ProcessPathRequests(GameObject requester, HashSet<Vector2Int> occupiedCells)
     {
         isProcessingRequest = true;
         // Debug.Log("Processing path requests...");
         while (requestQueue.Count > 0)
         {
             var request = requestQueue.Dequeue();
-            var result = await Task.Run(() => FindPath(request.start, request.end, self));
+            var result = await Task.Run(() => FindPath(request.start, request.end, requester, occupiedCells));
 
             lock (mainThreadActions)
             {
@@ -105,7 +105,7 @@ public class AstarPathFinding : SingleTonBehaviour<AstarPathFinding>
     /// 경로를 찾는 데 시간이 걸리는 경우, null을 반환합니다.
     /// 경로를 찾는 데 시간이 걸리는 경우, 코루틴을 사용하여 경로를 찾는 것이 좋습니다.
     /// </remarks>
-    public List<Vector2Int> FindPath(Vector2Int startPos, Vector2Int endPos, GameObject self) 
+    public List<Vector2Int> FindPath(Vector2Int startPos, Vector2Int endPos, GameObject self, HashSet<Vector2Int> occupiedCells = null) 
     {
         var key = (startPos, endPos);
         if (pathCache.TryGetValue(key, out var cached))
@@ -154,6 +154,10 @@ public class AstarPathFinding : SingleTonBehaviour<AstarPathFinding>
             foreach (Node neighbor in gridScanner.GetNeighbors(current))
             {
                 if (!neighbor.isWalkable || closedList.Contains(neighbor))
+                    continue;
+
+                // occupied 체크: 목표 노드는 허용
+                if (occupiedCells != null && occupiedCells.Contains(neighbor.gridPosition) && neighbor.gridPosition != endPos)
                     continue;
 
                 int extraCost = 0;

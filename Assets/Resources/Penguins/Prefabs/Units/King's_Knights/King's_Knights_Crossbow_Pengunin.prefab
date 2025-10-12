@@ -12,6 +12,14 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 2a696aad31615a24ebc0fa19a7969b0b, type: 2}
+    - target: {fileID: 2764380314185021207, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: pfProjectile
+      value: 
+      objectReference: {fileID: 6010107960188029939, guid: a3e8815180cb769479fd318e513d2d93, type: 3}
+    - target: {fileID: 2764380314185021207, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: projectileFireMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: currentHP
       value: 600

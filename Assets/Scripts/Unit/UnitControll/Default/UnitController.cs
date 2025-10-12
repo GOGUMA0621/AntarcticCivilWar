@@ -97,40 +97,37 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     /// </summary>
     public int RemainedDistance => unit.mover.GetRemainingTileDistanceToTarget();
 
-
-    //private bool inCombat = false; //유닛이 전투중인지 확인하기 위한 변수
-
     private bool _isFacingRight = true; //유닛이 바라보는 방향을 저장하기 위한 변수
 
-    protected bool isUnitDie;
+    protected bool isUnitDie; //유닛이 죽었는지 확인하기 위한 변수
 
     protected bool disableFlip = false; //애니메이션 좌우 반전을 막기 위한 변수
 
     private Transform lastAttacker; //넉백을 위해 마지막 공격자를 알아내는 변수
-    public IActiveSkill unitSkill;
-    public IPasseiveSkillAttack unitPassiveSkill;
-    public bool canMana = true;
-    public bool isSkillActive = false;
+    public IActiveSkill unitSkill; //유닛의 스킬을 저장하는 변수
+    public IPasseiveSkillAttack unitPassiveSkill; //유닛의 패시브 스킬을 저장하는 변수
+    public bool canMana = true; //유닛이 마나를 사용할 수 있는지 여부
+    public bool isSkillActive = false; //유닛의 스킬이 활성화되어 있는지 여부
 
-    private string currentAnimationName;
-    private bool isPaused = false;
-    private int pausedStateHash;
-    private float pausedTime;
+    private string currentAnimationName; //현재 재생중인 애니메이션 이름
+    private bool isPaused = false; //애니메이션이 일시정지 상태인지 여부
+    private int pausedStateHash; //일시정지 상태의 해시값
+    private float pausedTime; //일시정지된 시간
 
-    public bool isStunned = false;
+    public bool isStunned = false; //유닛이 기절 상태인지 여부
 
-    [HideInInspector] public UnitStats UnitStats;
-    [SerializeField] private UnitStats baseUnitStats;
-    [SerializeField] public float currentHP;
+    [HideInInspector] public UnitStats UnitStats; //유닛의 스탯을 저장하는 변수
+    [SerializeField] private UnitStats baseUnitStats; //유닛의 기본 스탯을 저장하는 변수
+    [SerializeField] public float currentHP; //유닛의 현재 체력을 저장하는 변수
 
     public float currentMP { get; private set; }
 
-    public bool isAllay = true;
+    public bool isAllay = true; //유닛이 아군인지 여부
 
-    public int unitLevel = 1;
+    public int unitLevel = 1; //유닛의 레벨을 저장하는 변수
 
-    public float unitAttackSpeed = 1.0f;
-    protected IUnitState currentState;
+    public float unitAttackSpeed = 1.0f; //유닛의 공격 속도를 저장하는 변수
+    protected IUnitState currentState; //유닛의 현재 상태를 저장하는 변수
 
     #region 이벤트 관리
 
@@ -183,21 +180,25 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     }
 
     #region FSM
-    private readonly IUnitState placeState = new UnitPlaceState(); 
-    private readonly IUnitState idleState = new UnitIdleState();
-    private readonly IUnitState attackState = new UnitAttackState();
-    private readonly IUnitState followState = new UnitFollowState();
-    private readonly IUnitState dieState = new UnitDieState();
-    private readonly IUnitState manaSkillState = new UnitManaSkillState();
+    private readonly IUnitState placeState = new UnitPlaceState(); //유닛이 배치되는 상태
+    private readonly IUnitState idleState = new UnitIdleState(); //유닛이 대기 상태인 경우
+    private readonly IUnitState attackState = new UnitAttackState(); //유닛이 공격 상태인 경우
+    private readonly IUnitState followState = new UnitFollowState(); //유닛이 추적 상태인 경우
+    private readonly IUnitState dieState = new UnitDieState(); //유닛이 사망 상태인 경우
+    private readonly IUnitState manaSkillState = new UnitManaSkillState(); //유닛이 마나 스킬 상태인 경우
 
-    public virtual void GoPlace() => ChangeState(placeState);
-    public virtual void GoIdle() => ChangeState(idleState);
-    public virtual void GoAttack() => ChangeState(attackState);
-    public virtual void GoFollow() => ChangeState(followState);
-    public virtual void GoDie() => ChangeState(dieState);
-    public virtual void GoSkill(bool isStanding = false, float duration = 0f) => ChangeState(manaSkillState, isStanding, duration);
-
-    public void ChangeState(IUnitState newState, bool force = false, float duration = 0f)
+    public virtual void GoPlace() => ChangeState(placeState); //유닛이 배치 상태로 전환
+    public virtual void GoIdle() => ChangeState(idleState); //유닛이 대기 상태로 전환
+    public virtual void GoAttack() => ChangeState(attackState); //유닛이 공격 상태로 전환
+    public virtual void GoFollow() => ChangeState(followState); //유닛이 추적 상태로 전환
+    public virtual void GoDie() => ChangeState(dieState); //유닛이 사망 상태로 전환
+    public virtual void GoSkill(bool isStanding = false, float duration = 0f) 
+        => ChangeState(manaSkillState); //유닛이 마나 스킬 상태로 전환
+    /// <summary>
+    /// 유닛의 상태를 변경하는 메서드입니다.
+    /// </summary>
+    /// <param name="newState">변경할 새로운 상태입니다.</param>
+    public void ChangeState(IUnitState newState)
     {
         if (currentState?.GetType() == newState.GetType())
         {
@@ -208,7 +209,10 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
         currentState = newState;
         currentState.Enter(this);
     }
-
+    /// <summary>
+    /// 유닛의 현재 상태를 반환하는 메서드입니다.
+    /// </summary>
+    /// <returns>유닛의 현재 상태입니다.</returns>
     public IUnitState GetCurrentState()
     {
         return currentState;

@@ -180,6 +180,7 @@ public class UnitAttackState : IUnitState
         this.unitController = unit;
         animator = unit.unit.animator;
         unitController.StopMovement();
+        unitController.SetAnimation("AttackState");
         attackCooldown = 0f;
     }
 
@@ -231,6 +232,13 @@ public class UnitAttackState : IUnitState
                 }
             }
         }
+        // 공격 애니메이션 끝나면 Idle로
+        if (isAttacking && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f
+                && animator.GetCurrentAnimatorStateInfo(0).IsName("AttackState"))
+        {
+            animator.Play("IdleState");
+            isAttacking = false;
+        }
 
         // 공격 쿨타임이 끝나면 공격
         else if (attackCooldown <= 0f)
@@ -244,13 +252,6 @@ public class UnitAttackState : IUnitState
             }
         }
 
-        // 공격 애니메이션 끝나면 Idle로
-        if (isAttacking && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f
-                && animator.GetCurrentAnimatorStateInfo(0).IsName("AttackState"))
-        {
-            animator.Play("IdleState");
-            isAttacking = false;
-        }
     }
 
     public void Exit()
@@ -291,31 +292,57 @@ public class UnitDieState : IUnitState
 public class UnitManaSkillState : IUnitState
 {
     private UnitController unit;
-    private bool skillStarted = false;
+    private Animator animator;
+    private bool finished = false;
 
     public void Enter(UnitController unit)
     {
         this.unit = unit;
-        skillStarted = false;
+        animator = unit.unit?.animator;
+        finished = false;
 
-        // 이동/정지 등 필요시 추가
+        // 스킬 시작 시 이동 중지 및 스킬 사용 플래그 처리
         unit.StopMovement();
         unit.canMana = false;
-        skillStarted = true;
+
+        // 스킬 애니메이션 트리거 (UnitController에 맞는 호출로 조정)
+        unit.SetAnimation("ManaSkillState");
     }
 
     public void Update()
     {
-        if (unit.unit.animator.GetCurrentAnimatorStateInfo(0).IsName("ManaSkillState") && !skillStarted)
+        if (finished) return;
+        if (animator == null) return;
+
+        var state = animator.GetCurrentAnimatorStateInfo(0);
+        // 스킬 애니메이션 플레이 중이고 끝났으면 정리
+        if (state.IsName("ManaSkillState") && state.normalizedTime >= 1f)
         {
-            unit.SetAnimation("ManaSkillState");
-            skillStarted = true;
+            finished = true;
+
+            // 스킬 끝난 뒤 복구: 이동 재개, canMana 복구, 상태 복귀
+            unit.canMana = true;
+
+            // mover/이동 플래그 복구 (UnitController 내부 API에 맞게 조정)
+            try
+            {
+                unit.unit.mover.SetCanMove(true);
+            }
+            catch { /* 안전하게 무시 */ }
+
+            // 기본적으로 Idle로 전환. 원하면 이전 상태로 복귀하도록 수정 가능
+            unit.GoIdle();
         }
     }
 
     public void Exit()
     {
-
+        // 안전 보장: Exit 시에도 복구 처리
+        if (unit != null)
+        {
+            unit.canMana = true;
+            try { unit.unit.mover.SetCanMove(true); } catch { }
+        }
     }
 }
 
