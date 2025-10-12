@@ -44,7 +44,7 @@ MonoBehaviour:
   unitAttackDistance: 3
   unitProjectile: {fileID: 7240340908294295380, guid: a72c9fe39e9f73245894bde683140b0c, type: 3}
   unitProjectileMaxSpeed: 3
-  unitProjectileMaxHeight: 2
+  unitProjectileMaxHeight: 0.5
   projectileTrajectoryAnimationCurve:
     serializedVersion: 2
     m_Curve:
