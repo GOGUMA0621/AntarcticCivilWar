@@ -29,13 +29,13 @@ MonoBehaviour:
   - 2100
   - 0
   unitMP: 200
-  unitSpeed: 0
+  unitSpeed: 3.5
   unitDamage:
   - 30
   - 50
   - 90
   - 0
-  unitAttackType: 1
+  unitAttackType: 0
   unitHasKnockback: 0
   unitUnstoppable: 0
   unitAttackSpeed: 1

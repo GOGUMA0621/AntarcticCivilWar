@@ -27,7 +27,7 @@ MonoBehaviour:
   - 400
   - 800
   - 1500
-  unitMP: 0
+  unitMP: 50
   unitSpeed: 3.5
   unitDamage:
   - 40

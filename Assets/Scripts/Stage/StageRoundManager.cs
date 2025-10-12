@@ -20,7 +20,7 @@ public enum EventRoundType { All, Special }
 
 // 라운드 후보 클래스
 [Serializable]
-public class RoundCandidate
+public class RoundCandidate : IEquatable<RoundCandidate>
 {
     public RoundType roundType;
     public string subType; // 세부 타입 이름
@@ -28,13 +28,37 @@ public class RoundCandidate
     public RoundCandidate(RoundType type, string subType = "")
     {
         roundType = type;
-        this.subType = subType;
+        this.subType = subType ?? "";
     }
 
     public override string ToString()
     {
         return string.IsNullOrEmpty(subType) ? roundType.ToString() : $"{roundType} ({subType})";
     }
+
+    // 값 기반 비교 구현
+    public bool Equals(RoundCandidate other)
+    {
+        if (ReferenceEquals(this, other)) return true;
+        if (other is null) return false;
+        return this.roundType == other.roundType && string.Equals(this.subType, other.subType);
+    }
+
+    public override bool Equals(object obj) => Equals(obj as RoundCandidate);
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 31 + (int)roundType;
+            hash = hash * 31 + (subType != null ? subType.GetHashCode() : 0);
+            return hash;
+        }
+    }
+
+    public static bool operator ==(RoundCandidate a, RoundCandidate b) => Equals(a, b);
+    public static bool operator !=(RoundCandidate a, RoundCandidate b) => !Equals(a, b);
 }
 
 [Serializable]
@@ -177,13 +201,14 @@ public class StageRoundManager : SingleTonBehaviour<StageRoundManager>
             var img = candidateUI.GetComponent<Image>() ?? candidateUI.GetComponentInChildren<Image>();
             if (img != null && roundIcons != null && roundIcons.ContainsKey(c))
                 img.sprite = roundIcons[c];
-
+            Debug.Log($"라운드 {currentRound + 1} 후보 {i + 1}: {c}" + (roundIcons.ContainsKey(c) ? " (아이콘 있음)" : " (아이콘 없음)"));
             var btn = candidateUI.GetComponent<Button>() ?? candidateUI.GetComponentInChildren<Button>();
             int candidateIndex = i;
             if (btn != null)
             {
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() => OnRoundCandidateSelected(currentRound, candidateIndex));
+                btn.onClick.AddListener(() => CloseMap());
             }
         }
     }
@@ -215,6 +240,11 @@ public class StageRoundManager : SingleTonBehaviour<StageRoundManager>
         RoundCandidate selected = candidates[candidateIndex];
         selectedRounds.Add(selected);
         Debug.Log($"선택된 라운드: {selected}");
+    }
+
+    private void CloseMap()
+    {
+        map.SetActive(false);
     }
 
     // 새로 추가: 전투 맵 생성 및 Enemy JSON 로드

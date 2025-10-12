@@ -1,6 +1,19 @@
 using System.Linq;
 using UnityEngine;
 
+// 그리드 기반 거리 계산 헬퍼 (UnitController의 astar를 사용)
+internal static class GridRangeHelper
+{
+    public static int GetGridDistance(UnitController unitController, Transform other)
+    {
+        if (unitController == null || other == null) return int.MaxValue;
+        var astar = unitController.GetAstarGrid() ?? Object.FindObjectOfType<AstarPathfinder>();
+        if (astar == null) return int.MaxValue;
+        // GridRangeUtility는 이전에 추가한 static 유틸 사용
+        return GridRangeUtility.GridDistance(astar, unitController.transform.position, other.position, GridDistanceMetric.Chebyshev);
+    }
+}
+
 public interface IUnitState
 {
     void Enter(UnitController boss);
@@ -25,7 +38,7 @@ public class UnitPlaceState : IUnitState
 
     public void Update()
     {
-        
+
     }
     public void Exit()
     {
@@ -48,21 +61,33 @@ public class UnitIdleState : IUnitState
     {
         if (unitController.unit.detectTarget.targets.Any())
         {
-           unitController.unit.detectTarget.SortClosestTarget();
-           var newTarget = unitController.unit.detectTarget.targetToAttack;
-           if (newTarget != null)
-           {
-               unitController.GoFollow();  
-           }
-        }else
+            unitController.unit.detectTarget.SortClosestTarget();
+            var newTarget = unitController.unit.detectTarget.targetToAttack;
+            if (newTarget != null)
+            {
+                int rangeCells = Mathf.CeilToInt(unitController.UnitStats.attackRange);
+                int gridDist = GridRangeHelper.GetGridDistance(unitController, newTarget.GetTransform());
+
+                if (gridDist == int.MaxValue)
+                {
+                    // 폴백: 월드 거리
+                    float dist = Vector2.Distance(unitController.transform.position, newTarget.GetTransform().position);
+                    if (dist <= unitController.UnitStats.attackRange) unitController.GoAttack();
+                    else unitController.GoFollow();
+                }
+                else
+                {
+                    if (gridDist <= rangeCells) unitController.GoAttack();
+                    else unitController.GoFollow();
+                }
+            }
+        }
+        else
         {
             unitController.StopMovement();
         }
     }
-    public void Exit()
-    {
-
-    }
+    public void Exit() { }
 }
 
 public class UnitFollowState : IUnitState
@@ -90,6 +115,51 @@ public class UnitFollowState : IUnitState
             return;
         }
 
+        // 목표가 존재하면 실시간으로 거리 체크하여 사거리 이내이면 공격 또는 스킬로 전환
+        var target = unitController.unit.detectTarget.targetToAttack;
+        if (target != null)
+        {
+            var tPos = target.GetTransform().position;
+
+            int rangeCells = Mathf.CeilToInt(unitController.UnitStats.attackRange);
+            int gridDist = GridRangeHelper.GetGridDistance(unitController, target.GetTransform());
+
+            if (gridDist == int.MaxValue)
+            {
+                // 폴백: 월드 거리 기준
+                float dist = Vector2.Distance(unitController.transform.position, tPos);
+                if (dist <= unitController.UnitStats.attackRange)
+                {
+                    unitController.StopMovement();
+                    Debug.Log($"[FollowState] (world) Reached attack range ({dist:F2}) -> Try skill or attack");
+                    // 스킬 가능하면 스킬로, 아니면 공격으로
+                    if (unitController.unit != null && unitController.isSkillActive)
+                    {
+                        unitController.GoSkill();
+                    }
+                    else
+                    {
+                        unitController.GoAttack();
+                    }
+                }
+            }
+            else
+            {
+                if (gridDist <= rangeCells)
+                {
+                    unitController.StopMovement();
+                    Debug.Log($"[FollowState] (grid) Reached attack range (cells: {gridDist}) -> Try skill or attack");
+                    if (unitController.unit != null && unitController.isSkillActive)
+                    {
+                        unitController.GoSkill();
+                    }
+                    else
+                    {
+                        unitController.GoAttack();
+                    }
+                }
+            }
+        }
     }
 
     public void Exit()
@@ -134,13 +204,34 @@ public class UnitAttackState : IUnitState
             }
             return;
         }
-        // 목표가 사거리 밖으로 벗어나면 추적 상태로
-        else if (unitController.RemainedDistance > unitController.UnitStats.attackRange)
+
+        // 목표가 사거리 밖으로 벗어나면 추적 상태로 (월드 거리 기반)
+        var currentTarget = unitController.unit.detectTarget.targetToAttack;
+        if (currentTarget != null)
         {
-            unitController.SetTargetToMove(unitController.unit.detectTarget.targetToAttack.GetTransform(), unitController.OnPathCompleteToAttack);
-            unitController.GoFollow();
-            return;
+            int rangeCells = Mathf.CeilToInt(unitController.UnitStats.attackRange);
+            int gridDist = GridRangeHelper.GetGridDistance(unitController, currentTarget.GetTransform());
+
+            if (gridDist == int.MaxValue)
+            {
+                // 폴백: 월드 거리
+                float dist = Vector2.Distance(unitController.transform.position, currentTarget.GetTransform().position);
+                if (dist > unitController.UnitStats.attackRange)
+                {
+                    unitController.GoFollow();
+                    return;
+                }
+            }
+            else
+            {
+                if (gridDist > rangeCells)
+                {
+                    unitController.GoFollow();
+                    return;
+                }
+            }
         }
+
         // 공격 쿨타임이 끝나면 공격
         else if (attackCooldown <= 0f)
         {
@@ -152,8 +243,9 @@ public class UnitAttackState : IUnitState
                 isAttacking = true;
             }
         }
+
         // 공격 애니메이션 끝나면 Idle로
-        else if (isAttacking && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f
+        if (isAttacking && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f
                 && animator.GetCurrentAnimatorStateInfo(0).IsName("AttackState"))
         {
             animator.Play("IdleState");
@@ -223,7 +315,7 @@ public class UnitManaSkillState : IUnitState
 
     public void Exit()
     {
-        
+
     }
 }
 
@@ -239,7 +331,7 @@ public class UnitCallState : IUnitState
     }
     public void Update()
     {
-        
+
     }
     public void Exit()
     {

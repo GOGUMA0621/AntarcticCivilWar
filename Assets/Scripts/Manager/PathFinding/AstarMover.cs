@@ -78,7 +78,7 @@ public class AstarMover : MonoBehaviour
             lastGridPos = currentGridPos;
         }
 
-        // 경로 요청 실패 시 재시도
+        // 경로 요청 실패 시 재시도 타이머 로직 (기존 유지)
         if (isWaitingForPath)
         {
             retryTimer += Time.deltaTime;
@@ -86,7 +86,7 @@ public class AstarMover : MonoBehaviour
             {
                 retryTimer = 0f;
                 isWaitingForPath = false;
-                return;
+                // 다음 업데이트에서 새 요청 허용
             }
         }
 
@@ -94,7 +94,6 @@ public class AstarMover : MonoBehaviour
         if (!isMoving || worldPath == null || currentIndex >= worldPath.Count)
         {
             if (rb != null) rb.velocity = Vector2.zero;
-            // Debug.Log("이동 중이 아닙니다.");
             return;
         }
 
@@ -127,7 +126,8 @@ public class AstarMover : MonoBehaviour
             }
             if (hit.gameObject != this.gameObject)
             {
-                MoveTo(targetTransform.position);
+                // 앞에 유닛이 있으면 현재 타겟(목적지)로 재요청
+                MoveTo(targetTransform != null ? targetTransform.position : worldPath[^1]);
                 break;
             }
         }
@@ -135,15 +135,43 @@ public class AstarMover : MonoBehaviour
         // 웨이포인트 도달 판정
         if (distance < waypointTolerance)
         {
-            currentIndex++;
-            if (currentIndex >= worldPath.Count)
+            // 목표 그리드에 도달했는지 확인
+            Vector2Int currGrid = gridScanner.WorldToGrid(transform.position);
+            if (currGrid == lastTargetGridPos)
             {
+                // 최종 목표 도달
                 isMoving = false;
                 velocity = Vector3.zero;
                 if (rb != null) rb.velocity = Vector2.zero;
                 onPathComplete?.Invoke();
-                Debug.Log($"목표 지점에 도달했습니다. {this.gameObject.name + " " + transform.position}");
+                onPathComplete = null;
+                Debug.Log($"목표 그리드에 도달했습니다. {this.gameObject.name} grid:{currGrid}");
+                return;
             }
+
+            // 이미 경로 재요청 중이면 기다림
+            if (isWaitingForPath)
+            {
+                // 멈추지 않고 현재 velocity 유지하거나 감속 처리 가능 (여기선 멈추지 않음)
+                return;
+            }
+
+            // 한 칸(웨이포인트)마다 경로 재계산 요청
+            Vector2Int startGrid = gridScanner.WorldToGrid(transform.position);
+            isWaitingForPath = true;
+            retryTimer = 0f;
+            AstarPathFinding.instance.RequestPath(
+                startGrid,
+                lastTargetGridPos,
+                this.gameObject,
+                OnPathFound
+            );
+
+            // 새 경로 올 때까지 기존 이동 경로는 중단
+            isMoving = false;
+            velocity = Vector3.zero;
+            if (rb != null) rb.velocity = Vector2.zero;
+            return;
         }
     }
 
@@ -193,9 +221,12 @@ public class AstarMover : MonoBehaviour
            onPathComplete = onComplete; // 새로운 콜백 설정
         }
 
+        // 목표 그리드 저장 (한 칸마다 재계산할 최종 목표)
+        lastTargetGridPos = gridScanner.WorldToGrid(worldDestination);
+
         AstarPathFinding.instance.RequestPath(
             gridScanner.WorldToGrid(this.transform.position),
-            gridScanner.WorldToGrid(worldDestination),
+            lastTargetGridPos,
             this.gameObject,
             OnPathFound
         );
@@ -220,6 +251,7 @@ public class AstarMover : MonoBehaviour
         }
         currentIndex = 0;
         isMoving = true;
+        isWaitingForPath = false;
     }
 
     private void OnPathEnd()

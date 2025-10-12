@@ -12,6 +12,22 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: d7250aad802624743a6d8522addcdd81, type: 2}
+    - target: {fileID: 2764380314185021207, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: projectilePrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2764380314185021207, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: projectilePrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 2987684513458352404, guid: db2dc057d1f1a8d44b035d8ee3213868, type: 3}
+    - target: {fileID: 2764380314185021207, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: projectilePrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 2987684513458352404, guid: e34b016c66eb984429a9904bb21cc751, type: 3}
+    - target: {fileID: 2764380314185021207, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
+      propertyPath: projectilePrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 2987684513458352404, guid: 0f19d0b88e2338e42b9f456769e716af, type: 3}
     - target: {fileID: 5257417320873170678, guid: c1e6cb6b0d70f194e92f1364853f2b73, type: 3}
       propertyPath: currentHP
       value: 400

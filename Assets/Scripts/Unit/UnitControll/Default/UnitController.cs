@@ -41,7 +41,7 @@ public class DamageData
 /// 유닛의 전반적인 컨트롤을 담당하는 클래스입니다.
 /// 유닛의 이동, 공격, 상태이상 적용, 스탯 계산 등을 담당합니다.
 /// </summary>
-public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛의 전반적인 컨트롤
+public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛의 전반적인 컨트롤
 {
     /// <summary>
     /// 유닛이 파괴될 때 호출되는 이벤트입니다.
@@ -146,6 +146,11 @@ public class UnitController : MonoBehaviour, IStatusAble, IDamageAble //유닛�
         {
             synergy?.Initialize(this);
         }
+    }
+
+    private void Awake()
+    {
+        cachedAstarGrid =  asterGrid != null ? asterGrid : FindObjectOfType<AstarPathfinder>();
     }
     protected virtual void Start()
     {

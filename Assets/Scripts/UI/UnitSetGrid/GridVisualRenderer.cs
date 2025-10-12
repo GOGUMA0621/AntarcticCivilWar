@@ -24,6 +24,10 @@ public class GridVisualRenderer : MonoBehaviour
     public string sortingLayerName = "Default";
     public int sortingOrder = 100;
 
+    [Header("Behavior")]
+    [Tooltip("마커가 이미 존재하면 새로 생성하지 않음(기본 true). 강제 재생성하려면 Refresh(true) 호출)")]
+    public bool preventDuplicateMarkers = true;
+
     // 내부
     private GameObject markerParent;
     private List<SpriteRenderer> markers = new List<SpriteRenderer>();
@@ -35,18 +39,22 @@ public class GridVisualRenderer : MonoBehaviour
     {
         mainCam = Camera.main;
         EnsureParents();
-    }
 
-    void Start()
-    {
-        Refresh();
+        // 기존에 씬에 GridHover가 이미 있으면 재사용하도록 캐시
+        var existing = transform.Find("GridHover");
+        if (existing != null)
+        {
+            hoverObj = existing.gameObject;
+            hoverRenderer = hoverObj.GetComponent<SpriteRenderer>();
+            if (hoverRenderer == null) hoverRenderer = hoverObj.AddComponent<SpriteRenderer>();
+        }
     }
 
     void Update()
     {
         UpdateHoverIndicator();
     }
-
+    
     void EnsureParents()
     {
         if (markerParent == null)
@@ -60,19 +68,68 @@ public class GridVisualRenderer : MonoBehaviour
         }
     }
 
-    public void Refresh()
+    public void Refresh(bool forceRebuild = false)
     {
         EnsureParents();
-        BuildMarkers();
+
+        if (forceRebuild)
+        {
+            // 안전하게 삭제: editor에서는 DestroyImmediate, 런타임에서는 Destroy
+#if UNITY_EDITOR
+            foreach (var mr in markers)
+                if (mr != null) DestroyImmediate(mr.gameObject);
+#else
+            foreach (var mr in markers)
+                if (mr != null) Destroy(mr.gameObject);
+#endif
+            markers.Clear();
+
+            // markerParent 자식 제거
+            for (int i = markerParent.transform.childCount - 1; i >= 0; i--)
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(markerParent.transform.GetChild(i).gameObject);
+#else
+                Destroy(markerParent.transform.GetChild(i).gameObject);
+#endif
+            }
+
+            BuildMarkers();
+        }
+        else
+        {
+            BuildMarkers();
+        }
+
+        // hover는 중복 생성 방지 로직 내에서 처리
         CreateHoverObject();
     }
 
     void BuildMarkers()
     {
+        // 이미 마커가 존재하고 중복 방지가 켜져 있으면 기존 마커 목록만 캐시하고 종료
+        if (preventDuplicateMarkers && markerParent != null && markerParent.transform.childCount > 0)
+        {
+            markers.Clear();
+            foreach (Transform child in markerParent.transform)
+            {
+                var sr = child.GetComponent<SpriteRenderer>();
+                if (sr != null) markers.Add(sr);
+            }
+            return;
+        }
+
         // 기존 마커 제거
         foreach (var mr in markers)
             if (mr != null) DestroyImmediate(mr.gameObject);
         markers.Clear();
+
+        // markerParent의 기존 자식들도 제거
+        if (markerParent != null)
+        {
+            for (int i = markerParent.transform.childCount - 1; i >= 0; i--)
+                DestroyImmediate(markerParent.transform.GetChild(i).gameObject);
+        }
 
         if (!showCorners || gridManager == null) return;
 
@@ -106,18 +163,58 @@ public class GridVisualRenderer : MonoBehaviour
 
     void CreateHoverObject()
     {
-        if (hoverObj != null) DestroyImmediate(hoverObj);
-        if (hoverSprite == null) return;
+        // 이미 하이라이트 객체가 있으면 재사용 및 설정 업데이트
+        if (hoverObj == null)
+        {
+            // 같은 이름의 기존 오브젝트가 있나 검색(다른 스크립트가 만든 경우 포함)
+            var existing = transform.Find("GridHover");
+            if (existing != null)
+            {
+                hoverObj = existing.gameObject;
+                hoverRenderer = hoverObj.GetComponent<SpriteRenderer>();
+                if (hoverRenderer == null) hoverRenderer = hoverObj.AddComponent<SpriteRenderer>();
+            }
+            else
+            {
+                if (hoverSprite == null) return;
+                hoverObj = new GameObject("GridHover");
+                hoverObj.transform.SetParent(transform, false);
+                hoverRenderer = hoverObj.AddComponent<SpriteRenderer>();
+            }
+        }
 
-        hoverObj = new GameObject("GridHover");
-        hoverObj.transform.SetParent(transform, true);
-        hoverRenderer = hoverObj.AddComponent<SpriteRenderer>();
-        hoverRenderer.sprite = hoverSprite;
-        hoverRenderer.transform.localScale = Vector3.one * hoverScale;
-        hoverRenderer.sortingLayerName = sortingLayerName;
-        hoverRenderer.sortingOrder = sortingOrder + 1;
-        hoverRenderer.color = new Color(1f, 1f, 1f, 0.9f);
-        hoverObj.SetActive(false);
+        // 중복 GridHover 정리: 같은 이름의 다른 오브젝트가 있다면 제거
+        int found = 0;
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            var child = transform.GetChild(i);
+            if (child.name == "GridHover")
+            {
+                if (found == 0)
+                {
+                    // 첫번째는 유지
+                    found++;
+                    continue;
+                }
+                // 나머지 중복은 제거
+#if UNITY_EDITOR
+                DestroyImmediate(child.gameObject);
+#else
+                Destroy(child.gameObject);
+#endif
+            }
+        }
+
+        // renderer 설정 갱신
+        if (hoverRenderer != null)
+        {
+            hoverRenderer.sprite = hoverSprite;
+            hoverRenderer.transform.localScale = Vector3.one * hoverScale;
+            hoverRenderer.sortingLayerName = sortingLayerName;
+            hoverRenderer.sortingOrder = sortingOrder + 1;
+            hoverRenderer.color = new Color(1f, 1f, 1f, 0.9f);
+            if (!hoverObj.activeSelf) hoverObj.SetActive(false);
+        }
     }
 
     void UpdateHoverIndicator()

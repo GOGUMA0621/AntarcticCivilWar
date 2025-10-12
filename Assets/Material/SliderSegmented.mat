@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: _LineColorSmall
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -41,9 +41,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AnchorFromTop: 1
     - _EnableExternalAlpha: 0
     - _LineLengthLarge: 1
-    - _LineLengthSmall: 1
+    - _LineLengthSmall: 0.712
     - _LineOffset: 0
     - _LineThicknessLarge: 8.43
     - _LineThicknessSmall: 5.55
