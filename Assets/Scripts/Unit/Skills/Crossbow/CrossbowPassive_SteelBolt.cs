@@ -12,16 +12,16 @@ public class CrossbowPassive_SteelBolt : MonoBehaviour, IPasseiveSkillAttack
         this.unit = unit;
     }
 
-    // ÀÏ¹İ °ø°İ ½Ã È£Ãâ
+    // ì¼ë°˜ ê³µê²© ì‹œ í˜¸ì¶œ
     public void DoPassiveSkill()
     {
         attackCount++;
         if (attackCount % 4 == 0)
         {
-            // 10% Ãß°¡ ÇÇÇØ Àû¿ë
-            float baseDamage = unit.GetFinalStat(StatType.AttackDamage);
+            // 10% ì¶”ê°€ í”¼í•´ ì ìš©
+            float baseDamage = unit.UnitStats.attackDamage;
             float bonus = baseDamage * 0.1f;
-            Debug.Log($"°­Ã¶ ¼è³ú Ãß°¡ ÇÇÇØ: {bonus}");
+            Debug.Log($"ê°•ì²  ì‡ ë‡Œ ì¶”ê°€ í”¼í•´: {bonus}");
         }
     }
 

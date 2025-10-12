@@ -14,7 +14,7 @@ public class Snipe : MonoBehaviour, IActiveSkill
 
     [SerializeField] private DamageData[] damageDatas;
 
-    // ·¹º§º° °è¼ö (230%, 300%, 420%)
+    // ë ˆë²¨ë³„ ê³„ìˆ˜ (230%, 300%, 420%)
     private static readonly float[] snipeDamageMultiplier = { 2.3f, 3.0f, 4.2f };
 
     public void FireSnipeProjectile()
@@ -27,7 +27,7 @@ public class Snipe : MonoBehaviour, IActiveSkill
         }
 
         int levelIdx = Mathf.Clamp(unit.unitLevel - 1, 0, snipeDamageMultiplier.Length - 1);
-        float baseDamage = unit.GetFinalStat(StatType.AttackDamage);
+        float baseDamage = unit.UnitStats.attackDamage;
         float snipeDamage = baseDamage * snipeDamageMultiplier[levelIdx];
 
         DamageData data = new DamageData(snipeDamage, StatusEffectType.Physical, 0);

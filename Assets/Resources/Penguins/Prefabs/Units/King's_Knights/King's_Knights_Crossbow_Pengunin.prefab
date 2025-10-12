@@ -211,5 +211,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de089ecf6e243c4a9d351fd9f9195ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pfbolt: {fileID: 7240340908294295380, guid: 4b06c672f3d3aa44fb5e96203645663f, type: 3}
+  _pfbolt: {fileID: 6010107960188029939, guid: a3e8815180cb769479fd318e513d2d93, type: 3}
   damageDatas: []
