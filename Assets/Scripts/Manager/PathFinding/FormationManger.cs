@@ -102,7 +102,7 @@ public class FormationManger : SingleTonBehaviour<FormationManger>
         visited.Add(centerGrid);
 
         while (queue.Count > 0 && assignedGridPositions.Count < units.Count)
-        {
+            {
             var current = queue.Dequeue();
             var currentNode = gridScanner.GetNode(current);
             if (gridScanner.HasNode(current) && currentNode.isWalkable)

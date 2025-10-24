@@ -7,7 +7,7 @@ public enum StatType
     MaxHealth, HealthRegen,
     MaxMana, ManaGain, ManaRegen,
     AttackDamage, AttackSpeed, AttackRange,
-    AdditionalDamage,
+    AdditionalDamage, LifeSteal,
     MoveSpeed,
     AOEDamage,
     CritChance, CritDamage,

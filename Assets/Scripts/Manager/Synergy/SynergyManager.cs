@@ -24,14 +24,22 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
     [SerializeField] private List<Sprite> tierIcons;
 
     private string dominantFactionTag = null;
-
+    /// <summary>
+    /// 시너지 아이콘 가져오기
+    /// </summary>
+    /// <param name="tier">티어 인덱스</param>
+    /// <returns>시너지 아이콘 스프라이트</returns>
     public Sprite GetTierIcon(int tier)
     {
         if (tier < 0 || tier >= tierIcons.Count)
             return null;
         return tierIcons[tier];
     }
-
+    /// <summary>
+    /// 시너지 데이터 가져오기
+    /// </summary>
+    /// <param name="isAllay">아군 시너지 여부</param>
+    /// <returns>시너지 UI 데이터 리스트</returns>
     public List<SynergyUIData> GetSynergyData(bool isAllay = true)
     {
         var result = new List<SynergyUIData>();
@@ -67,7 +75,11 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
 
         return result;
     }
-
+    /// <summary>
+    /// 진영 시너지 업데이트
+    /// </summary>
+    /// <param name="dict">시너지 딕셔너리</param>
+    /// <param name="isAllay">아군 시너지 여부</param>
     private void UpdateFactionSynergies(Dictionary<string, List<UnitController>> dict, bool isAllay)
     {
         var factionTags = SynergyInstaller.synergyTagTypeMap
@@ -114,7 +126,11 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
         }
     }
 
-
+    /// <summary>
+    /// 유닛 등록
+    /// </summary>
+    /// <param name="unit">등록할 유닛</param>
+    /// <param name="isAllay">아군 유닛 여부</param>
     public void RegisterUnit(UnitController unit, bool isAllay)
     {
         var dict = isAllay ? allaySynergyDict : enemySynergyDict;
@@ -130,7 +146,8 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
             NotifyCountChanged(tag, dict, isAllay);
         }
 
-        if (unit.unit.data.unitSynergyTags.Any(tag => SynergyInstaller.synergyTagTypeMap.ContainsKey(tag) && SynergyInstaller.synergyTagTypeMap[tag] == SynergyType.Faction))
+        if (unit.unit.data.unitSynergyTags.Any(tag => SynergyInstaller.synergyTagTypeMap.ContainsKey(tag) &&
+                SynergyInstaller.synergyTagTypeMap[tag] == SynergyType.Faction))
         {
             UpdateFactionSynergies(dict, isAllay);
         }
@@ -144,7 +161,10 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
             UnitManager.instance.AddEnemyList(unit);
         }
     }
-
+    /// <summary>
+    /// 유닛 등록 해제
+    /// </summary> <param name="unit">등록 해제할 유닛</param>
+    /// <param name="isAllay">아군 유닛 여부</param>
     public void UnregisterUnit(UnitController unit, bool isAllay)
     {
         var dict = isAllay ? allaySynergyDict : enemySynergyDict;
@@ -163,12 +183,17 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
             }
         }
 
-        if (unit.unit.data.unitSynergyTags.Any(tag => SynergyInstaller.synergyTagTypeMap.ContainsKey(tag) && SynergyInstaller.synergyTagTypeMap[tag] == SynergyType.Faction))
+        if (unit.unit.data.unitSynergyTags.Any(tag => SynergyInstaller.synergyTagTypeMap.ContainsKey(tag) 
+            && SynergyInstaller.synergyTagTypeMap[tag] == SynergyType.Faction))
         {
             UpdateFactionSynergies(dict, isAllay);
         }
     }
-
+    /// <summary>
+    /// 시너지 카운트 변경 알림
+    /// </summary> <param name="tag">시너지 태그</param>
+    /// <param name="dict">시너지 딕셔너리</param>
+    /// <param name="isAllay">아군 시너지 여부</param>
     private void NotifyCountChanged(string tag, Dictionary<string, List<UnitController>> dict, bool isAllay)
     {
         if (IsFactionSynergy(tag)) return;
@@ -221,7 +246,10 @@ public class SynergyManager : SingleTonBehaviour<SynergyManager>
         }
         OnSynergyUpdated?.Invoke();
     }
-
+    /// <summary>
+    /// 진영 시너지인지 확인
+    /// </summary> <param name="tag">시너지 태그</param>
+    /// <returns>진영 시너지 여부</returns>
     private bool IsFactionSynergy(string tag)
     {
         return SynergyInstaller.synergyTagTypeMap.TryGetValue(tag, out var type) && type == SynergyType.Faction;

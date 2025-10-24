@@ -240,10 +240,13 @@ public class AstarMover : MonoBehaviour
             occupied // 새로 추가된 파라미터
         );
     }
-
+    /// <summary>
+    /// 경로 탐색 완료 콜백
+    /// </summary>
+    /// <param name="path">탐색된 경로</param>
     private void OnPathFound(List<Vector2Int> path)
     {
-        if (path == null || path.Count == 0)
+        if (path == null || path.Count == 0) // 경로 없음
         {
             isMoving = false;
             isWaitingForPath = true;
@@ -253,7 +256,7 @@ public class AstarMover : MonoBehaviour
         }
 
         worldPath.Clear();
-        foreach (var gridPos in path)
+        foreach (var gridPos in path) // 그리드 좌표를 월드 좌표로 변환
         {
             worldPath.Add(gridScanner.GridToWorld(gridPos));
         }
@@ -261,7 +264,9 @@ public class AstarMover : MonoBehaviour
         isMoving = true;
         isWaitingForPath = false;
     }
-
+    /// <summary>
+    /// 경로 도착 처리
+    /// </summary>
     private void OnPathEnd()
     {
         isMoving = false;

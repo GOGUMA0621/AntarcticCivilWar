@@ -200,7 +200,14 @@ public class AstarPathFinding : SingleTonBehaviour<AstarPathFinding>
         return false; // 해당 위치에 다른 유닛이 없음        
     }
 
-
+    /// <summary>
+    /// 특정 그리드 위치에 유닛이 있는지 확인합니다.
+    /// 자기 자신과 목표 위치는 제외합니다.
+    /// </summary>
+    /// <param name="gridPos">확인할 그리드 위치</param>
+    /// <param name="self">자기 자신 게임 오브젝트</param>
+    /// <param name="goalGrid">목표 그리드 위치</param>
+    /// <returns>유닛이 있는지 여부</returns>
     private bool IsUnitSoftObstacle(Vector2Int gridPos, GameObject self, Vector2Int goalGrid)
     {
         if (gridPos == goalGrid) return false; // 목표 위치는 예외

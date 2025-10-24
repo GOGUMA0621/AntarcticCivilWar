@@ -4129,6 +4129,7 @@ MonoBehaviour:
     enemyJsons: []
   - poolName: "\uD6C4\uBC18 \uAD6C\uC5ED"
     enemyJsons: []
+  eventCandidates: []
   selectedRounds: []
 --- !u!114 &814582639
 MonoBehaviour:
@@ -11688,7 +11689,7 @@ MonoBehaviour:
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 40
-    OrthographicSize: 8.5
+    OrthographicSize: 7.9
     NearClipPlane: 0.1
     FarClipPlane: 5000
     Dutch: 0
@@ -12417,7 +12418,7 @@ Camera:
   far clip plane: 5000
   field of view: 40
   orthographic: 1
-  orthographic size: 8.5
+  orthographic size: 7.9
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
