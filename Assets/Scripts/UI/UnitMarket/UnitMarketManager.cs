@@ -4,9 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum MemberGrade
+{
+    Silver,
+    Gold,
+    Platinum,
+    Diamond
+}
+
 public class UnitMarketManager : MonoBehaviour
 {
-   // [SerializeField] private Player player;
+    // [SerializeField] private Player player;
     [SerializeField] private UnitMarketUI unitMarketUI;
     //[SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private UnitBench unitBench;
@@ -16,8 +24,28 @@ public class UnitMarketManager : MonoBehaviour
     [SerializeField] private Button rerollButton;
     [SerializeField] private Image toggleMarketButtonImage;
 
+    private MemberGrade currentMemberGrade = MemberGrade.Silver;
+
     private Sprite openSprite;
     private Sprite closeSprite;
+
+    // 등급별 티어 등장 확률 테이블
+    private static readonly Dictionary<MemberGrade, int[]> tierProbTable = new()
+    {
+        { MemberGrade.Silver,   new[] { 55, 30, 15, 0, 0 } },
+        { MemberGrade.Gold,     new[] { 40, 35, 20, 5, 0 } },
+        { MemberGrade.Platinum, new[] { 30, 30, 25, 10, 5 } },
+        { MemberGrade.Diamond,  new[] { 15, 20, 35, 20, 10 } }
+    };
+
+    // 등급별 승급 주화 비용
+    public static readonly Dictionary<MemberGrade, int> upgradeCost = new()
+    {
+        { MemberGrade.Gold, 15 },
+        { MemberGrade.Platinum, 25 },
+        { MemberGrade.Diamond, 35 }
+    };
+
 
     private void Start()
     {
@@ -125,5 +153,41 @@ public class UnitMarketManager : MonoBehaviour
         if (prefab == null)
             Debug.LogWarning($"유닛 프리팹을 찾을 수 없습니다: {unitName}");
         return prefab;
+    }
+
+    public int GetRandomTier(MemberGrade grade)
+    {
+        int[] probs = tierProbTable[grade];
+        int rand = Random.Range(1, 101);
+        int sum = 0;
+        for (int tier = 0; tier < probs.Length; tier++)
+        {
+            sum += probs[tier];
+            if (rand <= sum)
+                return tier + 1;
+        }
+        return 1;
+    }
+
+    public int GetUpgradeCost(MemberGrade grade)
+    {
+        if (upgradeCost.TryGetValue(grade, out int cost))
+            return cost;
+        return 0;
+    }
+
+    public void SetMemberGrade(MemberGrade newGrade)
+    {
+        if (currentMemberGrade != newGrade)
+        {
+            currentMemberGrade = newGrade;
+
+            LoadMarket();
+        }
+    }
+
+    public MemberGrade GetMemberGrade()
+    {
+        return currentMemberGrade;
     }
 }

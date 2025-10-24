@@ -23,22 +23,33 @@ public class UnitMarketUI : MonoBehaviour
         selected.Clear();
 
         var availableUnits = new List<UnitDB>(FirebaseManager.units.Values);
-        while (selected.Count < 5 && availableUnits.Count > 0)
-        {
-            int i = Random.Range(0, availableUnits.Count);
-            selected.Add(availableUnits[i]);
-            availableUnits.RemoveAt(i);
-        }
+        MemberGrade grade = unitMarketManager.GetMemberGrade();
 
-        for (int i = 0; i < selected.Count; i++)
+        int slotCount = Mathf.Min(5, slotGroup.childCount);
+        for (int slotIdx = 0; slotIdx < slotCount; slotIdx++)
         {
-            UnitDB unit = selected[i];
-            Transform slotTransform = slotGroup.GetChild(i);
+            //등급에 따라 티어 확률로 티어 결정
+            int tier = unitMarketManager.GetRandomTier(grade);
+
+            //해당 티어의 유닛만 필터링
+            var unitsOfTier = availableUnits.FindAll(u => u.tier == tier);
+
+            //만약 해당 티어 유닛이 없으면 전체에서 랜덤
+            if (unitsOfTier.Count == 0)
+                unitsOfTier = availableUnits;
+            if (unitsOfTier.Count == 0) break;
+
+            int i = Random.Range(0, unitsOfTier.Count);
+            UnitDB unit = unitsOfTier[i];
+            selected.Add(unit);
+            availableUnits.Remove(unit);
+
+            Transform slotTransform = slotGroup.GetChild(slotIdx);
             UnitSlotUI slotUI = slotTransform.GetComponent<UnitSlotUI>();
             slotTransform.gameObject.SetActive(true);
             if (slotUI == null)
             {
-                Debug.LogWarning($"슬롯 {i}에 UnitSlotUI가 없습니다.");
+                Debug.LogWarning($"슬롯 {slotIdx}에 UnitSlotUI가 없습니다.");
                 continue;
             }
 
