@@ -80,7 +80,6 @@ public class WorldDragController
 
         if (currentTarget is IWorldDragHandler dragHandler)
         {
-            Debug.Log($"Drag 호출됨 - {currentTarget.name}");
             dragHandler.OnDrag(CreateDragEventData(worldPos));
         }
     }
@@ -137,11 +136,27 @@ public class WorldDragController
         Debug.Log("FindDraggableUnderPointer 호출됨");
         int mask = ~(1 << LayerMask.NameToLayer("Detector")); // Detector 레이어 제외
         Vector3 worldPos = InputManager.instance.GetPointerWorldPosition();
+        Debug.Log($"월드 포지션: {worldPos}, 마스크: {mask}");
+        
         Collider2D col = Physics2D.OverlapPoint(worldPos, mask);
-        if (col != null && col.TryGetComponent<IWorldDraggable>(out var draggable) && !col.TryGetComponent<IWorldDropHandler>(out var _))
+        if (col != null)
         {
-            Debug.Log($"드래그 감지: {col.name}");
-            return draggable as MonoBehaviour;
+            Debug.Log($"콜라이더 발견: {col.name}, 레이어: {col.gameObject.layer}");
+            
+            bool hasWorldDraggable = col.TryGetComponent<IWorldDraggable>(out var draggable);
+            bool hasWorldDropHandler = col.TryGetComponent<IWorldDropHandler>(out var dropHandler);
+            
+            Debug.Log($"IWorldDraggable: {hasWorldDraggable}, IWorldDropHandler: {hasWorldDropHandler}");
+            
+            if (hasWorldDraggable && !hasWorldDropHandler)
+            {
+                Debug.Log($"드래그 감지: {col.name}");
+                return draggable as MonoBehaviour;
+            }
+        }
+        else
+        {
+            Debug.Log("콜라이더를 찾지 못함");
         }
 
         Debug.Log("드래그 가능한 오브젝트를 찾지 못함");

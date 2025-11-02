@@ -65,7 +65,7 @@ public class UnitIdleState : IUnitState
             var newTarget = unitController.unit.detectTarget.targetToAttack;
             if (newTarget != null)
             {
-                int rangeCells = Mathf.CeilToInt(unitController.UnitStats.attackRange);
+                int rangeCells = Mathf.RoundToInt(unitController.UnitStats.attackRange);
                 int gridDist = GridRangeHelper.GetGridDistance(unitController, newTarget.GetTransform());
 
                 if (gridDist == int.MaxValue)
@@ -100,8 +100,15 @@ public class UnitFollowState : IUnitState
 
         if (target != null)
         {
+            // 타겟으로 이동 경로 설정 및 즉시 이동 시작
             unitController.SetTargetToMove(target.GetTransform(), unitController.OnPathCompleteToAttack);
             unitController.StartMovement();
+            Debug.Log($"[FollowState] Enter: Moving to target {target.GetTransform().name}");
+        }
+        else
+        {
+            // 타겟이 없으면 Idle 상태로
+            unitController.GoIdle();
         }
     }
 
@@ -115,13 +122,14 @@ public class UnitFollowState : IUnitState
             return;
         }
 
-        // 목표가 존재하면 실시간으로 거리 체크하여 사거리 이내이면 공격 또는 스킬로 전환
+        // 타겟 재정렬 후 새로운 타겟이 있는지 확인
+        unitController.unit.detectTarget.SortClosestTarget();
         var target = unitController.unit.detectTarget.targetToAttack;
         if (target != null)
         {
             var tPos = target.GetTransform().position;
 
-            int rangeCells = Mathf.CeilToInt(unitController.UnitStats.attackRange);
+            int rangeCells = Mathf.RoundToInt(unitController.UnitStats.attackRange);
             int gridDist = GridRangeHelper.GetGridDistance(unitController, target.GetTransform());
 
             if (gridDist == int.MaxValue)
@@ -131,6 +139,7 @@ public class UnitFollowState : IUnitState
                 if (dist <= unitController.UnitStats.attackRange)
                 {
                     unitController.StopMovement();
+                    unitController.LookAtTarget(); // 타겟을 바라보도록 설정
                     Debug.Log($"[FollowState] (world) Reached attack range ({dist:F2}) -> Try skill or attack");
                     // 스킬 가능하면 스킬로, 아니면 공격으로
                     if (unitController.unit != null && unitController.isSkillActive)
@@ -148,6 +157,7 @@ public class UnitFollowState : IUnitState
                 if (gridDist <= rangeCells)
                 {
                     unitController.StopMovement();
+                    unitController.LookAtTarget(); // 타겟을 바라보도록 설정
                     Debug.Log($"[FollowState] (grid) Reached attack range (cells: {gridDist}) -> Try skill or attack");
                     if (unitController.unit != null && unitController.isSkillActive)
                     {
@@ -188,7 +198,7 @@ public class UnitAttackState : IUnitState
     {
         attackCooldown -= Time.deltaTime;
 
-        // 목표가 없거나 죽었으면 추적 상태로
+        // 목표가 없거나 죽었으면 새로운 타겟 찾기
         if (unitController.unit.detectTarget.targetToAttack == null || IsTargetDead(unitController.unit.detectTarget.targetToAttack.GetTransform()))
         {
             unitController.unit.detectTarget.SortClosestTarget();
@@ -196,8 +206,8 @@ public class UnitAttackState : IUnitState
 
             if (target != null)
             {
-                unitController.SetTargetToMove(target.GetTransform(), unitController.OnPathCompleteToAttack);
-                unitController.GoIdle();
+                // 새로운 타겟이 있으면 바로 Follow 상태로 전환
+                unitController.GoFollow();
             }
             else
             {
@@ -210,14 +220,20 @@ public class UnitAttackState : IUnitState
         var currentTarget = unitController.unit.detectTarget.targetToAttack;
         if (currentTarget != null)
         {
-            int rangeCells = Mathf.CeilToInt(unitController.UnitStats.attackRange);
+            // 공격 사거리 계산 (근접 유닛은 좀 더 관대하게)
+            float attackRange = unitController.UnitStats.attackRange;
+            bool isMelee = unitController.unit.data.unitAttackType == UnitAttackType.Melee;
+            
+            int rangeCells = Mathf.RoundToInt(attackRange);
             int gridDist = GridRangeHelper.GetGridDistance(unitController, currentTarget.GetTransform());
 
             if (gridDist == int.MaxValue)
             {
                 // 폴백: 월드 거리
                 float dist = Vector2.Distance(unitController.transform.position, currentTarget.GetTransform().position);
-                if (dist > unitController.UnitStats.attackRange)
+                float maxAllowedDistance = isMelee ? attackRange + 0.5f : attackRange; // 근접은 여유 거리 추가
+                
+                if (dist > maxAllowedDistance)
                 {
                     unitController.GoFollow();
                     return;
@@ -225,7 +241,8 @@ public class UnitAttackState : IUnitState
             }
             else
             {
-                if (gridDist > rangeCells)
+                int maxAllowedCells = isMelee ? rangeCells + 1 : rangeCells; // 근접은 1칸 여유
+                if (gridDist > maxAllowedCells)
                 {
                     unitController.GoFollow();
                     return;
@@ -245,10 +262,16 @@ public class UnitAttackState : IUnitState
         {
             if (unitController.unit.detectTarget.targetToAttack != null && !IsTargetDead(unitController.unit.detectTarget.targetToAttack.GetTransform()))
             {
+                // 공격 전에 타겟을 바라보도록 설정
+                unitController.LookAtTarget();
+                
+                // 애니메이션 트리거 설정 (애니메이션에서만 공격 실행)
                 animator.ResetTrigger("attack");
                 animator.SetTrigger("attack");
                 attackCooldown = 1f / unitController.unitAttackSpeed;
                 isAttacking = true;
+                
+                Debug.Log($"{unitController.name}: 공격 애니메이션 시작 - 애니메이션 이벤트에서 공격 실행됨");
             }
         }
 

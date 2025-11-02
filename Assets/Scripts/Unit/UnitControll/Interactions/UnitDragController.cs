@@ -19,15 +19,19 @@ public class UnitDragController : MonoBehaviour, IBeginWorldDragHandler, IWorldD
 
     public void OnBeginDrag(DragEventData data)
     {
+        Debug.Log($"OnBeginDrag 호출됨 - {gameObject.name}");
+        Debug.Log($"현재 상태: {unit.GetCurrentState()?.GetType().Name}");
+        Debug.Log($"canDrag: {canDrag}, Tag: {unit.tag}");
+        
         if (unit.GetCurrentState() is not UnitPlaceState)
         {
-            Debug.LogWarning("유닛이 배치 상태가 아닙니다. 드래그할 수 없습니다.");
+            Debug.LogWarning($"유닛이 배치 상태가 아닙니다. 현재 상태: {unit.GetCurrentState()?.GetType().Name}");
             return;
         }
 
         if (unit.tag == "Enemy" || !canDrag)
         {
-            Debug.LogWarning("적 유닛은 드래그할 수 없습니다.");
+            Debug.LogWarning($"드래그 불가 - Enemy: {unit.tag == "Enemy"}, canDrag: {canDrag}");
             return;
         }
         Debug.Log("드래그 시작");

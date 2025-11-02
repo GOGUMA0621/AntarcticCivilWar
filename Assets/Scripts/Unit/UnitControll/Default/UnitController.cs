@@ -187,7 +187,11 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     private readonly IUnitState dieState = new UnitDieState(); //유닛이 사망 상태인 경우
     private readonly IUnitState manaSkillState = new UnitManaSkillState(); //유닛이 마나 스킬 상태인 경우
 
-    public virtual void GoPlace() => ChangeState(placeState); //유닛이 배치 상태로 전환
+    public virtual void GoPlace() 
+    {
+        Debug.Log($"GoPlace 호출됨 - {gameObject.name}");
+        ChangeState(placeState); //유닛이 배치 상태로 전환
+    }
     public virtual void GoIdle() => ChangeState(idleState); //유닛이 대기 상태로 전환
     public virtual void GoAttack() => ChangeState(attackState); //유닛이 공격 상태로 전환
     public virtual void GoFollow() => ChangeState(followState); //유닛이 추적 상태로 전환
@@ -283,13 +287,25 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     {
         if(currentState is UnitFollowState)
         {
-          if(isSkillActive)
+            // 타겟이 여전히 유효한지 확인
+            var target = unit.detectTarget.targetToAttack;
+            if (target != null)
             {
-                GoSkill(true, unitSkill.Duration);
+                LookAtTarget(); // 타겟을 바라보도록 설정
+                
+                if(isSkillActive && canMana)
+                {
+                    GoSkill(true, unitSkill.Duration);
+                }
+                else
+                {
+                    GoAttack();
+                }
             }
             else
             {
-                GoAttack();
+                // 타겟이 없으면 Idle 상태로
+                GoIdle();
             }
         }
     }
@@ -304,6 +320,30 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     #endregion
 
     #region 애니메이션
+    /// <summary>
+    /// 타겟을 바라보도록 좌우 방향 조정
+    /// </summary>
+    public void LookAtTarget()
+    {
+        var target = unit.detectTarget.targetToAttack;
+        if (target != null)
+        {
+            Vector3 targetPosition = target.GetTransform().position;
+            Vector3 direction = targetPosition - transform.position;
+            
+            // 좌우만 구분 (x축만 사용)
+            if (direction.x > 0.1f) // 타겟이 오른쪽에 있음
+            {
+                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
+            else if (direction.x < -0.1f) // 타겟이 왼쪽에 있음
+            {
+                transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
+            // 0.1f 여유값으로 떨림 방지
+        }
+    }
+
     /// <summary>
     /// 유닛의 애니메이션을 판단하여 좌우 반전시키는 메서드
     /// </summary>
@@ -429,9 +469,14 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
     /// </summary>
     public void UnitAttack()
     {
+        // 공격 전에 타겟을 바라보도록 설정
+        LookAtTarget();
+        
         CollectMana();// 마나 수집
         TryActivateSkill(); // 스킬 발동 시도
         OnHit?.Invoke();// 공격시 이벤트 호출
+
+        Debug.Log($"{name}: UnitAttack 호출됨 (애니메이션 이벤트에서 실행)");
 
         if (unitPassiveSkill != null)
         {
@@ -441,16 +486,16 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
             }
             else
             {
-                //Debug.Log(name);
                 unit.attackController.Attack();// 일반 공격
             }
         }
         else
         {
-            //Debug.Log(name);
             unit.attackController.Attack();// 일반 공격
         }
     }
+
+
     /// <summary>
     /// 유닛 자신의 체력을 회복하는 메서드
     /// </summary>

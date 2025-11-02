@@ -19,6 +19,9 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
             Debug.LogWarning("참호에 이미 유닛이 있습니다. 기존 유닛을 교체합니다.");
             unitInDugout.transform.position = unit.transform.position; // 기존 유닛을 드롭한 위치로 이동
 
+            // 기존 유닛을 배치 상태로 전환하여 드래그 가능하도록 설정
+            unitInDugout.GoPlace();
+
             // 기존 유닛을 드래그 상태로 전환
             var dragController = unitInDugout.GetComponent<UnitDragController>();
             if (dragController != null)
@@ -42,7 +45,7 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
     public void SetUnitInDugout(UnitController unit)
     {
         unitInDugout = unit;
-        unit.transform.position = this.transform.position; // 참호 중앙에 위치
+        unit.transform.position = this.transform.position; // 참고 중앙에 위치
 
         // Null 체크 추가
         if (unit.unit == null)
@@ -56,6 +59,10 @@ public class UnitDugout : MonoBehaviour, IWorldDropHandler
             return;
         }
         unit.transform.tag = "Allay"; // 태그를 Allay로 변경
+        
+        // 벤치에 배치된 유닛은 다시 배치 상태로 전환하여 드래그 가능하도록 설정
+        unit.GoPlace();
+        
         Debug.Log("SetUnitInDugout 호출됨 - 유닛이 참호에 배치되었습니다." + unitInDugout.name);
     }
 

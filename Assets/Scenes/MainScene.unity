@@ -9865,7 +9865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47b870c152c9eae429250b2119e85b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyDataFile: {fileID: 4900000, guid: b7ac26dfe6de84340a7edbba52eb6aec, type: 3}
+  enemyDataFile: {fileID: 0}
   grid: {fileID: 1159989902}
 --- !u!114 &1159989905
 MonoBehaviour:

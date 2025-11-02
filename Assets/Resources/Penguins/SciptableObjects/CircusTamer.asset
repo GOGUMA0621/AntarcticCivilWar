@@ -15,7 +15,7 @@ MonoBehaviour:
   unitName: "\uC870\uB828\uC0AC \uD3AD\uADC4"
   unitDescription: 
   unitTier: 3
-  unitIcon: {fileID: 0}
+  unitIcon: {fileID: 302870206, guid: 55dfdf674aa30fc4f8f8ab91bc73ab14, type: 3}
   unitFaction: 1
   unitType: 0
   unitSynergyTags:

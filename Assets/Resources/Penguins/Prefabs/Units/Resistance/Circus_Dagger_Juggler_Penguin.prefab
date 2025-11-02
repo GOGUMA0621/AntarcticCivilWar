@@ -208,5 +208,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   burning: {fileID: 7400000, guid: 19c2ab7291884284ab1aa3e0dde55c83, type: 2}
+  burningDuration: 5
   burningDaggerPrefab: {fileID: 3473815611056847703, guid: a9d1b86af69eb7540b541d2a2ff26142, type: 3}
-  damageDatas: []
+  damageDatas:
+  - damage: 0
+    effectType: 8
+    buildAmount: 0
+  - damage: 0
+    effectType: 0
+    buildAmount: 0
+  - damage: 0
+    effectType: 0
+    buildAmount: 0

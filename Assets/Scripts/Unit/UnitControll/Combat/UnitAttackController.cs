@@ -118,17 +118,26 @@ public class UnitAttackController : MonoBehaviour
     void MeleeAttack(DamageData damageData = null)
     {
         IDamageAble target = unit.detectTarget.targetToAttack;
-        Transform targetTransform = target.GetTransform();
-
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, 5f);
-        foreach (Collider2D targetCollider in collider)
+        if (target != null && !target.IsDestroyed())
         {
-            if (targetCollider.transform == targetTransform)
+            // 근접 공격 전 거리 재확인 (안전장치)
+            float distance = Vector2.Distance(transform.position, target.GetTransform().position);
+            float attackRange = unit.controller.UnitStats.attackRange;
+            
+            if (distance <= attackRange + 0.5f) // 약간의 여유 거리 추가
             {
                 target.ReceiveDamage(damageData);
-                Debug.Log($"{this.gameObject}가 {targetTransform.gameObject}를 공격, 데미지: {damageData.damage}");
                 unit.controller.TriggerOnHit(target);
+                Debug.Log($"{unit.controller.name}: 근접 공격 성공! 거리: {distance:F2}, 사거리: {attackRange:F2}");
             }
+            else
+            {
+                Debug.LogWarning($"{unit.controller.name}: 근접 공격 실패 - 거리가 너무 멀음! 거리: {distance:F2}, 사거리: {attackRange:F2}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"{unit.controller.name}: 근접 공격 실패 - 타겟이 없거나 파괴됨!");
         }
     }
 
