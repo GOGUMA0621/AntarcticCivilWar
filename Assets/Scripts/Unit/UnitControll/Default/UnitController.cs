@@ -778,4 +778,17 @@ public partial class UnitController : MonoBehaviour, IStatusAble, IDamageAble //
             return value;
         return 0f;
     }
+
+    public void ApplyStun(float duration)
+    {
+        if (isStunned) return;
+        StartCoroutine(StunCoroutine(duration));
+    }
+
+    private IEnumerator StunCoroutine(float duration)
+    {
+        isStunned = true;
+        yield return new WaitForSeconds(duration);
+        isStunned = false;
+    }
 }

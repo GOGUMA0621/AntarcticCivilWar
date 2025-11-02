@@ -26,6 +26,11 @@ public enum ModifierMethod
 
 public class StatModifier
 {
+    private StatType attackSpeed;
+    private float v;
+    private object percentAdd;
+    private string modifierSourceId;
+
     public string sourceId { get; } //어떤 오브젝트에서 온 버프인지 구분하기 위한 아이디
     public StatType statType { get; } //어떤 스탯에 영향을 주는지
     public float value { get; } //얼마나 영향을 주는지
@@ -44,6 +49,14 @@ public class StatModifier
         this.statType = statType;
         this.value = value;
         this.modifierMethod = modifierMethod;
+    }
+
+    public StatModifier(StatType attackSpeed, float v, object percentAdd, string modifierSourceId)
+    {
+        this.attackSpeed = attackSpeed;
+        this.v = v;
+        this.percentAdd = percentAdd;
+        this.modifierSourceId = modifierSourceId;
     }
 }
 [Serializable]
