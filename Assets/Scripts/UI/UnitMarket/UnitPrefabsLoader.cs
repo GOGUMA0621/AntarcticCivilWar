@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class UnitPrefabsLoader
@@ -77,14 +78,20 @@ public static class UnitPrefabsLoader
         GameObject prefab = GetPrefab(unitName);
         if (prefab == null) return null;
 
-        SpriteRenderer sr = prefab.GetComponent<SpriteRenderer>();
-        if (sr == null)
+        // SpriteRenderer sr = prefab.GetComponent<SpriteRenderer>();
+        // if (sr == null)
+        // {
+        //     Debug.LogWarning($"SpriteRenderer 컴포넌트가 없는 '{unitName}' 프리팹");
+        //     return null;
+        // }
+        Unit unit = prefab.GetComponent<UnitController>()?.unit;
+        if (unit == null)
         {
-            Debug.LogWarning($"SpriteRenderer 컴포넌트가 없는 '{unitName}' 프리팹");
+            Debug.LogWarning($"Unit 컴포넌트가 없는 '{unitName}' 프리팹");
             return null;
         }
 
-        return sr.sprite;
+        return unit.data.unitIcon;
     }
 
     public static Sprite GetTierSprite(int tier)

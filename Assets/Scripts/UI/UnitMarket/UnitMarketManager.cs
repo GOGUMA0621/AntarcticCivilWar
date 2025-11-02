@@ -134,6 +134,13 @@ public class UnitMarketManager : MonoBehaviour
             return;
         }
 
+        // 벤치에 유닛을 추가할 수 있는지 확인
+        if (!unitBench.CanAddUnit(unitData.name, 1))
+        {
+            Debug.LogWarning("벤치가 가득 차서 유닛을 구매할 수 없습니다!");
+            return;
+        }
+
         UpdateGoldUI();
 
         unitBench.AddUnitToBench(unitData);

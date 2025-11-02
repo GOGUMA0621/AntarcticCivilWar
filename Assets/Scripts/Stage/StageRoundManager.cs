@@ -247,16 +247,32 @@ public partial class StageRoundManager : MonoBehaviour
     {
         SelectRound(roundIndex, candidateIndex);
 
-        // 선택된 라운드를 가져와 타입에 따라 처리 (전투이면 맵 열기)
+        // 선택된 라운드를 가져와 타입에 따라 처리
         var chosen = selectedRounds.Count > 0 ? selectedRounds[selectedRounds.Count - 1] : null;
-        if (chosen != null && chosen.roundType == RoundType.Battle)
+        if (chosen != null)
         {
-            OpenBattleMap(chosen, roundIndex, candidateIndex);
-        }
-        else
-        {
-            // 그 외 타입은 추후 처리
-            Debug.Log("Selected non-battle round: " + chosen);
+            switch (chosen.roundType)
+            {
+                case RoundType.Battle:
+                    OpenBattleMap(chosen, roundIndex, candidateIndex);
+                    break;
+                    
+                case RoundType.Event:
+                    OpenEventRound();
+                    break;
+                    
+                case RoundType.Shop:
+                    OpenShopRound();
+                    break;
+                    
+                case RoundType.Rest:
+                    OpenRestRound();
+                    break;
+                    
+                default:
+                    Debug.Log("Selected round: " + chosen);
+                    break;
+            }
         }
     }
 
@@ -336,6 +352,153 @@ public partial class StageRoundManager : MonoBehaviour
     }
     #endregion
 
+    #region 이벤트 라운드
+    [Header("이벤트 UI")]
+    [SerializeField] private Canvas eventCanvas; // 이벤트 UI가 생성될 캔버스
+    [SerializeField] private GameObject choiceButtonPrefab; // 선택지 버튼 프리팹
+    
+    private GameObject currentEventUI; // 현재 생성된 이벤트 UI
+    
+    /// <summary>
+    /// 이벤트 라운드 시작 - 직접 랜덤 이벤트 선택 및 실행
+    /// </summary>
+    private void OpenEventRound()
+    {
+        Debug.Log("이벤트 라운드 시작");
+        
+        // 사용 가능한 이벤트 목록 가져오기
+        var availableEvents = GetAvailableEventCandidates();
+        
+        if (availableEvents.Count == 0)
+        {
+            Debug.LogWarning("사용 가능한 이벤트가 없습니다. 다음 라운드로 진행합니다.");
+            AdvanceToNextRound();
+            return;
+        }
+        
+        // 랜덤으로 이벤트 선택
+        int randomIndex = UnityEngine.Random.Range(0, availableEvents.Count);
+        StageEventCandidate selectedEvent = availableEvents[randomIndex];
+        
+        Debug.Log($"선택된 이벤트: {selectedEvent.displayName}");
+        
+        // 이벤트 시작 및 UI 생성
+        TriggerEvent(selectedEvent);
+    }
+    
+    /// <summary>
+    /// 특정 이벤트 실행
+    /// </summary>
+    public void TriggerEvent(StageEventCandidate eventCandidate)
+    {
+        if (eventCandidate == null)
+        {
+            Debug.LogError("이벤트가 null입니다.");
+            return;
+        }
+
+        if (eventCanvas == null)
+        {
+            Debug.LogError("EventCanvas가 설정되지 않았습니다.");
+            return;
+        }
+
+        if (choiceButtonPrefab == null)
+        {
+            Debug.LogError("ChoiceButtonPrefab이 설정되지 않았습니다.");
+            return;
+        }
+
+        // 기존 이벤트 UI 정리
+        if (currentEventUI != null)
+        {
+            Destroy(currentEventUI);
+        }
+
+        // 이벤트 시작 및 UI 생성
+        currentEventUI = eventCandidate.StartEvent(eventCanvas, choiceButtonPrefab);
+        
+        if (currentEventUI != null)
+        {
+            Debug.Log($"이벤트 UI 생성 완료: {eventCandidate.displayName}");
+        }
+    }
+    
+    /// <summary>
+    /// 이벤트 완료 시 호출 (StageEventCandidate에서 호출)
+    /// </summary>
+    public void OnEventCompleted(StageEventCandidate completedEvent)
+    {
+        Debug.Log($"이벤트 완료: {completedEvent.displayName}");
+        
+        // 이벤트 활성화 처리
+        ActivateEvent(completedEvent);
+        
+        // 현재 이벤트 UI 제거
+        if (currentEventUI != null)
+        {
+            Destroy(currentEventUI);
+            currentEventUI = null;
+        }
+        
+        // 다음 라운드로 진행
+        AdvanceToNextRound();
+    }
+    #endregion
+
+    #region 상점 라운드
+    /// <summary>
+    /// 상점 라운드 시작
+    /// </summary>
+    private void OpenShopRound()
+    {
+        Debug.Log("상점 라운드 시작");
+        
+        // 상점 UI 열기 로직
+        // ShopManager shopManager = FindObjectOfType<ShopManager>();
+        // if (shopManager != null)
+        // {
+        //     shopManager.OpenShop();
+        // }
+    }
+    #endregion
+
+    #region 휴식 라운드
+    /// <summary>
+    /// 휴식 라운드 시작
+    /// </summary>
+    private void OpenRestRound()
+    {
+        Debug.Log("휴식 라운드 시작");
+        
+        // 휴식 효과 적용 (체력 회복 등)
+        // PlayerStats.instance.RestoreHealth(50);
+        // PlayerStats.instance.RestoreMana(30);
+        
+        Debug.Log("휴식을 취했습니다. 체력과 마나가 회복되었습니다.");
+        
+        // 다음 라운드로 자동 진행하거나 UI 표시
+        AdvanceToNextRound();
+    }
+    
+    /// <summary>
+    /// 다음 라운드로 진행
+    /// </summary>
+    private void AdvanceToNextRound()
+    {
+        currentRound++;
+        if (currentRound < maxRounds)
+        {
+            ShowRoundCandidates();
+        }
+        else
+        {
+            Debug.Log("모든 라운드 완료!");
+            // 스테이지 완료 처리
+        }
+    }
+    #endregion
+
     // 이벤트 사용 가능 여부 검사
     public bool IsEventAvailable(StageEventCandidate ev)
     {
@@ -358,11 +521,11 @@ public partial class StageRoundManager : MonoBehaviour
         if (ev == null) return;
         activatedEventIds.Add(ev.id);
         // unlock 처리: unlockEventIds에 있는 ID들을 활성화 표시하거나 다른 로직을 수행
-        foreach (var id in ev.unlockEventIds)
-        {
-            // 단순히 활성화 표시(원하면 별도 논리로 변경)
-            activatedEventIds.Add(id);
-        }
+        // foreach (var id in ev.unlockEventIds)
+        // {
+        //     // 단순히 활성화 표시(원하면 별도 논리로 변경)
+        //     activatedEventIds.Add(id);
+        // }
         SaveActivatedEvents();
     }
 

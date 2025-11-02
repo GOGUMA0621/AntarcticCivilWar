@@ -201,6 +201,27 @@ public class UnitBench : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 벤치에 빈 슬롯이 있는지 확인
+    /// </summary>
+    public bool HasEmptySlot()
+    {
+        return bench.Any(d => d.unitInDugout == null);
+    }
+
+    /// <summary>
+    /// 새 유닛을 추가할 수 있는지 확인 (빈 슬롯이 있거나 레벨업 가능한 경우)
+    /// </summary>
+    public bool CanAddUnit(string unitName, int unitLevel = 1)
+    {
+        // 빈 슬롯이 있으면 무조건 추가 가능
+        if (HasEmptySlot())
+            return true;
+        
+        // 빈 슬롯이 없으면 레벨업 가능한지 확인
+        return CanLevelUpWithNewUnit(unitName, unitLevel);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
