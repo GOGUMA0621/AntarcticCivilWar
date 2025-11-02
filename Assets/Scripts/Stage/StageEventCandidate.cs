@@ -340,9 +340,6 @@ public class StageEventCandidate : MonoBehaviour
     /// </summary>
     public void OnChoiceSelected(int choiceIndex)
     {
-        Debug.Log($"=== OnChoiceSelected 호출됨! ===");
-        Debug.Log($"선택된 인덱스: {choiceIndex}");
-        
         // 선택지 처리 (보상 적용)
         SelectChoice(choiceIndex);
         
@@ -354,8 +351,6 @@ public class StageEventCandidate : MonoBehaviour
         
         // "종료" 버튼 생성
         CreateExitButton();
-        
-        Debug.Log("선택지 결과 표시 완료, 종료 버튼 생성됨");
     }
     
     /// <summary>
@@ -368,12 +363,6 @@ public class StageEventCandidate : MonoBehaviour
             // 결과 텍스트로 이벤트 설명을 표시
             resultText.text = eventDescription;
             resultText.gameObject.SetActive(true);
-            
-            Debug.Log($"결과 텍스트 표시: {eventDescription}");
-        }
-        else
-        {
-            Debug.LogWarning("ResultText 컴포넌트가 할당되지 않았습니다. Inspector에서 할당하세요.");
         }
     }
     
@@ -401,19 +390,12 @@ public class StageEventCandidate : MonoBehaviour
                 roundManager.ChoiceButtonPrefab, 
                 choiceContainer, 
                 (exitIndex) => {
-                    Debug.Log("종료 버튼 클릭됨");
                     OnEventExit();
                 }
             );
             
             // 원래 choices 복원
             choices = originalChoices;
-            
-            Debug.Log("종료 버튼 생성 완료");
-        }
-        else
-        {
-            Debug.LogError("StageRoundManager 또는 ChoiceContainer를 찾을 수 없습니다.");
         }
     }
     
@@ -422,18 +404,11 @@ public class StageEventCandidate : MonoBehaviour
     /// </summary>
     private void OnEventExit()
     {
-        Debug.Log("=== 이벤트 종료 시작 ===");
-        
         // StageRoundManager에게 이벤트 완료 알림
         StageRoundManager roundManager = FindObjectOfType<StageRoundManager>();
         if (roundManager != null)
         {
-            Debug.Log("StageRoundManager에게 이벤트 완료 알림 전송");
             roundManager.OnEventCompleted(this);
-        }
-        else
-        {
-            Debug.LogError("StageRoundManager를 찾을 수 없습니다!");
         }
     }
 
@@ -921,7 +896,6 @@ public class StageEventCandidate : MonoBehaviour
     public virtual void GenerateChoiceUI(GameObject buttonPrefab, Transform parentTransform)
     {
         CreateChoiceButtons(buttonPrefab, parentTransform, (choiceIndex) => {
-            Debug.Log($"GenerateChoiceUI 콜백 호출됨 - 선택지 {choiceIndex}");
             OnChoiceSelected(choiceIndex);  // SelectChoice + 이벤트 완료 처리 포함
         });
     }

@@ -11,9 +11,25 @@ public class BlackMarketSlot : MonoBehaviour
     [SerializeField] private Button buyButton;
 
     private ItemDB currentItem;
+    private BlackMarketManager blackMarketManager;
+
+    /// <summary>
+    /// BlackMarketManager 참조 설정
+    /// </summary>
+    /// <param name="manager">BlackMarketManager 인스턴스</param>
+    public void SetBlackMarketManager(BlackMarketManager manager)
+    {
+        blackMarketManager = manager;
+    }
 
     public void SetItem(ItemDB item)
     {
+        if (item == null)
+        {
+            Debug.LogError("SetItem에 null 아이템이 전달되었습니다.");
+            return;
+        }
+
         Debug.Log(item.name);
         currentItem = item;
 
@@ -27,10 +43,23 @@ public class BlackMarketSlot : MonoBehaviour
             slotFrame.sprite = raritySprite;
             //itemFrame.sprite = itemFrameSprite;
         }
+        else
+        {
+            Debug.LogWarning($"아이템 스프라이트를 로드할 수 없습니다: {item.name}, 레어도: {item.rarity}");
+        }
 
         itemPrice.text = item.price.ToString();
         buyButton.onClick.RemoveAllListeners();
-        buyButton.onClick.AddListener(() => ItemBuyUI.Instance.Open(currentItem));
+        buyButton.onClick.AddListener(() => {
+            if (blackMarketManager != null)
+            {
+                blackMarketManager.OpenItemBuyUI(currentItem);
+            }
+            else
+            {
+                Debug.LogError("BlackMarketManager가 설정되지 않았습니다.");
+            }
+        });
     }
 
     public void ClearSlot()

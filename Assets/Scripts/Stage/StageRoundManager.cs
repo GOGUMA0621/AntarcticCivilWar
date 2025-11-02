@@ -616,6 +616,7 @@ public partial class StageRoundManager : MonoBehaviour
         if (blackMarketManager != null)
         {
             Debug.Log("블랙 마켓 매니저 발견, 상점 열기");
+            blackMarketManager.InitializeMarket();
             blackMarketManager.OpenShop();
         }
         else

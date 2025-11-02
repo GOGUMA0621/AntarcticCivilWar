@@ -12,6 +12,7 @@ public class BlackMarketManager : MonoBehaviour
     [SerializeField] private BlackMarketSlot[] shopSlots;
     [SerializeField] private Button rerollButton;
     [SerializeField] private Button closeButton;
+    [SerializeField] private GameObject itemBuyUIPrefab; // ItemBuyUI ÇÁ¸®ÆÕ
     //[SerializeField] private TextMeshProUGUI currencyText;
 
     private List<ItemDB> allItems = new();
@@ -21,10 +22,21 @@ public class BlackMarketManager : MonoBehaviour
     private void Start()
     {
         CloseShop();
+        InitializeMarket();
+        Debug.Log($"???? ???? {allItems.Count}");
+    }
+
+    public void InitializeMarket()
+    {
         rerollButton.onClick.AddListener(RerollShop);
         closeButton.onClick.AddListener(CloseShop);
         allItems = FirebaseManager.items.Values.ToList();
-        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ {allItems.Count}");
+        
+        // °¢ ½½·Ô¿¡ ¸Å´ÏÀú ÂüÁ¶ Àü´Ş
+        foreach (var slot in shopSlots)
+        {
+            slot.SetBlackMarketManager(this);
+        }
     }
 
     public void OpenShop()
@@ -37,7 +49,7 @@ public class BlackMarketManager : MonoBehaviour
         UpdateUI();
         blackMarketUI.SetActive(true);
         
-        // ë¸”ë™ ë§ˆì¼“ì´ ì—´ë¦´ ë•Œ ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ìˆ¨ê¸°ê¸°
+        // ºí·¢ ¸¶ÄÏÀÌ ¿­¸± ¶§ ±âÁ¸ À¯´Ö »óÁ¡ ¹öÆ° ¼û±â±â
         HideUnitMarketButton();
     }
 
@@ -48,16 +60,16 @@ public class BlackMarketManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ ï¿½Â±ï¿½
+    /// ?????? ??????? ?????? ?¡¾?
     /// </summary>
     private void GenerateRandomItems()
     {
         currentItems.Clear();
 
-        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // ?????? ???? ???????? ??????? ????
         var candidates = allItems.Except(previousItems).OrderBy(x => Random.value).Take(3).ToList();
 
-        // ï¿½Õ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ßºï¿½ È®ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // ??? ???? ?????? ??? ?????? ????
         if (candidates.Count < 3)
         {
             var fallback = allItems.OrderBy(x => Random.value).Take(3 - candidates.Count);
@@ -85,12 +97,12 @@ public class BlackMarketManager : MonoBehaviour
     {
         blackMarketUI.SetActive(false);
         
-        // ë¸”ë™ ë§ˆì¼“ì´ ë‹«í ë•Œ ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ë‹¤ì‹œ í‘œì‹œ
+        // ºí·¢ ¸¶ÄÏÀÌ ´İÈú ¶§ ±âÁ¸ À¯´Ö »óÁ¡ ¹öÆ° ´Ù½Ã Ç¥½Ã
         ShowUnitMarketButton();
     }
     
     /// <summary>
-    /// ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ìˆ¨ê¸°ê¸°
+    /// ±âÁ¸ À¯´Ö »óÁ¡ ¹öÆ° ¼û±â±â
     /// </summary>
     private void HideUnitMarketButton()
     {
@@ -98,16 +110,16 @@ public class BlackMarketManager : MonoBehaviour
         if (unitMarketManager != null)
         {
             unitMarketManager.SetToggleButtonVisibility(false);
-            Debug.Log("ìœ ë‹› ìƒì  ë²„íŠ¼ ìˆ¨ê¹€");
+            Debug.Log("À¯´Ö »óÁ¡ ¹öÆ° ¼û±è");
         }
         else
         {
-            Debug.LogWarning("UnitMarketManagerë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            Debug.LogWarning("UnitMarketManager¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
         }
     }
     
     /// <summary>
-    /// ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ë‹¤ì‹œ í‘œì‹œ
+    /// ±âÁ¸ À¯´Ö »óÁ¡ ¹öÆ° ´Ù½Ã Ç¥½Ã
     /// </summary>
     private void ShowUnitMarketButton()
     {
@@ -115,11 +127,65 @@ public class BlackMarketManager : MonoBehaviour
         if (unitMarketManager != null)
         {
             unitMarketManager.SetToggleButtonVisibility(true);
-            Debug.Log("ìœ ë‹› ìƒì  ë²„íŠ¼ ë‹¤ì‹œ í‘œì‹œ");
+            Debug.Log("À¯´Ö »óÁ¡ ¹öÆ° ´Ù½Ã Ç¥½Ã");
         }
         else
         {
-            Debug.LogWarning("UnitMarketManagerë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            Debug.LogWarning("UnitMarketManager¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+        }
+    }
+    
+    /// <summary>
+    /// ItemBuyUI ÇÁ¸®ÆÕÀ» »ı¼ºÇÏ¿© ¾ÆÀÌÅÛ ±¸¸Å UI ¿­±â
+    /// </summary>
+    /// <param name="item">±¸¸ÅÇÒ ¾ÆÀÌÅÛ</param>
+    public void OpenItemBuyUI(ItemDB item)
+    {
+        if (item == null)
+        {
+            Debug.LogError("±¸¸ÅÇÒ ¾ÆÀÌÅÛÀÌ nullÀÔ´Ï´Ù.");
+            return;
+        }
+
+        if (itemBuyUIPrefab == null)
+        {
+            Debug.LogError("ItemBuyUI ÇÁ¸®ÆÕÀÌ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù. Inspector¿¡¼­ ÇÒ´çÇÏ¼¼¿ä.");
+            return;
+        }
+
+        // ¸ŞÀÎ Äµ¹ö½º¸¦ Ã£¾Æ¼­ ±× ÇÏÀ§¿¡ »ı¼º
+        Canvas mainCanvas = FindObjectOfType<Canvas>();
+        if (mainCanvas == null)
+        {
+            Debug.LogError("¸ŞÀÎ Äµ¹ö½º¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            return;
+        }
+
+        // ItemBuyUI ÇÁ¸®ÆÕ ÀÎ½ºÅÏ½ºÈ­
+        GameObject itemBuyUIInstance = Instantiate(itemBuyUIPrefab, mainCanvas.transform);
+        ItemBuyUI itemBuyUI = itemBuyUIInstance.GetComponent<ItemBuyUI>();
+
+        if (itemBuyUI != null)
+        {
+            // BlackMarketUIÀÇ CanvasGroup Ã£¾Æ¼­ ¼³Á¤
+            CanvasGroup blackMarketCanvasGroup = blackMarketUI.GetComponent<CanvasGroup>();
+            if (blackMarketCanvasGroup != null)
+            {
+                itemBuyUI.SetBlackMarketUI(blackMarketCanvasGroup);
+            }
+            else
+            {
+                Debug.LogWarning("BlackMarketUI¿¡ CanvasGroup ÄÄÆ÷³ÍÆ®°¡ ¾ø½À´Ï´Ù.");
+            }
+            
+            // ¾ÆÀÌÅÛ Á¤º¸·Î UI ¿­±â
+            itemBuyUI.Open(item);
+            Debug.Log($"ItemBuyUI »ı¼º ¿Ï·á: {item.name_kr}");
+        }
+        else
+        {
+            Debug.LogError("»ı¼ºµÈ ÇÁ¸®ÆÕ¿¡ ItemBuyUI ÄÄÆ÷³ÍÆ®°¡ ¾ø½À´Ï´Ù.");
+            Destroy(itemBuyUIInstance);
         }
     }
 }
