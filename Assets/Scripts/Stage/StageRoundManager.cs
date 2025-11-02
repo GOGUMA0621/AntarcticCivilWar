@@ -102,8 +102,8 @@ public partial class StageRoundManager : MonoBehaviour
     [SerializeField] private List<EnemyPool> zonePools = new List<EnemyPool>();
 
     [Header("이벤트 라운드")]
-    [Tooltip("에디터에서 이벤트 ScriptableObject들을 할당하세요 (StageEventCandidate)")]
-    [SerializeField] private List<StageEventCandidate> eventCandidates = new List<StageEventCandidate>();
+    [Tooltip("에디터에서 이벤트 프리팹들을 할당하세요 (StageEventCandidate가 붙은 GameObject)")]
+    [SerializeField] private List<GameObject> eventCandidatePrefabs = new List<GameObject>();
 
     // 전체 라운드 후보 리스트: 각 라운드(인덱스)마다 후보 리스트를 보관
     public List<List<RoundCandidate>> roundCandidatesList = new List<List<RoundCandidate>>();
@@ -120,20 +120,26 @@ public partial class StageRoundManager : MonoBehaviour
 
     void Start()
     {
-        // 시작 시 모든 라운드 후보 생성 후 첫 화면 세팅
+        // 시작 시 모든 라운드 후보 생성
         GenerateAllRoundCandidates();
         map.SetActive(false); // 기본적으로 맵 UI 숨김
-        ShowRoundCandidates();
+        
+        Debug.Log("라운드 시스템 초기화 완료. 맵 버튼을 눌러서 첫 라운드를 시작하세요.");
+        // ShowRoundCandidates() 제거 - 사용자가 수동으로 맵을 열어야 함
     }
 
     private void Awake()
     {
         LoadActivatedEvents();
         // 초기 activeByDefault 적용
-        foreach (var ev in eventCandidates)
+        foreach (var eventPrefab in eventCandidatePrefabs)
         {
-            if (ev != null && ev.activeByDefault)
-                activatedEventIds.Add(ev.id);
+            if (eventPrefab != null)
+            {
+                var eventCandidate = eventPrefab.GetComponent<StageEventCandidate>();
+                if (eventCandidate != null && eventCandidate.activeByDefault)
+                    activatedEventIds.Add(eventCandidate.id);
+            }
         }
     }
 
@@ -292,6 +298,22 @@ public partial class StageRoundManager : MonoBehaviour
     {
         map.SetActive(false);
     }
+
+    /// <summary>
+    /// 맵을 수동으로 여는 public 메서드 (사용자가 버튼을 눌러서 호출)
+    /// </summary>
+    public void OpenMap()
+    {
+        if (currentRound >= 0 && currentRound < roundCandidatesList.Count)
+        {
+            Debug.Log($"맵 열기: {currentRound + 1}라운드 선택지 표시");
+            ShowRoundCandidates();
+        }
+        else
+        {
+            Debug.LogWarning("표시할 라운드가 없습니다.");
+        }
+    }
     #region  전투 라운드
     // 전투 맵을 열고 적을 로드하는 로직
     private void OpenBattleMap(RoundCandidate rc, int roundIndex, int candidateIndex)
@@ -353,11 +375,48 @@ public partial class StageRoundManager : MonoBehaviour
     #endregion
 
     #region 이벤트 라운드
+    /*
+     * 이벤트 시스템 사용법 (프리팹 기반):
+     * 
+     * === 이벤트 프리팹 설정 ===
+     * 1. GameObject를 생성하고 StageEventCandidate 컴포넌트 추가
+     * 2. 각종 이벤트 설정 (id, displayName, choices 등) 구성
+     * 3. 프리팹으로 저장 후 eventCandidatePrefabs 리스트에 추가
+     * 
+     * === 실행 방식 ===
+     * - OpenEventRound(): 랜덤 이벤트 자동 선택 및 실행
+     * - TriggerEventById(string id): 특정 ID 이벤트 직접 실행
+     * - TriggerEventFromPrefab(GameObject prefab): 프리팹으로 직접 실행
+     * 
+     * === 이벤트 계층 구조 ===
+     * EventCanvas (캔버스)
+     *  └── EventInstance (인스턴스화된 이벤트 프리팹 - 후보자 역할)
+     *       └── EventUI (이벤트 UI 프리팹)
+     *            └── ChoiceButtons (선택지 버튼들)
+     * 
+     * === 이벤트 생명주기 ===
+     * 1. 프리팹 → Canvas 하위에 인스턴스화 (후보자 생성)
+     * 2. 후보자 → UI 생성 (선택지들 포함)
+     * 3. 플레이어 선택 → 결과 적용
+     * 4. OnEventCompleted 호출 → 모든 인스턴스 정리 → 다음 라운드
+     * 
+     * === 디버깅 기능 ===
+     * - GetCurrentEventStatus(): 현재 이벤트 상태 확인
+     * - ForceEndCurrentEvent(): 강제 이벤트 종료
+     */
+    
     [Header("이벤트 UI")]
     [SerializeField] private Canvas eventCanvas; // 이벤트 UI가 생성될 캔버스
     [SerializeField] private GameObject choiceButtonPrefab; // 선택지 버튼 프리팹
     
+    /// <summary>
+    /// 선택지 버튼 프리팹에 대한 public 접근자
+    /// </summary>
+    public GameObject ChoiceButtonPrefab => choiceButtonPrefab;
+    
     private GameObject currentEventUI; // 현재 생성된 이벤트 UI
+    private GameObject currentEventInstance; // 현재 인스턴스화된 이벤트 후보자 (부모 역할)
+    private StageEventCandidate currentEventCandidate; // 현재 활성 이벤트 후보자 컴포넌트
     
     /// <summary>
     /// 이벤트 라운드 시작 - 직접 랜덤 이벤트 선택 및 실행
@@ -382,18 +441,41 @@ public partial class StageRoundManager : MonoBehaviour
         
         Debug.Log($"선택된 이벤트: {selectedEvent.displayName}");
         
-        // 이벤트 시작 및 UI 생성
-        TriggerEvent(selectedEvent);
+        // 이벤트 프리팹을 인스턴스화하여 시작
+        TriggerEventFromCandidate(selectedEvent);
     }
     
     /// <summary>
-    /// 특정 이벤트 실행
+    /// 이벤트 후보자(프리팹에서 가져온 컴포넌트)로부터 이벤트 실행
     /// </summary>
-    public void TriggerEvent(StageEventCandidate eventCandidate)
+    public void TriggerEventFromCandidate(StageEventCandidate eventCandidate)
     {
         if (eventCandidate == null)
         {
-            Debug.LogError("이벤트가 null입니다.");
+            Debug.LogError("이벤트 후보가 null입니다.");
+            return;
+        }
+
+        // 해당 후보의 프리팹을 찾아서 인스턴스화
+        GameObject eventPrefab = FindEventPrefabByCandidate(eventCandidate);
+        if (eventPrefab == null)
+        {
+            Debug.LogError($"이벤트 후보 {eventCandidate.displayName}에 해당하는 프리팹을 찾을 수 없습니다.");
+            return;
+        }
+
+        // 프리팹을 인스턴스화하여 이벤트 실행
+        TriggerEventFromPrefab(eventPrefab);
+    }
+
+    /// <summary>
+    /// 이벤트 프리팹으로부터 직접 이벤트 실행
+    /// </summary>
+    public void TriggerEventFromPrefab(GameObject eventPrefab)
+    {
+        if (eventPrefab == null)
+        {
+            Debug.LogError("이벤트 프리팹이 null입니다.");
             return;
         }
 
@@ -409,19 +491,76 @@ public partial class StageRoundManager : MonoBehaviour
             return;
         }
 
-        // 기존 이벤트 UI 정리
-        if (currentEventUI != null)
+        // 기존 이벤트 관련 오브젝트들 정리
+        CleanupCurrentEvent();
+
+        // 이벤트 프리팹을 캔버스에 인스턴스화 (프리팹에 이미 UI가 포함되어 있음)
+        currentEventInstance = Instantiate(eventPrefab, eventCanvas.transform);
+        
+        // 인스턴스화된 객체에서 StageEventCandidate 컴포넌트 가져오기
+        currentEventCandidate = currentEventInstance.GetComponent<StageEventCandidate>();
+        
+        if (currentEventCandidate == null)
         {
-            Destroy(currentEventUI);
+            Debug.LogError($"이벤트 프리팹 {eventPrefab.name}에 StageEventCandidate 컴포넌트가 없습니다.");
+            CleanupCurrentEvent();
+            return;
         }
 
-        // 이벤트 시작 및 UI 생성
-        currentEventUI = eventCandidate.StartEvent(eventCanvas, choiceButtonPrefab);
+        Debug.Log($"이벤트 프리팹 인스턴스 생성 완료: {eventPrefab.name}");
+        Debug.Log($"구조: {eventCanvas.name} > {currentEventInstance.name} (프리팹에 UI 포함)");
         
-        if (currentEventUI != null)
+        // 프리팹에 UI가 포함되어 있으므로 SerializedField로 할당된 선택지 컨테이너 사용
+        if (choiceButtonPrefab != null)
         {
-            Debug.Log($"이벤트 UI 생성 완료: {eventCandidate.displayName}");
+            Debug.Log("선택지 버튼 생성 시작...");
+            
+            // SerializedField로 할당된 선택지 컨테이너 확인
+            if (currentEventCandidate.ChoiceContainer != null)
+            {
+                Debug.Log($"SerializedField 선택지 컨테이너 사용: {currentEventCandidate.ChoiceContainer.name}");
+                currentEventCandidate.GenerateChoiceUI(choiceButtonPrefab, currentEventCandidate.ChoiceContainer);
+                Debug.Log("선택지 버튼 생성 완료");
+            }
+            else
+            {
+                Debug.LogError("선택지 컨테이너가 할당되지 않았습니다. StageEventCandidate의 choiceContainer를 Inspector에서 할당하세요.");
+            }
         }
+        else
+        {
+            Debug.LogWarning("ChoiceButtonPrefab이 null입니다. 선택지 버튼을 생성할 수 없습니다.");
+        }
+        
+        // UI 참조는 인스턴스 자체로 설정
+        currentEventUI = currentEventInstance;
+    }
+
+    /// <summary>
+    /// 특정 이벤트 후보에 해당하는 프리팹 찾기
+    /// </summary>
+    private GameObject FindEventPrefabByCandidate(StageEventCandidate targetCandidate)
+    {
+        foreach (var eventPrefab in eventCandidatePrefabs)
+        {
+            if (eventPrefab != null)
+            {
+                var candidate = eventPrefab.GetComponent<StageEventCandidate>();
+                if (candidate != null && candidate.id == targetCandidate.id)
+                {
+                    return eventPrefab;
+                }
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 특정 이벤트 실행 (기존 호환성용 - 직접 컴포넌트 사용)
+    /// </summary>
+    public void TriggerEvent(StageEventCandidate eventCandidate)
+    {
+        TriggerEventFromCandidate(eventCandidate);
     }
     
     /// <summary>
@@ -434,32 +573,55 @@ public partial class StageRoundManager : MonoBehaviour
         // 이벤트 활성화 처리
         ActivateEvent(completedEvent);
         
-        // 현재 이벤트 UI 제거
-        if (currentEventUI != null)
-        {
-            Destroy(currentEventUI);
-            currentEventUI = null;
-        }
+        // 현재 이벤트 관련 모든 오브젝트들 정리
+        CleanupCurrentEvent();
         
         // 다음 라운드로 진행
         AdvanceToNextRound();
+    }
+
+    /// <summary>
+    /// 현재 활성 이벤트와 관련된 모든 오브젝트들을 정리
+    /// </summary>
+    private void CleanupCurrentEvent()
+    {
+        // 이벤트 인스턴스 정리 (프리팹에 포함된 UI도 함께 정리됨)
+        if (currentEventInstance != null)
+        {
+            Debug.Log($"이벤트 인스턴스 정리 중: {currentEventInstance.name}");
+            Destroy(currentEventInstance);
+            currentEventInstance = null;
+        }
+        
+        // 이벤트 후보자 컴포넌트 참조 정리
+        currentEventCandidate = null;
+        
+        // UI 참조도 정리 (별도 생성하지 않으므로 null로 설정)
+        currentEventUI = null;
+        
+        Debug.Log("현재 이벤트 정리 완료");
     }
     #endregion
 
     #region 상점 라운드
     /// <summary>
-    /// 상점 라운드 시작
+    /// 상점 라운드 시작 - 블랙 마켓 열기
     /// </summary>
     private void OpenShopRound()
     {
-        Debug.Log("상점 라운드 시작");
+        Debug.Log("상점 라운드 시작 - 블랙 마켓 열기");
         
-        // 상점 UI 열기 로직
-        // ShopManager shopManager = FindObjectOfType<ShopManager>();
-        // if (shopManager != null)
-        // {
-        //     shopManager.OpenShop();
-        // }
+        // 블랙 마켓 매니저 찾기 및 상점 열기
+        BlackMarketManager blackMarketManager = FindObjectOfType<BlackMarketManager>();
+        if (blackMarketManager != null)
+        {
+            Debug.Log("블랙 마켓 매니저 발견, 상점 열기");
+            blackMarketManager.OpenShop();
+        }
+        else
+        {
+            Debug.LogError("BlackMarketManager를 찾을 수 없습니다! 씬에 BlackMarketManager가 있는지 확인하세요.");
+        }
     }
     #endregion
 
@@ -476,8 +638,9 @@ public partial class StageRoundManager : MonoBehaviour
         // PlayerStats.instance.RestoreMana(30);
         
         Debug.Log("휴식을 취했습니다. 체력과 마나가 회복되었습니다.");
+        Debug.Log("맵 버튼을 눌러서 다음 라운드로 진행하세요.");
         
-        // 다음 라운드로 자동 진행하거나 UI 표시
+        // 자동 진행 제거 - 사용자가 수동으로 맵을 열어야 함
         AdvanceToNextRound();
     }
     
@@ -489,7 +652,9 @@ public partial class StageRoundManager : MonoBehaviour
         currentRound++;
         if (currentRound < maxRounds)
         {
-            ShowRoundCandidates();
+            Debug.Log($"다음 라운드로 진행: {currentRound + 1}라운드");
+            Debug.Log("맵 버튼을 눌러서 다음 라운드 선택지를 확인하세요.");
+            // ShowRoundCandidates() 호출 제거 - 사용자가 수동으로 맵을 열어야 함
         }
         else
         {
@@ -529,13 +694,20 @@ public partial class StageRoundManager : MonoBehaviour
         SaveActivatedEvents();
     }
 
-    // 현재 할당된 eventCandidates 중 사용 가능한 것 반환
+    // 현재 할당된 eventCandidatePrefabs 중 사용 가능한 것 반환
     public List<StageEventCandidate> GetAvailableEventCandidates()
     {
         var list = new List<StageEventCandidate>();
-        foreach (var ev in eventCandidates)
+        foreach (var eventPrefab in eventCandidatePrefabs)
         {
-            if (IsEventAvailable(ev)) list.Add(ev);
+            if (eventPrefab != null)
+            {
+                var eventCandidate = eventPrefab.GetComponent<StageEventCandidate>();
+                if (eventCandidate != null && IsEventAvailable(eventCandidate))
+                {
+                    list.Add(eventCandidate);
+                }
+            }
         }
         return list;
     }
@@ -574,6 +746,108 @@ public partial class StageRoundManager : MonoBehaviour
             Debug.LogWarning("LoadActivatedEvents 실패: " + ex.Message);
         }
     }
+
+    /// <summary>
+    /// 특정 ID의 이벤트 프리팹으로 직접 이벤트 실행
+    /// </summary>
+    /// <param name="eventId">실행할 이벤트 ID</param>
+    public void TriggerEventById(string eventId)
+    {
+        GameObject eventPrefab = FindEventPrefabById(eventId);
+        if (eventPrefab != null)
+        {
+            TriggerEventFromPrefab(eventPrefab);
+        }
+        else
+        {
+            Debug.LogError($"ID '{eventId}'에 해당하는 이벤트 프리팹을 찾을 수 없습니다.");
+        }
+    }
+
+    /// <summary>
+    /// 특정 ID의 이벤트 프리팹 찾기
+    /// </summary>
+    /// <param name="eventId">찾을 이벤트 ID</param>
+    /// <returns>해당하는 프리팹, 없으면 null</returns>
+    private GameObject FindEventPrefabById(string eventId)
+    {
+        foreach (var eventPrefab in eventCandidatePrefabs)
+        {
+            if (eventPrefab != null)
+            {
+                var candidate = eventPrefab.GetComponent<StageEventCandidate>();
+                if (candidate != null && candidate.id == eventId)
+                {
+                    return eventPrefab;
+                }
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 이벤트 프리팹 리스트에서 사용 가능한 이벤트 개수 반환
+    /// </summary>
+    /// <returns>사용 가능한 이벤트 개수</returns>
+    public int GetAvailableEventCount()
+    {
+        int count = 0;
+        foreach (var eventPrefab in eventCandidatePrefabs)
+        {
+            if (eventPrefab != null)
+            {
+                var candidate = eventPrefab.GetComponent<StageEventCandidate>();
+                if (candidate != null && IsEventAvailable(candidate))
+                {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// 현재 활성 이벤트 상태 반환 (디버깅용)
+    /// </summary>
+    /// <returns>현재 이벤트 상태 정보</returns>
+    public string GetCurrentEventStatus()
+    {
+        if (currentEventCandidate == null && currentEventInstance == null)
+        {
+            return "현재 활성 이벤트 없음";
+        }
+
+        string status = "=== 현재 이벤트 상태 ===\n";
+        
+        if (currentEventCandidate != null)
+            status += $"이벤트 후보자: {currentEventCandidate.displayName} (ID: {currentEventCandidate.id})\n";
+        
+        if (currentEventInstance != null)
+            status += $"이벤트 인스턴스: {currentEventInstance.name} (프리팹에 UI 포함)\n";
+            
+        status += $"구조: EventCanvas > EventInstance (프리팹 UI 포함)\n";
+        
+        return status;
+    }
+
+    /// <summary>
+    /// 강제로 현재 이벤트 종료 (디버깅/테스트용)
+    /// </summary>
+    public void ForceEndCurrentEvent()
+    {
+        if (currentEventCandidate != null)
+        {
+            Debug.Log($"강제 이벤트 종료: {currentEventCandidate.displayName}");
+            OnEventCompleted(currentEventCandidate);
+        }
+        else
+        {
+            Debug.Log("종료할 활성 이벤트가 없습니다.");
+            CleanupCurrentEvent();
+        }
+    }
+
+
 
     [Serializable]
     private class StringListWrapper

@@ -137,8 +137,14 @@ public class StageEventCandidate : MonoBehaviour
     [Header("UI 컴포넌트 직접 지정 (TextMeshPro만 사용)")]
     [SerializeField] private TMPro.TextMeshProUGUI titleText;            // 제목 텍스트 (TextMeshPro)
     [SerializeField] private TMPro.TextMeshProUGUI descriptionText;      // 설명 텍스트 (TextMeshPro)
+    [SerializeField] private TMPro.TextMeshProUGUI resultText;           // 결과 텍스트 (선택 후 표시)
     [SerializeField] private UnityEngine.UI.Image eventImageUI;          // 이벤트 이미지 UI
     [SerializeField] private Transform choiceContainer;                  // 선택지 버튼들이 생성될 부모 컨테이너
+
+    /// <summary>
+    /// SerializedField로 할당된 선택지 컨테이너에 대한 접근자
+    /// </summary>
+    public Transform ChoiceContainer => choiceContainer;
 
     [Header("선택지들")]
     public List<EventChoice> choices = new List<EventChoice>();
@@ -153,15 +159,34 @@ public class StageEventCandidate : MonoBehaviour
     public bool activeByDefault = false;
 
     /// <summary>
-    /// 이벤트 시작 시 호출 - 직접 UI 생성
+    /// 이벤트 시작 시 호출 - 직접 UI 생성 (기존 호환성)
     /// </summary>
     /// <param name="eventCanvas">UI가 생성될 캔버스</param>
     /// <param name="choiceButtonPrefab">선택지 버튼 프리팹</param>
     /// <returns>생성된 이벤트 UI GameObject</returns>
     public virtual GameObject StartEvent(Canvas eventCanvas, GameObject choiceButtonPrefab)
     {
-        Debug.Log($"이벤트 시작: {displayName}");
-        Debug.Log($"선택지 {choices.Count}개 준비됨");
+        return StartEventWithParent(eventCanvas.transform, choiceButtonPrefab);
+    }
+
+    /// <summary>
+    /// 특정 부모 Transform 하위에 이벤트 UI 생성
+    /// </summary>
+    /// <param name="parentTransform">UI가 생성될 부모 Transform</param>
+    /// <param name="choiceButtonPrefab">선택지 버튼 프리팹</param>
+    /// <returns>생성된 이벤트 UI GameObject</returns>
+    public virtual GameObject StartEventWithParent(Transform parentTransform, GameObject choiceButtonPrefab)
+    {
+        Debug.Log($"=== 이벤트 시작 (부모 지정) ===");
+        Debug.Log($"이벤트명: {displayName} (ID: {id})");
+        Debug.Log($"선택지 개수: {choices.Count}");
+        Debug.Log($"부모 Transform: {parentTransform.name}");
+        
+        // 선택지 내용 로그
+        for (int i = 0; i < choices.Count; i++)
+        {
+            Debug.Log($"선택지 {i + 1}: '{choices[i].choiceText}'");
+        }
         
         // 이벤트 UI 프리팹 검증
         if (eventUIPrefab == null)
@@ -170,18 +195,25 @@ public class StageEventCandidate : MonoBehaviour
             return null;
         }
 
-        if (eventCanvas == null)
+        if (parentTransform == null)
         {
-            Debug.LogError("EventCanvas가 null입니다.");
+            Debug.LogError("Parent Transform이 null입니다.");
             return null;
         }
 
-        // 이벤트 UI 생성
-        GameObject eventUI = Instantiate(eventUIPrefab, eventCanvas.transform);
+        Debug.Log($"Parent: {parentTransform.name}");
+        Debug.Log($"ChoiceButtonPrefab: {choiceButtonPrefab.name}");
+        Debug.Log($"EventUIPrefab: {eventUIPrefab.name}");
+
+        // 이벤트 UI를 지정된 부모 하위에 생성
+        GameObject eventUI = Instantiate(eventUIPrefab, parentTransform);
+        eventUI.name = $"EventUI_{displayName}";
+        Debug.Log($"이벤트 UI 인스턴스 생성됨: {eventUI.name} (부모: {parentTransform.name})");
         
         // 선택지 UI 생성
         CreateEventChoiceUI(eventUI, choiceButtonPrefab);
         
+        Debug.Log($"=== 이벤트 시작 완료 ===");
         return eventUI;
     }
 
@@ -198,6 +230,9 @@ public class StageEventCandidate : MonoBehaviour
             return;
         }
 
+        Debug.Log($"이벤트 '{displayName}' UI 생성 시작");
+        Debug.Log($"EventUI: {eventUI.name}, ChoiceButtonPrefab: {choiceButtonPrefab.name}");
+
         // 이벤트 UI의 제목과 설명 설정
         SetupEventUITexts(eventUI);
 
@@ -205,8 +240,12 @@ public class StageEventCandidate : MonoBehaviour
         if (choiceContainer == null)
         {
             Debug.LogError($"선택지 컨테이너가 할당되지 않았습니다. Inspector에서 choiceContainer를 할당하세요.");
+            Debug.LogError($"현재 이벤트: {displayName} (ID: {id})");
             return;
         }
+
+        Debug.Log($"선택지 컨테이너 확인됨: {choiceContainer.name}");
+        Debug.Log($"선택지 개수: {choices.Count}");
 
         // 선택지 버튼 생성
         CreateChoiceButtons(choiceButtonPrefab, choiceContainer, OnChoiceSelected);
@@ -264,6 +303,13 @@ public class StageEventCandidate : MonoBehaviour
         {
             Debug.LogWarning($"설명 텍스트 컴포넌트가 할당되지 않았습니다. Inspector에서 descriptionText를 할당하세요.");
         }
+        
+        // 결과 텍스트는 처음에 숨김 처리
+        if (resultText != null)
+        {
+            resultText.gameObject.SetActive(false);
+            Debug.Log("결과 텍스트 초기화: 숨김 처리");
+        }
     }
 
     /// <summary>
@@ -290,22 +336,104 @@ public class StageEventCandidate : MonoBehaviour
 
 
     /// <summary>
-    /// 선택지 선택 콜백 (StageRoundManager에서 이벤트 완료 처리)
+    /// 선택지 선택 콜백 (결과 표시 후 종료 버튼 생성)
     /// </summary>
-    private void OnChoiceSelected(int choiceIndex)
+    public void OnChoiceSelected(int choiceIndex)
     {
-        // 선택지 처리
+        Debug.Log($"=== OnChoiceSelected 호출됨! ===");
+        Debug.Log($"선택된 인덱스: {choiceIndex}");
+        
+        // 선택지 처리 (보상 적용)
         SelectChoice(choiceIndex);
-
+        
+        // 결과 텍스트 표시
+        ShowEventResult();
+        
+        // 기존 선택지 버튼들 제거
+        ClearChoiceButtons(choiceContainer);
+        
+        // "종료" 버튼 생성
+        CreateExitButton();
+        
+        Debug.Log("선택지 결과 표시 완료, 종료 버튼 생성됨");
+    }
+    
+    /// <summary>
+    /// 이벤트 결과 텍스트 표시
+    /// </summary>
+    private void ShowEventResult()
+    {
+        if (resultText != null)
+        {
+            // 결과 텍스트로 이벤트 설명을 표시
+            resultText.text = eventDescription;
+            resultText.gameObject.SetActive(true);
+            
+            Debug.Log($"결과 텍스트 표시: {eventDescription}");
+        }
+        else
+        {
+            Debug.LogWarning("ResultText 컴포넌트가 할당되지 않았습니다. Inspector에서 할당하세요.");
+        }
+    }
+    
+    /// <summary>
+    /// "종료" 버튼 생성
+    /// </summary>
+    private void CreateExitButton()
+    {
+        // StageRoundManager에서 choiceButtonPrefab을 사용하여 종료 버튼 생성
+        StageRoundManager roundManager = FindObjectOfType<StageRoundManager>();
+        if (roundManager != null && choiceContainer != null)
+        {
+            // 종료용 가짜 선택지 생성
+            EventChoice exitChoice = new EventChoice
+            {
+                choiceText = "종료"
+            };
+            
+            // 현재 choices 리스트를 임시로 백업하고 종료 선택지로 교체
+            var originalChoices = choices;
+            choices = new System.Collections.Generic.List<EventChoice> { exitChoice };
+            
+            // 종료 버튼 생성
+            CreateChoiceButtons(
+                roundManager.ChoiceButtonPrefab, 
+                choiceContainer, 
+                (exitIndex) => {
+                    Debug.Log("종료 버튼 클릭됨");
+                    OnEventExit();
+                }
+            );
+            
+            // 원래 choices 복원
+            choices = originalChoices;
+            
+            Debug.Log("종료 버튼 생성 완료");
+        }
+        else
+        {
+            Debug.LogError("StageRoundManager 또는 ChoiceContainer를 찾을 수 없습니다.");
+        }
+    }
+    
+    /// <summary>
+    /// 이벤트 종료 처리
+    /// </summary>
+    private void OnEventExit()
+    {
+        Debug.Log("=== 이벤트 종료 시작 ===");
+        
         // StageRoundManager에게 이벤트 완료 알림
         StageRoundManager roundManager = FindObjectOfType<StageRoundManager>();
         if (roundManager != null)
         {
+            Debug.Log("StageRoundManager에게 이벤트 완료 알림 전송");
             roundManager.OnEventCompleted(this);
         }
         else
         {
-            Debug.LogWarning("StageRoundManager를 찾을 수 없습니다.");
+            Debug.LogError("StageRoundManager를 찾을 수 없습니다!");
         }
     }
 
@@ -652,15 +780,30 @@ public class StageEventCandidate : MonoBehaviour
             return;
         }
 
+        Debug.Log($"선택지 버튼 생성 시작 - 총 {choices.Count}개 선택지");
+        Debug.Log($"부모 Transform: {parentTransform.name}");
+
         // 기존 버튼들 제거
         ClearChoiceButtons(parentTransform);
+
+        // 선택지가 없는 경우 경고
+        if (choices.Count == 0)
+        {
+            Debug.LogWarning($"이벤트 '{displayName}'에 선택지가 없습니다!");
+            return;
+        }
 
         // 각 선택지마다 버튼 생성
         for (int i = 0; i < choices.Count; i++)
         {
+            Debug.Log($"선택지 {i + 1} 버튼 생성 중: '{choices[i].choiceText}'");
             GameObject buttonObj = UnityEngine.Object.Instantiate(buttonPrefab, parentTransform);
+            buttonObj.name = $"ChoiceButton_{i}_{choices[i].choiceText}";
             SetupChoiceButton(buttonObj, i, choices[i], onChoiceCallback);
+            Debug.Log($"선택지 {i + 1} 버튼 생성 완료: {buttonObj.name}");
         }
+
+        Debug.Log($"모든 선택지 버튼 생성 완료! 총 {choices.Count}개");
     }
 
     /// <summary>
@@ -698,24 +841,33 @@ public class StageEventCandidate : MonoBehaviour
     /// <param name="onChoiceCallback">콜백 함수</param>
     protected virtual void SetupChoiceButtonManually(GameObject buttonObj, int choiceIndex, EventChoice choice, System.Action<int> onChoiceCallback)
     {
+        Debug.Log($"수동 버튼 설정 시작 - 선택지 {choiceIndex}: {choice.choiceText}");
+        
         // Button 컴포넌트 가져오기
         var button = buttonObj.GetComponent<UnityEngine.UI.Button>();
         if (button == null)
         {
+            Debug.Log($"GameObject에서 Button을 찾을 수 없음, 하위 오브젝트에서 검색 중...");
             button = buttonObj.GetComponentInChildren<UnityEngine.UI.Button>();
         }
 
         if (button != null)
         {
+            Debug.Log($"Button 컴포넌트 발견: {button.name}");
+            
             // 버튼 클릭 이벤트 설정
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => {
+                Debug.Log($"버튼 클릭됨! 선택지 {choiceIndex}: {choice.choiceText}");
                 onChoiceCallback?.Invoke(choiceIndex);
             });
+            
+            Debug.Log($"onClick 이벤트 설정 완료 - 선택지 {choiceIndex}");
         }
         else
         {
-            Debug.LogWarning($"Button 컴포넌트를 찾을 수 없습니다: {buttonObj.name}");
+            Debug.LogError($"Button 컴포넌트를 찾을 수 없습니다: {buttonObj.name}");
+            Debug.LogError($"GameObject 구조를 확인하세요. Button 컴포넌트가 있어야 합니다.");
         }
 
         // TextMeshPro 텍스트 설정
@@ -741,9 +893,13 @@ public class StageEventCandidate : MonoBehaviour
     {
         if (parentTransform == null) return;
 
+        int childCount = parentTransform.childCount;
+        Debug.Log($"기존 선택지 버튼 정리 중... 현재 자식 개수: {childCount}");
+
         for (int i = parentTransform.childCount - 1; i >= 0; i--)
         {
             Transform child = parentTransform.GetChild(i);
+            Debug.Log($"기존 버튼 제거: {child.name}");
             if (UnityEngine.Application.isPlaying)
             {
                 UnityEngine.Object.Destroy(child.gameObject);
@@ -753,6 +909,8 @@ public class StageEventCandidate : MonoBehaviour
                 UnityEngine.Object.DestroyImmediate(child.gameObject);
             }
         }
+
+        Debug.Log("기존 선택지 버튼 정리 완료");
     }
 
     /// <summary>
@@ -763,7 +921,8 @@ public class StageEventCandidate : MonoBehaviour
     public virtual void GenerateChoiceUI(GameObject buttonPrefab, Transform parentTransform)
     {
         CreateChoiceButtons(buttonPrefab, parentTransform, (choiceIndex) => {
-            SelectChoice(choiceIndex);
+            Debug.Log($"GenerateChoiceUI 콜백 호출됨 - 선택지 {choiceIndex}");
+            OnChoiceSelected(choiceIndex);  // SelectChoice + 이벤트 완료 처리 포함
         });
     }
 

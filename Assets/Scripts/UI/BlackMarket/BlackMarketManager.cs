@@ -24,7 +24,7 @@ public class BlackMarketManager : MonoBehaviour
         rerollButton.onClick.AddListener(RerollShop);
         closeButton.onClick.AddListener(CloseShop);
         allItems = FirebaseManager.items.Values.ToList();
-        Debug.Log($"ºí·¢ ¸¶ÄÏ {allItems.Count}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ {allItems.Count}");
     }
 
     public void OpenShop()
@@ -36,6 +36,9 @@ public class BlackMarketManager : MonoBehaviour
         }
         UpdateUI();
         blackMarketUI.SetActive(true);
+        
+        // ë¸”ë™ ë§ˆì¼“ì´ ì—´ë¦´ ë•Œ ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ìˆ¨ê¸°ê¸°
+        HideUnitMarketButton();
     }
 
     private void RerollShop()
@@ -45,16 +48,16 @@ public class BlackMarketManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ¾ÆÀÌÅÛ ¸®·ÑÇÏ°í Áı¾î³Ö±â ±Â±Â
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ ï¿½Â±ï¿½
     /// </summary>
     private void GenerateRandomItems()
     {
         currentItems.Clear();
 
-        // ÀÌÀü¿¡ ³ª¿Â ¾ÆÀÌÅÛÀº ÀÌ¹ø¿¡´Â Á¦¿Ü
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         var candidates = allItems.Except(previousItems).OrderBy(x => Random.value).Take(3).ToList();
 
-        // ¾Õ¿¡ ³ª¿Â ¾ÆÀÌÅÛ Áßº¹ È®ÀÎÇÏ°í µ¹¸²
+        // ï¿½Õ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ßºï¿½ È®ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (candidates.Count < 3)
         {
             var fallback = allItems.OrderBy(x => Random.value).Take(3 - candidates.Count);
@@ -81,5 +84,42 @@ public class BlackMarketManager : MonoBehaviour
     private void CloseShop()
     {
         blackMarketUI.SetActive(false);
+        
+        // ë¸”ë™ ë§ˆì¼“ì´ ë‹«í ë•Œ ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ë‹¤ì‹œ í‘œì‹œ
+        ShowUnitMarketButton();
+    }
+    
+    /// <summary>
+    /// ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ìˆ¨ê¸°ê¸°
+    /// </summary>
+    private void HideUnitMarketButton()
+    {
+        UnitMarketManager unitMarketManager = FindObjectOfType<UnitMarketManager>();
+        if (unitMarketManager != null)
+        {
+            unitMarketManager.SetToggleButtonVisibility(false);
+            Debug.Log("ìœ ë‹› ìƒì  ë²„íŠ¼ ìˆ¨ê¹€");
+        }
+        else
+        {
+            Debug.LogWarning("UnitMarketManagerë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+        }
+    }
+    
+    /// <summary>
+    /// ê¸°ì¡´ ìœ ë‹› ìƒì  ë²„íŠ¼ ë‹¤ì‹œ í‘œì‹œ
+    /// </summary>
+    private void ShowUnitMarketButton()
+    {
+        UnitMarketManager unitMarketManager = FindObjectOfType<UnitMarketManager>();
+        if (unitMarketManager != null)
+        {
+            unitMarketManager.SetToggleButtonVisibility(true);
+            Debug.Log("ìœ ë‹› ìƒì  ë²„íŠ¼ ë‹¤ì‹œ í‘œì‹œ");
+        }
+        else
+        {
+            Debug.LogWarning("UnitMarketManagerë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+        }
     }
 }

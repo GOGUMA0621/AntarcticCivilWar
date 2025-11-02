@@ -197,4 +197,21 @@ public class UnitMarketManager : MonoBehaviour
     {
         return currentMemberGrade;
     }
+    
+    /// <summary>
+    /// 유닛 상점 토글 버튼의 가시성 설정 (블랙 마켓에서 호출)
+    /// </summary>
+    /// <param name="visible">버튼 표시 여부</param>
+    public void SetToggleButtonVisibility(bool visible)
+    {
+        if (toggleMarketButton != null)
+        {
+            toggleMarketButton.gameObject.SetActive(visible);
+            Debug.Log($"유닛 상점 토글 버튼 가시성: {visible}");
+        }
+        else
+        {
+            Debug.LogWarning("toggleMarketButton이 할당되지 않았습니다.");
+        }
+    }
 }
